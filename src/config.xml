@@ -7,23 +7,37 @@
 ////////////////////////////////////////////////////////////////////////////////
 -->
 <configuration>
-    <title>ArcGIS Viewer for Flex</title>
-    <subtitle>a configurable web mapping application</subtitle>
-    <logo>assets/images/logo.png</logo>
+    <title>LAND INFORMATION PORTAL</title>
+    <subtitle>St. Louis County, Minnesota</subtitle>
+    <logo>assets/images/la.png</logo>
     <style>
-        <colors>0xFFFFFF,0x333333,0x101010,0x000000,0xFFD700</colors>
+        <colors>0xFFFFFF,0x333333,0x101010,0x000000,0xffffff</colors>
         <alpha>0.8</alpha>
+        <font name="Myriad Web Pro" size="13"></font>
     </style>
-    <!-- replace the following url with your own geometryservice -->
-    <geometryservice url="http://tasks.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer" />
-
+    
+    <geometryservice url="http://gis.stlouiscountymn.gov/arcgis/rest/services/Utilities/Geometry/GeometryServer" />
+	<bing key="Ajm6CVlSoCbfdagQS4AsSiUYFxu0sxoc05XEsqNji7P9R0E0bM4DB4djiC747xak"/>
     <!-- UI elements -->
     <widget left="10"  top="50"    config="widgets/Navigation/NavigationWidget.xml" url="widgets/Navigation/NavigationWidget.swf"/>
     <widget right="0" bottom="0"   config="widgets/OverviewMap/OverviewMapWidget.xml" url="widgets/OverviewMap/OverviewMapWidget.swf"/>
     <widget right="20" top="55"    config="widgets/MapSwitcher/MapSwitcherWidget.xml" url="widgets/MapSwitcher/MapSwitcherWidget.swf"/>
     <widget left="0"   top="0"     config="widgets/HeaderController/HeaderControllerWidget.xml" url="widgets/HeaderController/HeaderControllerWidget.swf"/>
+    <widget left="5" bottom="50"    config="widgets/Coordinate/CoordinateWidget.xml" url="widgets/Coordinate/CoordinateWidget.swf"/>
+    
 
-    <map wraparound180="true" initialextent="-14083000 3139000 -10879000 5458000" fullextent="-20000000 -20000000 20000000 20000000" top="40" addarcgisbasemaps="true">
+    <map wraparound180="true" initialextent="-10679623.4209 5870891.7487 -9899354.2362 6213941.1316" fullextent="-10679623.4209 5870891.7487 -9899354.2362 6213941.1316" top="40" addarcgisbasemaps="false"
+    attributionvisible="false" esrilogovisible="false" minscale="1:4514">
+        <basemaps>
+        		<layer label="Bing Hybrid" type="bing" visible="true" style="aerialWithLabels" culture="en-US" icon="assets/images/bing_aerialWithLabels.png"/>
+        		<layer label="Bing Aerial" type="bing" visible="false" style="aerial" culture="en-US" icon="assets/images/bing_aerial.png" />
+        		<layer label="Bing Roads" type="bing" visible="false" style="road" culture="en-US" icon="assets/images/bing_road.png"/>
+        		<layer label="Esri Streets" type="tiled" visible="false" url="http://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer" icon="assets/images/basemap_streets.jpg"/>
+	            <layer label="Esri Imagery"  type="tiled" visible="false" url="http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer" icon="assets/images/basemap_imagery.jpg"/>
+	           	<layer label="USGS Topo" type="tiled" visible="false" url="http://server.arcgisonline.com/ArcGIS/rest/services/USA_Topo_Maps/MapServer" icon="assets/images/basemap_topographic.jpg"/>
+	  			<layer label="2013 County Imagery" type="dynamic" visible="false" url="http://arcgiswaprod/ArcGIS/rest/services/Planning/Pictometry_2013/MapServer" icon="assets/images/bsmp_CountyImagery.png"/> 
+				
+          </basemaps>
         <operationallayers>
             <layer label="Demographics" type="tiled" visible="false" alpha="0.5"
                    url="http://server.arcgisonline.com/ArcGIS/rest/services/Demographics/USA_Median_Household_Income/MapServer">
