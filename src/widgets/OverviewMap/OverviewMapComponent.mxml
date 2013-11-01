@@ -610,8 +610,10 @@
     </s:transitions>
 
     <s:BorderContainer id="viewBox"
-                       width="250" width.collapsed="{toggleIcon.width}" height="250" height.collapsed="{toggleIcon.height}"
-                       backgroundAlpha="1.0">
+                       width="200" width.collapsed="{toggleIcon.width}" height="200" height.collapsed="{toggleIcon.height}"
+					   cornerRadius="20"
+					   backgroundAlpha="1.0">
+					   
         <esri:Map id="overviewMap"
                   width="250" height="250"
                   attributionVisible="false"
@@ -629,7 +631,8 @@
                   wrapAround180="{map.wrapAround180}"
                   zoomSliderVisible="false"/>
         <s:BorderContainer id="mapMask"
-                           width="{viewBox.width}" height="{viewBox.height}"/>
+                           width="{viewBox.width}" height="{viewBox.height}"
+						   cornerRadius="20"/>
         <s:Group width="{viewBox.width}" height="{viewBox.height}"
                  includeInLayout.noncollapsible="false"
                  visible.noncollapsible="false">
@@ -638,16 +641,18 @@
                       buttonMode="true"
                       mask="{iconMask}"
                       smoothBitmapContent="true"
-                      source="assets/images/i_expand2.png"
+				      source="assets/images/i_expand2.png"
                       toolTip.collapsed="{openToolTip}"
                       toolTip.expanded="{closeToolTip}"
                       useHandCursor="true"/>
             <s:BorderContainer id="iconMask"
-                               width="{toggleIcon.width}" height="{toggleIcon.height}"/>
+                               width="{toggleIcon.width}" height="{toggleIcon.height}"
+							   cornerRadius="20"/>
         </s:Group>
     </s:BorderContainer>
     <s:Rect id="borderRect1"
-            left="-1" right="-1" top="-1" bottom="-1">
+            left="-1" right="-1" top="-1" bottom="-1"
+			radiusX="20" radiusY="20">
         <s:stroke>
             <s:SolidColorStroke color="{getStyle('contentBackgroundColor')}" weight="1"/>
         </s:stroke>

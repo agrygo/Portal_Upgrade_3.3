@@ -91,7 +91,7 @@
                 super.updateDisplayList(unscaledWidth, unscaledHeight);
             }
 
-            private var cornerRadius:Number = 2;
+            private var cornerRadius:Number = 20;
         ]]>
     </fx:Script>
 
