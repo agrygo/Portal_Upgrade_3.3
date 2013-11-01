@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<configuration>
+    <title>FEMA damage category: {FEMA_categ}</title>
+	<description><![CDATA[Parcel #: {PRCL_NBR}
+Address: {StreetAdd}
+
+]]></description>
+	
+	
+	
+	
+</configuration>

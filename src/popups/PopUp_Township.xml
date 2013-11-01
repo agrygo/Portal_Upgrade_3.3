@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<configuration>
+    <title>{COMMONNAME}</title>
+    <fields>
+        <field name="COMMONNAME" />         
+        <field name="TOWN" alias="Township: " visible="true"/>
+        <field name="RANG" alias="Range: " visible="true"/>
+		
+		
+	</fields>
+</configuration>
+
+<!--
+    Pop-up configuration file for:
+ http://nt-arcgis-pilot/ArcGIS/rest/services/Planning/PortalBase/MapServer/0
+-->
+

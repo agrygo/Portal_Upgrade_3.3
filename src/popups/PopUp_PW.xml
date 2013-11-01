@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+<configuration>
+    <title>Work Order Number:{WO_NUM}</title>
+	<description><![CDATA[Road Name: {roadname}
+Description: {descript_1}
+Damage location: {LocDesc}
+Work Order Number: {WORKORDER}
+<b>Location</b>
+SLC Trans Merc X: {X}
+SLC Trans Merc Y: {Y}
+UTM Northing: {UTM_N}
+UTM Easting: {UTM_E}
+]]></description>
+	
+	
+	
+	
+</configuration>

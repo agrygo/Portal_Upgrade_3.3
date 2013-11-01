@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<configuration>
+    <title>Location: {ROAD_NAME}</title>
+    <description><![CDATA[Damage: {DAMAGETYPE}
+Description: {NOTES}
+Image: <a target='_blank' href='file:{URL_LINK}'>{URL_LINK}</a>
+Work Order Number: {WORKORDER}
+<b>Location</b>
+Latitude: {LAT}
+Longitude: {LONG}
+]]></description>
+</configuration>

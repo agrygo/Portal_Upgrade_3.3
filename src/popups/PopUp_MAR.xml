@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<configuration>
+    <title>Location: {AddressNumber} {AddressNumberSuffix} {CompleteStreetName}</title>
+    <description><![CDATA[<b>Status:</b> {SLCReviewed}
+<b>SLCID:</b> {SLCID}
+
+  
+
+]]></description>
+</configuration>

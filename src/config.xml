@@ -28,6 +28,24 @@
 
     <map wraparound180="true" initialextent="-10679623.4209 5870891.7487 -9899354.2362 6213941.1316" fullextent="-10679623.4209 5870891.7487 -9899354.2362 6213941.1316" top="40" addarcgisbasemaps="false"
     attributionvisible="false" esrilogovisible="false" minscale="1:4514">
+    
+    <lods>
+    		<lod resolution="0.07461264922529845" scale="282"/>
+			<lod resolution="0.1492252984505969" scale="564"/>-->
+			<lod resolution="0.29858214164761665" scale="1128.4971760000001"/>
+			<lod resolution="0.59716428355981721" scale="2256.994353"/>
+			<lod resolution="1.19432856685505" scale="4513.988705"/>
+			<lod resolution="2.38865713397468" scale="9027.977411"/>
+			<lod resolution="4.77731426794937" scale="18055.954822"/>
+			<lod resolution="9.55462853563415" scale="36111.909643"/>
+			<lod resolution="19.1092570712683" scale="72223.819286"/>
+			<lod resolution="38.2185141425366" scale="144447.638572"/>
+			<lod resolution="76.4370282850732" scale="288895.277144"/>
+			<lod resolution="152.874056570411" scale="577790.554289"/>
+			<lod resolution="305.748113140558" scale="1155581.108577"/>
+			<lod resolution="611.49622628138" scale="2311162.217155"/>
+			<lod resolution="1222.99245256249" scale="4622324.434309"/>
+    </lods>
         <basemaps>
         		<layer label="Bing Hybrid" type="bing" visible="true" style="aerialWithLabels" culture="en-US" icon="assets/images/bing_aerialWithLabels.png"/>
         		<layer label="Bing Aerial" type="bing" visible="false" style="aerial" culture="en-US" icon="assets/images/bing_aerial.png" />
@@ -39,30 +57,67 @@
 				
           </basemaps>
         <operationallayers>
-            <layer label="Demographics" type="tiled" visible="false" alpha="0.5"
-                   url="http://server.arcgisonline.com/ArcGIS/rest/services/Demographics/USA_Median_Household_Income/MapServer">
-                <sublayer id="1" popupconfig="popups/PopUp_Demographics_BlockGroups.xml"/>
-                <sublayer id="2" popupconfig="popups/PopUp_Demographics_Tracts.xml"/>
-                <sublayer id="3" popupconfig="popups/PopUp_Demographics_Counties.xml"/>
-                <sublayer id="4" popupconfig="popups/PopUp_Demographics_States.xml"/>
-            </layer>
-            <layer label="Fires" type="feature" visible="false" alpha="1.0"
-                   popupconfig="popups/PopUp_Fires.xml"
-                   url="http://sampleserver3.arcgisonline.com/ArcGIS/rest/services/Fire/Sheep/FeatureServer/0"/>
+          	<layer label="2013 Imagery" type="dynamic" visible="false" url="http://arcgiswaprod/ArcGIS/rest/services/Planning/Pictometry_2013/MapServer"/>
+			<layer label="General Structures"  type="dynamic" visible="false" url="http://arcgiswaprod/ArcGIS/rest/services/Planning/Portal_Structures/MapServer"/>
+			<layer label="QA-QC"  type="dynamic" visible="false" url="http://arcgiswaprod/ArcGIS/rest/services/Planning/Portal_QA_QC/MapServer"/>
+			<layer label="Mining and Minerals" type="dynamic" imageformat="png32" visible="false"  url="http://arcgiswaprod/ArcGIS/rest/services/Planning/Portal_MiningMinerals/MapServer"/>
+			<layer label="Environmental" type="dynamic" visible="false" imageformat="png32"  url="http://arcgiswaprod/ArcGIS/rest/services/Planning/Portal_Environmental/MapServer"/>
+			<!--<layer label="Zoning" type="dynamic" visible="false" imageformat="png32"  url="http://arcgiswaprod/ArcGIS/rest/services/Planning/Portal_Zoning/MapServer"/>-->
+			
+			<layer label="Property Health Indicators" type="dynamic"  imageformat="png32" visible="false" url="http://arcgiswaprod/ArcGIS/rest/services/Planning/Portal_PropertyHealthIndicators/MapServer"/>
+			<!--<layer label="Tax Forfeit Land Sales" type="dynamic" visible="false" imageformat="png32" 
+			url="http://arcgiswaprod/ArcGIS/rest/services/Land/LandSales/MapServer"/>-->
+			<layer label="Market Activity" type="dynamic" visible="false" imageformat="png32" url="http://arcgiswaprod/ArcGIS/rest/services/Planning/Portal_Market_Activity/MapServer"/>
+			<layer label="2012 June Flood"  type="dynamic"  visible="false"  url="http://arcgiswaprod/ArcGIS/rest/services/Planning/Portal_FloodDamage/MapServer">
+					<sublayer id="0" popupconfig="popups/PopUp_Land.xml"/>
+	                <sublayer id="1" popupconfig="popups/PopUp_Land.xml"/>
+					<sublayer id="2" popupconfig="popups/PopUp_PW.xml"/>
+					<sublayer id="3" popupconfig="popups/PopUp_PW.xml"/>
+	                <sublayer id="4" popupconfig="popups/PopUp_Private.xml"/>
+					<sublayer id="5" popupconfig="popups/PopUp_Private.xml"/>
+			</layer>
+					
+			
+			
+			<layer label="Cadastral" type="dynamic" visible="false" imageformat="png32"	url="http://arcgiswaprod/ArcGIS/rest/services/Planning/Portal_Cadastral/MapServer">
+				<sublayer id="30" popupconfig="popups/PopUp_ControlPoints.xml"/>
+			</layer>	
+			<layer label="Ownership" type="dynamic" imageformat="png32"  visible="false" url="http://arcgiswaprod/ArcGIS/rest/services/Planning/Portal_Ownership/MapServer"/>
+			<layer label="Baselayers" type="dynamic" visible="true" url="http://arcgiswaprod/arcgis/rest/services/Planning/Portal_Base/MapServer">
+				<sublayer id="0" popupconfig="popups/PopUp_Parcels.xml"/>
+			</layer>
+			<layer label="Administrative Boundaries"  type="dynamic" imageformat="png32" visible="false"  url="http://arcgiswaprod/arcgis/rest/services/Planning/Portal_Admin/MapServer"/>	
+			<layer label="Addresing & Places Area 5" type="dynamic" visible="false" url="http://arcgiswaprod/ArcGIS/rest/services/Planning/Portal_Addressing_and_PlacesArea5/MapServer">
+				<sublayer id="1" popupconfig="popups/PopUp_MAR_Area5_DDP.xml"/>
+				<sublayer id="3" popupconfig="popups/PopUp_MAR.xml"/>
+				<sublayer id="4" popupconfig="popups/PopUp_MAR.xml"/>
+				<sublayer id="5" popupconfig="popups/PopUp_MAR.xml"/>
+			</layer>	
+			<layer label="Addressing & Places Area 3/4"  type="dynamic"  visible="false" url="http://arcgiswaprod/ArcGIS/rest/services/Planning/Portal_Addressing_and_Places/MapServer">
+				<sublayer id="1" popupconfig="popups/PopUp_MAR_Area34_DDP.xml"/>
+				<sublayer id="3" popupconfig="popups/PopUp_MAR.xml"/>
+				<sublayer id="4" popupconfig="popups/PopUp_MAR.xml"/>
+				<sublayer id="6" popupconfig="popups/PopUp_MAR.xml"/>
+				<sublayer id="7" popupconfig="popups/PopUp_MAR.xml"/>
+				<sublayer id="9" popupconfig="popups/PopUp_MAR.xml"/>
+			</layer>	
+	
+			<layer label="Addressing EDITS" type="dynamic" visible="false" imageformat="png32" url="http://arcgiswaprod/arcgis/rest/services/Planning/Portal_Addressing_and_Places_EDITS/MapServer"/>
+				
+			
+			<!--<layer label="Addressing & Places"  type="dynamic" imageformat="png32" visible="false" url="http://nt-arcgis-prod/ArcGIS/rest/services/Planning/Portal_AddressingPlaces/MapServer"/>-->	
+			<layer label="Labels" type="dynamic" visible="false" url="http://arcgiswaprod/ArcGIS/rest/services/Planning/Portal_Labels/MapServer"/>
         </operationallayers>
     </map>
 
     <!-- widgets organized into widget containers that manage close/open etc -->
     <!-- supported layout property options: horizontal(default)|float|vertical|fix-->
     <widgetcontainer layout="float">
-        <widget label="Bookmarks"         left="430" top="90"
-                icon="assets/images/i_bookmark.png"
+        <widget label="Common Locations"         left="430" top="90"
+                icon="assets/images/Flex-Bookmark-1.png"
                 config="widgets/Bookmark/BookmarkWidget.xml"
                 url="widgets/Bookmark/BookmarkWidget.swf"/>
-        <widget label="Louisville Police" left="590" top="280"
-                icon="assets/images/i_police.png"
-                config="widgets/Query/QueryWidget_Louisville_PoliceStations.xml"
-                url="widgets/Query/QueryWidget.swf"/>
+        
         <widget label="Search" left="80" top="280"
                 icon="assets/images/i_search.png"
                 config="widgets/Search/SearchWidget_Louisville.xml"

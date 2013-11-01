@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<configuration>
+    <title>{Point_ID2}</title>
+    <fields>
+        <field name="Point_ID2"/>         
+        <field name="Northing_Feet" alias="Northing (feet): " visible="true"/>
+        <field name="Easting_Feet" alias="Easting (feet): " visible="true"/>
+		<field name="CornerCertificate" alias="Corner Certificate" hyperlinkgridfield="true" hyperlinkaliastext="Open Corner Certificate" visible="true"/>
+        <field name="CornerReport" alias="Corner Report" hyperlinkgridfield="true" hyperlinkaliastext="Open Corner Report" visible="true"/>
+	</fields>
+</configuration>
+
+<!--
+    Pop-up configuration file for:
+ http://nt-arcgis-pilot/ArcGIS/rest/services/Planning/Portal_ControlPoints/MapServer/0
+-->
+

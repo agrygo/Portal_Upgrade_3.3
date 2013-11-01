@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+<configuration>
+    <title>{SCH_DIST}</title>
+    <fields>
+        <field name="PRCL_NBR" alias="PIN: "/> 
+		<field name="TPCLSCode1" alias="Primary Tax Class Code: "/>         
+		<field name="TPCLS1" alias="Primary Tax Class: "/> 
+        <field name="OWNAME" alias="Owner: " visible="true"/>
+        <field name="PHYSADDR" alias="Address: " visible="true"/>
+		<field name="PHYSCITY" alias="City: " visible="true"/>
+	</fields>
+</configuration>
+
+<!--
+    Pop-up configuration file for:
+ http://nt-arcgis-prod/ArcGIS/rest/services/Planning/Portal_QAQC/MapServer/5
+-->
+

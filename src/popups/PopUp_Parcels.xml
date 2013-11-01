@@ -1,0 +1,60 @@
+<?xml version="1.0" ?>
+<configuration>
+ <title>Parcel ID Number: {PRCL_NBR}</title>
+ <description>
+  <![CDATA[
+ <b>Parcel Type</b> {ParcelType}
+ <b>Address</b> {PHYSADDR} {PHYSCITY} {PHYSZIP}
+ <b>Owner Name</b>  {OWNAME}
+ <b>Owner Address</b> {OWADR1} {OWADR2}
+ <b>Taxpayer</b>   {TXNAME}
+ <b>Address</b>   {TXADR1} {TXADR2}
+ <b>Tax District</b>   {TAX_DIST_NAME}
+ <b>Tax Code</b> 	{TPCLS1}
+ <b>Est Land Value</b>	{LAND_EST} 
+ <b>Est Building Value</b>	{BUILDING}
+ <b>Taxable Market Value</b>	{TaxableMarketValue}
+ <b>Plat Description</b>   {PLDESC}
+ <b>Lot</b> {LOT_NBR}  <b>Block</b>   {BLOCK_NBR}
+ <b>Deeded Acres</b>   {DEEDED_ACRES}
+ <b>Township</b>  {TOWNSHIP},  <b>Range</b>  {RANGE},   <b>Section</b>  {SECTION}   
+ <b>School District</b>   {SCH_DIST}
+ <b>Lake Name</b>   {LAKE_NAME}
+ 
+ 	    
+<a target="_blank" href="http://apps.stlouiscountymn.gov/auditor/parcelInfo2005Iframe/frmSearchNDetailREV1.aspx?ParcelID={PRCL_NBR}">Parcel Tax Lookup</a>    
+<a target="_blank" href="http://reports.stlouiscountymn.gov/ssrs_wrapper/ShowSSRSReport.aspx?reportPath=/Assessor/PropertyDetails/Main&param1=parcelnum={PRCL_NBR}&pdf=true 
+">Property Details</a>
+	    ]]>
+	   
+	   
+	   
+    </description>
+</configuration>
+
+<!-- ##################ORIGINAL CONFIG FILE, REVISED 8-14-2013, AMG
+<configuration>
+    <title>{PRCL_NBR}</title>
+    <fields>
+        <field name="PRCL_NBR" />         
+        <field name="OWNAME" alias="Owner: " visible="true"/>
+        <field name="TXNAME" alias="Taxpayer: " visible="true"/>
+		<field name="PHYSADDR" alias="Property Address: " visible="true"/>
+		<field name="PHYSCITY" alias="City: " visible="true"/>
+		<field name="PHYSZIP" alias="ZIP: " visible="true" numberformat="5||"/>
+		<field name="DEEDED_ACRES" alias="Deeded acres" gridfield="true" gridfieldonly="true"/>
+		<field name="SCH_DIST" alias="School District" gridfield="true" gridfieldonly="true"/>
+		<field name="TPCLS1" alias="Tax code" gridfield="true" gridfieldonly="true"/>
+		<field name="LAND_EST" alias="Est Land Value" gridfield="true" currencyformat="$|0|,|." gridfieldonly="true"/>
+		<field name="BUILDING" alias="Est Building Value" gridfield="true" currencyformat="$|0|,|." gridfieldonly="true"/>
+		<field name="LAND_EST" alias="Est Land Value" gridfield="true" currencyformat="$|0|,|." gridfieldonly="true"/>
+		<field name="TaxableMarketValue" alias="Taxable Market Value" gridfield="true" currencyformat="$|0|,|." gridfieldonly="true"/>
+		
+	</fields>
+</configuration>-->
+
+<!--
+    Pop-up configuration file for:
+ http://nt-arcgis-pilot/ArcGIS/rest/services/Planning/PortalBase/MapServer/0
+-->
+
