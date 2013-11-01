@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<configuration label="Draw and measure (default)">
+    <layername>Draw Features</layername>
+    <!-- <autoloadgraphics zoompercent="1.6" autozoom="true">http://gis.calhouncounty.org/FlexViewer3.0/SavedGraphics.txt</autoloadgraphics> -->
+    <spatialref>102003</spatialref>
+    <addhalototext>true</addhalototext>
+    <distanceunits>
+        <distanceunit id="km"/>
+        <distanceunit id="mi"/>
+        <distanceunit id="m"/>
+        <distanceunit id="ft"/>
+        <distanceunit id="yd"/>
+    </distanceunits>
+    <areaunits>
+        <areaunit id="sq km"/>
+        <areaunit id="sq mi"/>
+        <areaunit id="ac"/>
+        <areaunit id="ha"/>
+        <areaunit id="sq m"/>
+        <areaunit id="sq ft"/>
+        <areaunit id="sq yd"/>
+    </areaunits>
+    <pointunits>
+        <pointunit abbr="spal" wkid="102629">NAD83 AL East(SP Feet)</pointunit>
+        <pointunit abbr="wgs84dd" wkid="4326">Decimal Degrees (WGS84)</pointunit>
+        <pointunit abbr="wgs84dms" wkid="4326">DMS (WGS84)</pointunit>
+        <pointunit abbr="utm19n" wkid="2960">NAD 1983 UTM 19N</pointunit>
+        <pointunit abbr="spalm" wkid="2759">NAD83 AL East(SP Meters)</pointunit>
+    </pointunits>
+    <geonumericlabelprecision>0</geonumericlabelprecision>
+    <dddnumericlabelprecision>9</dddnumericlabelprecision>
+    <dmsnumericlabelprecision>2</dmsnumericlabelprecision>
+    <defaulttool>polygon</defaulttool>
+    <labels>
+        <textrotationlabel>Rotation</textrotationlabel>
+        <markerrotationlabel>Angle</markerrotationlabel>
+        <pointunitslabel>Point Units</pointunitslabel>
+        <savelabel>Save Graphics Layer</savelabel>
+        <openlabel>Open Saved Graphics Layer</openlabel>
+        <addhalolabel>Add Halo</addhalolabel>
+        <fontwarningmsg>If you are using a non standard font and sharing this saved graphics layer with another computer there is a possibility that that machine could not have the font installed and would cause and error when loaded. Do you want to switch the font to Arial?</fontwarningmsg>
+        <fontwarningtitle>Warning</fontwarningtitle>
+        <textboldlabel>B</textboldlabel>
+        <textunderlinelabel>U</textunderlinelabel>
+    </labels>
+    <disablelivemeasure>false</disablelivemeasure>
+</configuration>
+
+<!--
+    See Draw widget tag reference at
+    http://links.esri.com/drawwidget
+-->

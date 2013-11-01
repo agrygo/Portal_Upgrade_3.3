@@ -113,7 +113,7 @@
     <!-- widgets organized into widget containers that manage close/open etc -->
     <!-- supported layout property options: horizontal(default)|float|vertical|fix-->
     <widgetcontainer layout="float">
-        <widget label="Common Locations"         left="430" top="90"
+        <widget label="Common Locations" left="430" top="90"
                 icon="assets/images/Flex-Bookmark-1.png"
                 config="widgets/Bookmark/BookmarkWidget.xml"
                 url="widgets/Bookmark/BookmarkWidget.swf"/>
@@ -122,14 +122,12 @@
                 icon="assets/images/i_search.png"
                 config="widgets/Search/SearchWidget_Louisville.xml"
                 url="widgets/Search/SearchWidget.swf"/>
-        <widget label="Earthquakes (GeoRSS)" left="410" top="280"
-                icon="assets/images/i_rss.png"
-                config="widgets/GeoRSS/GeoRSSWidget.xml"
-                url="widgets/GeoRSS/GeoRSSWidget.swf"/>
-        <widget label="Draw" left="60" top="400"
-                icon="assets/images/i_draw2.png"
-                config="widgets/Draw/DrawWidget.xml"
-                url="widgets/Draw/DrawWidget.swf"/>
+        
+        <widget label="Draw & Measure" left="60" top="400"
+                icon="assets/images/Final-Flex-Draw.png"
+                config="widgets/eDraw/eDrawWidget.xml"
+                url="widgets/eDraw/eDrawWidget.swf"/>
+                
         <widget label="Print" left="390" top="400"
                 icon="assets/images/i_print.png"
                 config="widgets/Print/PrintWidget.xml"

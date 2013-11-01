@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <configuration label="Coordinates (default)">
     <!-- geo, dms, mercator -->
-    <outputunit>geo</outputunit>
+    <outputunit>dms</outputunit>
 </configuration>
 
 <!--

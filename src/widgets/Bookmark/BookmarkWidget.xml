@@ -1,7 +1,23 @@
 <?xml version="1.0" ?>
-<configuration>
+<configuration label="Bookmarks (example)">
     <bookmarks>
+       <bookmark name="St. Louis County">-10679623.4209 5870891.7487 -9899354.2362 6213941.1316</bookmark>
+       <bookmark name="Chisholm">-10342600 6020670 -10334570 6024430</bookmark>
+       <bookmark name="Duluth">-10282600 5890900 -10218400 5921000</bookmark>
+       <bookmark name="Ely">-10229100 6088470 -10221070 6092230</bookmark>
+       <bookmark name="Eveleth">-10302900 6017180 -10298890 6019060</bookmark>
+       <bookmark name="Hermantown">-10270400 5904000 -10254300 5911500</bookmark>
+       <bookmark name="Hibbing">-10377900 5997100 -10313700 6027100</bookmark>
+       <bookmark name="Lake Vermilion">-10314300 6073800 -10250100 6103900</bookmark>
+       <bookmark name="Virginia">-10305240 6025660 -10297210 6029420</bookmark>
+       
     </bookmarks>
+    <labels>
+    	<bookmarkslabel>All locations</bookmarkslabel>
+    	<addbookmarkslabel>Add new location</addbookmarkslabel>
+    	<addlabel>Add current extent as a location named:</addlabel>
+    	<submitlabel>Add Location</submitlabel>
+    </labels>
 </configuration>
 
 <!--

@@ -90,7 +90,8 @@
                 }
                 else
                 {
-                    wTemplate.width = wTemplate.height = 300;
+                    wTemplate.width = 300;
+					wTemplate.height = 350;
                 }
             }
 
@@ -123,10 +124,10 @@
 
             private function addTitleBarButtons():void
             {
-                wTemplate.addTitlebarButton(ICON_URL + "i_bookmark.png", bookmarksLabel, showBookmarksList);
+                wTemplate.addTitlebarButton(ICON_URL + "Flex-Bookmark-all.png", bookmarksLabel, showBookmarksList);
                 if (canUserAddBookmarks)
                 {
-                    wTemplate.addTitlebarButton(ICON_URL + "i_bookmark_add.png", addbookmarksLabel, showBookmarkAdd);
+                    wTemplate.addTitlebarButton(ICON_URL + "Flex-Bookmark-new.png", addbookmarksLabel, showBookmarkAdd);
                 }
             }
 
