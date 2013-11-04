@@ -478,7 +478,7 @@
                 </s:HGroup>
 
                 <components:GeocoderComponent id="singleLineSearch"
-                                              width="230" height="28"
+                                              width="275" height="28"
                                               includeInLayout="false"
                                               visible="false"/>
 

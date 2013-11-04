@@ -113,20 +113,20 @@
     <!-- widgets organized into widget containers that manage close/open etc -->
     <!-- supported layout property options: horizontal(default)|float|vertical|fix-->
     <widgetcontainer layout="float">
+        <widget label="Search" left="80" top="280"
+                icon="assets/images/Final-Flex-Search.png"
+                config="widgets/Search/SearchWidget_Louisville.xml"
+                url="widgets/Search/SearchWidget.swf"/>
+        
         <widget label="Common Locations" left="430" top="90"
                 icon="assets/images/Flex-Bookmark-1.png"
                 config="widgets/Bookmark/BookmarkWidget.xml"
                 url="widgets/Bookmark/BookmarkWidget.swf"/>
         
-        <widget label="Search" left="80" top="280"
-                icon="assets/images/i_search.png"
-                config="widgets/Search/SearchWidget_Louisville.xml"
-                url="widgets/Search/SearchWidget.swf"/>
-
-		<widget label="Layers" left="100" top="400" 
+        <widget label="Layers" left="100" top="400" 
         		icon="assets/images/Final-Flex-Map-Layers.png"
         		 config="widgets/TOC/TOCWidget.xml"
-                url="widgets/TOC/TOCWidget.swf"/>       
+                url="widgets/TOC/TOCWidget.swf"/>  
 
         <widget label="Draw & Measure" left="60" top="400"
                 icon="assets/images/Final-Flex-Draw.png"
