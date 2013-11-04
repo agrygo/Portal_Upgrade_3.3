@@ -25,7 +25,7 @@
         <![CDATA[
             import com.esri.ags.Map;
             import com.esri.viewer.AppEvent;
-            import com.esri.viewer.utils.LocalizationUtil;
+            import com.esri.viewer.ViewerContainer;
 
             import mx.events.FlexEvent;
 
@@ -34,23 +34,24 @@
             [Bindable]
             public var map:Map;
 
-            [Bindable]
-            public var panwheelItem:NavToolItem;
+            //[Bindable]
+            //public var panwheelItem:NavToolItem;
 
             [Bindable]
             public var zoomFullextItem:NavToolItem;
 
-            [Bindable]
-            public var panupItem:NavToolItem;
+            //[Bindable]
+           // public var panupItem:NavToolItem;
 
-            [Bindable]
-            public var pandownItem:NavToolItem;
+            //[Bindable]
+            //public var pandownItem:NavToolItem;
 
-            [Bindable]
-            public var panleftItem:NavToolItem;
+            //[Bindable]
+            //public var panleftItem:NavToolItem;
 
-            [Bindable]
-            public var panrightItem:NavToolItem;
+            //[Bindable]
+            //public var panrightItem:NavToolItem;
+
 
             [Bindable]
             public var prevextItem:NavToolItem;
@@ -128,11 +129,10 @@
                             blurX="10"
                             blurY="10"/>
     </s:filters>
-    <s:Group enabled="{map.loaded}"
-             includeInLayout="{panwheelItem.toolVisible}"
-             layoutDirection="ltr"
-             visible="{panwheelItem.toolVisible}">
-        <s:Button id="nwButton"
+    
+	<s:Group>
+			  
+        <!--<s:Button id="nwButton"
                   x="2" y="2"
                   click="map.panUpperLeft()"
                   skinClass="widgets.Navigation.nwButtonSkin"/>
@@ -167,16 +167,16 @@
                   x="18" y="0"
                   click="map.panUp()"
                   skinClass="widgets.Navigation.nButtonSkin"
-                  toolTip="{panupItem.toolName}"/>
+                  toolTip="{panupItem.toolName}"/>-->
         <Navigation:IconButton id="innerButton"
-                               x="18" y="18"
+                               x="6" y="10"
                                click="doNavAction('zoomfull', zoomFullextItem.toolName)"
                                iconUp="{zoomFullextItem.toolIcon}"
                                skinClass="widgets.Navigation.InnerButtonSkin"
-                               toolTip="{zoomFullextItem.toolName}"
+                               toolTip="Zoom to St. Louis County"
                                visible="{zoomFullextItem.toolVisible}"/>
     </s:Group>
-    <s:HGroup enabled="{map.loaded}" gap="0">
+    <s:HGroup gap="0">
         <s:Button id="prevExt"
                   x="0" y="19"
                   click="doNavAction('zoomprevious', prevextItem.toolName)"
@@ -195,28 +195,28 @@
     <esri:Navigation top="0"
                      map="{map}"
                      skinClass="widgets.Navigation.NavigationSkin"/>
-    <s:VGroup enabled="{map.loaded}" paddingTop="3">
+    <s:VGroup paddingTop="3">
         <s:ButtonBar id="btnBar"
                      change="buttonbar1_changeHandler(event)"
                      requireSelection="true"
                      selectedIndex="0"
-                     skinClass="widgets.Navigation.VerticalButtonBarSkin"
+					 skinClass="widgets.Navigation.VerticalButtonBarSkin"
                      valueCommit="buttonbar1_valueCommitHandler(event)">
             <s:layout>
-                <s:VerticalLayout gap="0"/>
+                <s:VerticalLayout gap="3"/>
             </s:layout>
             <s:dataProvider>
                 <s:ArrayCollection>
                     <fx:Object action="pan"
                                imageIcon="assets/images/i_pan.png"
-                               label="{LocalizationUtil.getDefaultString('panLabel')}"/>
+                               label="Pan"/>
                     <fx:Object action="zoomin"
                                imageIcon="assets/images/i_zoomin.png"
-                               label="{LocalizationUtil.getDefaultString('zoomInLabel')}"
+                               label="Zoom In"
                                visible="false"/>
                     <fx:Object action="zoomout"
                                imageIcon="assets/images/i_zoomout.png"
-                               label="{LocalizationUtil.getDefaultString('zoomOutLabel')}"/>
+                               label="Zoom Out"/>
                 </s:ArrayCollection>
             </s:dataProvider>
         </s:ButtonBar>

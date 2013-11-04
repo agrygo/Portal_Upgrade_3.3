@@ -35,12 +35,11 @@
     <fx:Script>
         <![CDATA[
             import com.esri.ags.layers.supportClasses.LOD;
-            import com.esri.viewer.utils.LocalizationUtil;
 
             private function formatSliderDataTip(value:Number):String
             {
                 const lod:LOD = hostComponent.map.lods[value];
-                return lod ? "1:" + numberFormatter.format(lod.scale) : LocalizationUtil.getDefaultString('lodNotFoundError');
+                return lod ? "1:" + numberFormatter.format(lod.scale) : resourceManager.getString('ViewerStrings', 'lodNotFoundError');
             }
         ]]>
     </fx:Script>
@@ -52,9 +51,10 @@
         <s:State name="disabledWithSlider"/>
     </s:states>
 
+	<!--AMG modfied radius from 3 to 10-->
     <s:Rect left="0" right="0" top="0" bottom="0"
-            radiusX="3"
-            radiusY="3">
+           	radiusX="10"
+            radiusY="10">
         <s:fill>
             <s:SolidColor alpha="{getStyle('contentBackgroundAlpha')}" color="{getStyle('contentBackgroundColor')}"/>
         </s:fill>
@@ -71,8 +71,8 @@
         <s:Button id="zoomInButton"
                   enabled.disabled="false"
                   enabled.disabledWithSlider="false"
-                  skinClass="com.esri.ags.skins.NavigationZoomInButtonSkin"
-                  toolTip="{resourceManager.getString('ESRIMessages', 'zoomInTooltip')}"/>
+				  skinClass="com.esri.ags.skins.NavigationZoomInButtonSkin"
+				  toolTip="{resourceManager.getString('ESRIMessages', 'zoomInTooltip')}"/>
 
         <s:VSlider id="slider"
                    height="120"
@@ -91,7 +91,7 @@
         <s:Button id="zoomOutButton"
                   enabled.disabled="false"
                   enabled.disabledWithSlider="false"
-                  skinClass="com.esri.ags.skins.NavigationZoomOutButtonSkin"
+				  skinClass="com.esri.ags.skins.NavigationZoomOutButtonSkin"
                   toolTip="{resourceManager.getString('ESRIMessages', 'zoomOutTooltip')}"/>
 
     </s:VGroup>

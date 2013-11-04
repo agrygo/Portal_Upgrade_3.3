@@ -43,15 +43,17 @@
     </fx:Declarations>
 
     <!-- layer: fill -->
-    <s:Rect x="0" y="0" width="100%" height="100%"
-            minWidth="23"
-            radiusX="3"
-            radiusY="3">
-        <s:fill>
-            <s:SolidColor alpha="{getStyle('contentBackgroundAlpha')}" color="{getStyle('contentBackgroundColor')}"/>
-        </s:fill>
-    </s:Rect>
-
+    
+	<!--<s:Rect x="0" y="0" width="100%" height="100%"
+            minWidth="25"
+            radiusX="5"
+            radiusY="5">
+        
+    </s:Rect>-->
+	<s:Ellipse x="0" y="0" width="100%" height="100%"
+			   minWidth="25">
+			   
+	</s:Ellipse>   
     <!---
          @copy spark.components.SkinnableDataContainer#dataGroup
     -->

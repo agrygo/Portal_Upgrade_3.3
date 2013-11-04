@@ -74,8 +74,28 @@
     </s:states>
 
     <s:Group>
-        <s:Ellipse id="ellipse3"
-                   x="0" y="0" width="26" height="26">
+		<s:Rect id="rectextent"
+				x="0" y="0" width="40" height="60" radiusX="10" radiusY="10">
+			<s:fill>
+				<s:SolidColor alpha="{getStyle('contentBackgroundAlpha')}"
+							  alpha.down="1"
+							  color="{getStyle('contentBackgroundColor')}"
+							  color.down="{getStyle('selectionColor')}"
+							  color.over="{getStyle('rollOverColor')}"/>
+			</s:fill>
+			<s:stroke>
+				<s:SolidColorStroke color="{getStyle('color')}"
+									color.disabled="#888888"
+									color.down="{getStyle('focusColor')}"
+									color.over="{getStyle('focusColor')}"
+									joints="miter"
+									miterLimit="10"
+									weight="2"/>
+			</s:stroke>
+		</s:Rect>
+				
+        <!--<s:Ellipse id="ellipse3"
+                   x="0" y="0" width="55" height="55">
             <s:fill>
                 <s:SolidColor alpha="{getStyle('contentBackgroundAlpha')}"
                               alpha.down="1"
@@ -92,10 +112,10 @@
                                     miterLimit="10"
                                     weight="2"/>
             </s:stroke>
-        </s:Ellipse>
+        </s:Ellipse>-->
 
         <mx:Image id="icon"
-                  width="17" height="17"
+                  width="23" height="50"
                   alpha="{(this.currentState == 'up')?.8:1}"
                   horizontalCenter="-0.5"
                   source="{hostComponent.getStyle('iconUp')}"

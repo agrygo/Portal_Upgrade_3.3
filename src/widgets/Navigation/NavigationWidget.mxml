@@ -72,12 +72,12 @@
                     navigation.alpha = rollOutAlpha;
                     navigation.visible = true;
 
-                    navigation.panwheelItem = new NavToolItem("PanWheel", "", configXML.panwheel.@visible == 'true');
+                    //navigation.panwheelItem = new NavToolItem("PanWheel", "", configXML.panwheel.@visible == 'true');
                     navigation.zoomFullextItem = new NavToolItem(configXML.panwheel.@fullextlabel || getDefaultString("fullExtentLabel"), configXML.panwheel.@fullexticon, true);
-                    navigation.pandownItem = new NavToolItem(configXML.panwheel.@pandownlabel || getDefaultString("panDownLabel"), "", true);
-                    navigation.panleftItem = new NavToolItem(configXML.panwheel.@panleftlabel || getDefaultString("panLeftLabel"), "", true);
-                    navigation.panrightItem = new NavToolItem(configXML.panwheel.@panrightlabel || getDefaultString("panRightLabel"), "", true);
-                    navigation.panupItem = new NavToolItem(configXML.panwheel.@panuplabel || getDefaultString("panUpLabel"), "", true);
+                    //navigation.pandownItem = new NavToolItem(configXML.panwheel.@pandownlabel || getDefaultString("panDownLabel"), "", true);
+                    //navigation.panleftItem = new NavToolItem(configXML.panwheel.@panleftlabel || getDefaultString("panLeftLabel"), "", true);
+                    //navigation.panrightItem = new NavToolItem(configXML.panwheel.@panrightlabel || getDefaultString("panRightLabel"), "", true);
+                    //navigation.panupItem = new NavToolItem(configXML.panwheel.@panuplabel || getDefaultString("panUpLabel"), "", true);
                     navigation.prevextItem = new NavToolItem(configXML.prevextbutton.@label || getDefaultString("previousExtentLabel"), "", configXML.prevextbutton.@visible == 'true');
                     navigation.nextextItem = new NavToolItem(configXML.nextextbutton.@label || getDefaultString("nextExtentLabel"), "", configXML.nextextbutton.@visible == 'true');
                     navigation.panItem = new NavToolItem(configXML.panbutton.@label || getDefaultString("panLabel"), configXML.panbutton.@icon, configXML.panbutton.@visible == 'true');
@@ -89,11 +89,9 @@
         ]]>
     </fx:Script>
     <Navigation:Navigation id="navigation"
-                           focusIn="rollOverFade.play()"
-                           focusOut="rollOutFade.play()"
-                           includeInLayout="false"
+                           layoutDirection="ltr"
                            map="{map}"
-                           rollOut="rollOutFade.play()"
-                           rollOver="rollOverFade.play()"
+                           rollOut="{rollOutFade.play()}"
+                           rollOver="{rollOverFade.play()}"
                            visible="false"/>
 </viewer:BaseWidget>

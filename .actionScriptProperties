@@ -16,6 +16,7 @@
   </compiler>
   <applications>
     <application path="index.mxml"/>
+    <application path="widgets/Navigation/NavigationTools.mxml"/>
   </applications>
   <modules>
     <module application="src/index.mxml" destPath="widgets/Directions/DirectionsWidget.swf" optimize="true" sourcePath="src/widgets/Directions/DirectionsWidget.mxml"/>
