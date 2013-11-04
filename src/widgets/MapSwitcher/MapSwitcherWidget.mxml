@@ -65,7 +65,7 @@
                 if (configXML)
                 {
                     opLayerListButtonLabel = configXML.labels.layerlistlabel || getDefaultString("layerListLabel");
-                    basemapsLabel = configXML.labels.basemapslabel || getDefaultString("basemap");
+                    basemapsLabel = "Click to Change Basemap";
                     expandLayerItems = (configXML.expandlayeritems == "true");
                     if (configXML.includelegenditems.length())
                     {
