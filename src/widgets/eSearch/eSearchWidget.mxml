@@ -6418,7 +6418,7 @@
 	<viewer:WidgetTemplate id="wTemplate"
 						   closed="widgetClosedHandler(event)"
 						   open="widgetOpenedHandler(event)"
-						   width="400" height="240"
+						   width="450" height="400"
 						   minHeight="160"
 						   minWidth="210"
 						   visible="false" >
@@ -6639,7 +6639,7 @@
 							 rollOut="buffCfgBtn_rollOutHandler(event)"/>
 					<s:PopUpAnchor id="graphicPopUp"
 								   left="0" bottom="22"
-								   popUpPosition="right"
+								   popUpPosition="topLeft"
 								   styleName="popUpBox">
 						<s:BorderContainer width="225" height="160"
 										   backgroundAlpha="{getStyle('backgroundAlpha')}"
