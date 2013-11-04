@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:GridItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					xmlns:s="library://ns.adobe.com/flex/spark" 
+					xmlns:mx="library://ns.adobe.com/flex/mx"
+					width="100%" height="100%"
+					clipAndEnableScrolling="false">
+	
+	<fx:Script>
+		<![CDATA[
+			import flash.net.URLRequest;
+			
+			private var u:URLRequest;
+			
+			override public function prepare(hasBeenRecycled:Boolean):void {
+				if(data){
+					if( column.labelFunction != null ) {
+						lblData.text = column.labelFunction( data, column );
+					} else {
+						lblData.text = data[column.dataField];
+					}
+				}
+			}
+			
+			protected function lblData_clickHandler(event:MouseEvent):void
+			{
+				u = new URLRequest(data[column.dataField]);
+				navigateToURL(u);
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:Label id="lblData" top="9" left="7" useHandCursor="true" buttonMode="true"
+			 click="lblData_clickHandler(event)"
+			 textDecoration="underline"/>
+</s:GridItemRenderer>

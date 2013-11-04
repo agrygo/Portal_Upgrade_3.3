@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<!-- See Enhanced Search Widget fixed data grid setup.pdf for detailed explanation -->
+<configuration>
+	<autohide>true</autohide>
+	<height>200</height>
+	<duration>3000</duration>
+	<labels>
+		<searchresulttab>Search Results</searchresulttab>
+		<relateresulttab>Relate Results</relateresulttab>
+		<autohidelabel>Auto hide</autohidelabel>
+	</labels>
+</configuration>

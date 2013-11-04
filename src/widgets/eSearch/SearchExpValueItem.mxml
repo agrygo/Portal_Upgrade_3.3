@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+          xmlns:s="library://ns.adobe.com/flex/spark"
+          xmlns:mx="library://ns.adobe.com/flex/mx"
+          width="100%" creationComplete="init(event)">
+	<fx:Metadata>
+		[Event(name="dataChange", type="flash.events.Event")] 
+	</fx:Metadata>
+	
+	<fx:Script>
+		<![CDATA[
+            import com.esri.ags.layers.supportClasses.RangeDomain;
+            
+            import mx.collections.ArrayCollection;
+            import mx.controls.ToolTip;
+            import mx.events.FlexEvent;
+            import mx.events.ValidationResultEvent;
+            import mx.validators.NumberValidator;
+            
+            import spark.components.TextInput;
+            import spark.events.IndexChangeEvent;
+		
+			private var _type:String;
+			
+			private var myTip:ToolTip;
+			
+			private var numberValidator:NumberValidator;
+			
+			[Bindable] private var _wTemplateWidth:Number;
+			
+			[Bindable] private var _textValue:String;
+			
+			[Bindable] private var _prompt:String;
+			
+			[Bindable] private var _RequiredLbl:String;
+			
+			[Bindable] private var _RequiredTooltip:String;
+            
+            [Bindable] private var _bgColor:uint;
+			
+			/*
+			* operator to use when this value
+			*/
+			public var operator:String = "AND";
+			
+			[Bindable] private var _isValueRequired:Boolean = true;
+			
+			// does the expression require a value
+			// if is combobox, this adds an empty entry and selects it
+			public function get isValueRequired():Boolean
+			{
+				return _isValueRequired;
+			}
+			
+			public function set isValueRequired(value:Boolean):void
+			{
+				_isValueRequired = value;
+			}
+            
+            private var _isAutoSubmitdisabled:Boolean = false;
+            
+            // does the expression get auto submitted
+            public function get isAutoSubmitdisabled():Boolean
+            {
+                return _isAutoSubmitdisabled;
+            }
+            
+            public function set isAutoSubmitdisabled(value:Boolean):void
+            {
+                _isAutoSubmitdisabled = value;
+            }
+			
+			// the text that represents "no value"
+			// defaults to ""
+			public var noValue:String = "";
+			
+			public function set wTemplateWidth(value:Number):void
+			{
+				_wTemplateWidth = value;
+			}
+			
+			public function resetTxtSearch():void
+			{
+				txtSearch.restrict = null;
+				txtSearch.errorString = "";
+				txtSearch.text = "";
+				
+				if(numberValidator){
+					numberValidator.property = "";
+					numberValidator.source = null;
+				}
+			}
+			
+			public function validateNum():void
+			{
+				numberValidator.validate();
+			}
+			
+			public function setCBDataProvider(value:Array):void
+			{
+				resetTxtSearch();
+				txtSearch.visible = false;
+				txtSearch.includeInLayout = false;
+				cbSearch.visible = true;
+				cbSearch.includeInLayout = true;
+				cbSearch.prompt = "";
+				cbSearch.dataProvider = new ArrayCollection(value);
+                cbSearch.selectedIndex = 0;
+			}
+			
+			public function restrictTextBox(rangeDomain:RangeDomain):void
+			{
+				changeToTextBox();
+				txtSearch.removeEventListener(FlexEvent.ENTER, AutoSubmitSearch);
+				txtSearch.errorString = "";
+				txtSearch.restrict = "0-9\\.\\-";
+				numberValidator = new NumberValidator();
+				numberValidator.required = false;
+				numberValidator.domain = "int";
+				numberValidator.source = txtSearch;
+				numberValidator.property = "text";
+				numberValidator.minValue = rangeDomain.minValue;
+				numberValidator.maxValue = rangeDomain.maxValue;
+				numberValidator.trigger = txtSearch;
+				numberValidator.triggerEvent = "enter";
+				numberValidator.exceedsMaxError +=  " " + rangeDomain.minValue.toString() + " - " + rangeDomain.maxValue.toString();
+				numberValidator.lowerThanMinError += " " + rangeDomain.minValue.toString() + " - " + rangeDomain.maxValue.toString();
+                numberValidator.addEventListener(ValidationResultEvent.VALID, AutoSubmitSearch);
+			}
+			
+			private function RaiseValueChanged(event:Event):void
+			{
+				var eventObj:Event = new Event("valueChanged"); 
+				dispatchEvent(eventObj);
+			}
+			
+			private function AutoSubmitSearch(event:Event):void
+			{
+                if(!isAutoSubmitdisabled){
+				    var eventObj:Event = new Event("submitSearch"); 
+				    dispatchEvent(eventObj);
+                }
+			}
+			
+			public function changeToTextBox():void
+			{
+				cbSearch.visible = false;
+				cbSearch.includeInLayout = false;
+				cbSearch.dataProvider = null;
+				txtSearch.visible = true;
+				txtSearch.includeInLayout = true;
+				resetTxtSearch();
+			}
+			
+			public function changeToComboBox():void
+			{
+				cbSearch.visible = true;
+				cbSearch.includeInLayout = true;
+				txtSearch.visible = false;
+				txtSearch.includeInLayout = false;
+			}
+			
+			public function set setPrompt(value:String):void
+			{
+				_prompt = value;
+			}
+			
+			public function set setRequiredText(value:String):void
+			{
+				_RequiredLbl = value;
+			}
+			
+			public function set setRequiredTooltip(value:String):void
+			{
+				_RequiredTooltip = value;
+			}
+			
+			public function set textValue(value:String):void
+			{
+				_textValue = value;
+				if (isTextBox()){
+					txtSearch.text = _textValue;
+				}else{
+					cbSearch.selectedItem = _textValue;
+				}
+			}
+			
+			public function get textValue():String
+			{
+				if (txtSearch.visible){
+					_textValue = txtSearch.text;
+				}else{
+					if(!cbSearch.selectedItem){
+						_textValue = null;
+					}else{
+						_textValue = cbSearch.selectedItem.value;
+					}
+				}
+				return _textValue;
+			}
+			
+			public function isTextBox():Boolean
+			{
+				return txtSearch.visible;
+			}
+			
+			/*
+			* is the ui for this value a combobox (vs textbox)
+			*/
+			public function isComboBox():Boolean
+			{
+				return cbSearch.visible;
+			}
+			
+			/*
+			* has the user entered a value
+			*/
+			public function hasAValue():Boolean
+			{
+				return (textValue != noValue && textValue);
+			}
+            
+            /*
+            * set background color
+            */
+            public function set setBGcolor(value:uint):void
+            {
+                _bgColor = value;
+                sfc.color = _bgColor;
+                bgRect.alpha = 0.2;
+            }
+			
+			/*
+			* makes sure the value entered by the user is is valid
+			*/
+			public function isValid():Boolean
+			{
+				if (isValueRequired){
+					return hasAValue();	
+				}else{
+					// value not required so anything goes
+					return true;
+				}
+			}
+			
+			protected function init(event:FlexEvent):void
+			{
+				// when the user types each character in textbox fire change event
+				txtSearch.addEventListener(flash.events.Event.CHANGE, RaiseValueChanged);
+				
+				// when new entry is selected
+				cbSearch.addEventListener(IndexChangeEvent.CHANGE, RaiseValueChanged);
+				
+                // automatically submit search when enter is pressed in text box
+				txtSearch.addEventListener(FlexEvent.ENTER, AutoSubmitSearch);
+                    
+                // automatically submit search when entry is selected
+                cbSearch.addEventListener(IndexChangeEvent.CHANGE, AutoSubmitSearch);
+				
+				//Set the font size to make the asterisk more visible
+				txtIsRequired.setStyle("fontSize", 22);
+			}
+			
+		]]>
+	</fx:Script>
+    <s:Rect id="bgRect" width="100%" height="100%" alpha="0">
+        <s:fill>
+            <s:SolidColor id="sfc" color="0x000000" />
+        </s:fill>
+    </s:Rect>
+    <s:VGroup width="100%" horizontalAlign="center" paddingTop="8" paddingBottom="8" gap="-1">
+    	<s:HGroup horizontalAlign="left" width="100%" verticalAlign="contentJustify">
+    		<s:RichEditableText id="prompt" text="{_prompt}" paddingLeft="2" maxWidth="{_wTemplateWidth - 62}" selectable="true" editable="false" tabEnabled="false" tabFocusEnabled="false"/>
+    		<s:Label id="txtIsRequired"
+    				 text="{_RequiredLbl}"
+    				 color="0xFF0000"
+    				 includeInLayout="{txtIsRequired.visible}"
+    				 visible="{_isValueRequired}"
+    				 toolTip="{_RequiredTooltip}"/>		
+    	</s:HGroup>
+    	<s:TextInput id="txtSearch" width="99%" needsSoftKeyboard="true" />
+    	<s:DropDownList id="cbSearch" creationComplete="{cbSearch.width = _wTemplateWidth - 62;}"
+    				 visible="false" includeInLayout="false"
+    				 labelField="label">
+    		<s:itemRenderer>
+    			<fx:Component>
+    				<s:ItemRenderer toolTip="{data.label}">
+    					<s:Group verticalCenter="0" left="6" right="6" top="6" bottom="4">
+    						<s:Label text="{data.label}"/>
+    					</s:Group>
+    				</s:ItemRenderer>
+    			</fx:Component>
+    		</s:itemRenderer>
+    	</s:DropDownList>
+    </s:VGroup>
+ </s:Group>

@@ -1,0 +1,184 @@
+<?xml version="1.0" ?>
+<!-- See Enhanced Search Widget XML Configuration.pdf for detailed explanation -->
+<configuration>
+	<layers>
+		<layer>
+			<token/>
+			<definitionexpression></definitionexpression>
+			<enableexport>true</enableexport>
+			<enableprintgrid title="Selected Parcels">true</enableprintgrid>
+			<name>Parcels</name>
+			<url>http://stlouis.prowestgis.com/ArcGIS/rest/services/StLouis-Base/MapServer/23</url>
+			<expressions>
+				<expression alias="Parcel Number" textsearchlabel="Search Parcel Number by PIN:" isvaluerequired="true">
+					<values>
+						<value prompt="Example: RES MULTI-FAMILY" isvaluerequired="true">upper(ZONING_NAME) LIKE upper('%[value]%')</value>					
+					 </values>
+				</expression>
+			</expressions>
+			<graphicalsearchlabel>Use one of the graphical search tools to select Parcels</graphicalsearchlabel>
+			<spatialsearchlayer>true</spatialsearchlayer>
+			<titlefield>APPRCL</titlefield>
+			<fields all="false" >
+				<field name="APPRCL" alias="PIN" gridfield="true" />
+				<field name="TDTDNM" alias="TDTDNM" gridfield="true" />
+				<field name="OWNAME" alias="OWNAME" gridfield="true" />
+				<field name="PHYSADDR" alias="PHYSADDR" gridfield="true" />
+				<field name="OBJECTID" alias="OBJECTID" gridfield="true" />
+			</fields>
+			<links/>
+			<zoomscale usegeometry="true" zoompercent="1.2"></zoomscale>
+			<autoopendatagrid>false</autoopendatagrid>
+			<queryattachments>false</queryattachments>
+			<relates/>
+			<symbology>
+				<simplefillsymbol color="0xff0000" alpha="0.5">
+					<outline color="0xff0000" alpha="0.8" width="2" />
+				</simplefillsymbol>
+			</symbology>
+		</layer>
+	</layers>
+	<tables><!-- This section is ONLY for tables (i.e. data that has no geometry)! -->
+	</tables>
+	<spatialrelationships>
+		<!-- possible spatial relationships esriSpatialRelIntersects | esriSpatialRelContains 
+			| esriSpatialRelCrosses | esriSpatialRelEnvelopeIntersects | esriSpatialRelIndexIntersects 
+			| esriSpatialRelOverlaps | esriSpatialRelTouches | esriSpatialRelWithin currently 
+			unavailable: esriSpatialRelRelation -->
+		<spatialrelationship>
+			<name>esriSpatialRelContains</name>
+			<label>entirely contained in</label>
+		</spatialrelationship>
+		<spatialrelationship>
+			<name>esriSpatialRelIntersects</name>
+			<label>intersected by</label>
+		</spatialrelationship>
+		<spatialrelationship>
+			<name>esriSpatialRelEnvelopeIntersects</name>
+			<label>intersected by envelope of</label>
+		</spatialrelationship>
+	</spatialrelationships>
+	<bufferunits>
+		<bufferunit>
+			<name>UNIT_FOOT</name>
+			<label>Feet</label>
+		</bufferunit>
+		<bufferunit selected="true">
+			<name>UNIT_STATUTE_MILE</name>
+			<label>Miles</label>
+		</bufferunit>
+		<bufferunit>
+			<name>UNIT_METER</name>
+			<label>Meters</label>
+		</bufferunit>
+		<bufferunit>
+			<name>UNIT_KILOMETER</name>
+			<label>Kilometers</label>
+		</bufferunit>
+	</bufferunits>
+	<buffervalue>2</buffervalue>
+	<printdatagrid>
+		<addheadertoeachpage>true</addheadertoeachpage>
+		<columnheaderbgcolor>0xa7a7a7</columnheaderbgcolor>
+		<columnheaderfontcolor>0x000000</columnheaderfontcolor>
+		<footer>
+			<pageoftext>Page ## of ##</pageoftext>
+			<includeprintdate format="MM-DD-YYYY L:NN A">true</includeprintdate>
+			<disclaimer></disclaimer><!-- be carefull of the length -->
+		</footer>
+	</printdatagrid>
+	<!-- Added 7/13/2011 Path to Web service containing functions that will integrate with the portal -->
+	<integrationWebService>http://proteus/StLouisPortalIntegrationServices/PortalIntegraionServices.asmx?wsdl</integrationWebService>
+	<parcelLayerName>Parcels</parcelLayerName>
+	<parcelLayerPINFieldName>APPRCL</parcelLayerPINFieldName>
+	<!-- End PWA Updates -->
+	<keepgraphicalsearchenabled>true</keepgraphicalsearchenabled>
+	<autozoomtoresults>true</autozoomtoresults>
+	<popupsdisabled>false</popupsdisabled>
+	<enabledatagridinteractionwithwidget>true</enabledatagridinteractionwithwidget>
+	<toleranceforpointgraphicalselection>6</toleranceforpointgraphicalselection><!-- value is in screen pixels -->
+	<tolerancebydefault>false</tolerancebydefault>
+	<spatialreference>102100</spatialreference>
+	<zoomscale>2400</zoomscale>
+	<csvseparator>,</csvseparator>
+	<disablebuttons></disablebuttons><!--possible values one or more not all four search types comma separated text,graphic,spatial,result,datagrid -->
+	<defaultselectionoption>textInput</defaultselectionoption><!--possible values only one graphicalInput or textInput or spatialInput -->
+	<enabledrawgraphicbutton>true</enabledrawgraphicbutton>
+	<enablebuffergraphicbutton>true</enablebuffergraphicbutton>
+    <enablelocategraphicbutton>true</enablelocategraphicbutton>
+    <enablemultigraphicssearch>false</enablemultigraphicssearch>
+    <enableincludetextsearch>true</enableincludetextsearch>
+    <enableaddtollerance>true</enableaddtollerance>
+    <enablegraphicsbuffering>true</enablegraphicsbuffering>
+	<selectedgraphicaltool></selectedgraphicaltool><!-- possible values are extent or polygon or mappoint or polyline or nothing -->
+	<multipartgraphicsearch>false</multipartgraphicsearch>
+	<floatorfixed>float</floatorfixed><!-- possible values are fixed and float -->
+	<relatetooltip>Show Relates</relatetooltip>
+	<relateicon>widgets/eSearch/assets/images/i_relate.png</relateicon>
+	<labels>
+		<urlsearcherrormessage>URL search parameters are incorrect</urlsearcherrormessage>
+		<includetextquery>include text query in selection criteria</includetextquery>
+		<includetextquerywarn>Must be the same search layer in both&#10;graphical and text search pages.</includetextquerywarn>
+		<buffergrapicprops>Buffer graphic properties</buffergrapicprops>
+		<bufferusergraphics>Buffer Graphic</bufferusergraphics>
+		<norelatesfound>No related features found for: </norelatesfound>
+		<norelatesfoundalerttitle>No Results</norelatesfoundalerttitle>
+		<addtolerance>Add search tolerance to point selection</addtolerance>
+		<existingdrawgraphicslabel>Use Existing Enhanced Draw Widget Graphics</existingdrawgraphicslabel>
+        <existinglocategraphicslabel>Use Existing Enhanced Locate Widget Graphics</existinglocategraphicslabel>
+		<existingbuffergraphicslabel>Use Existing Point Buffer Widget Graphics</existingbuffergraphicslabel>
+		<graphicalsearchlabel>Graphical Search</graphicalsearchlabel>
+		<textsearchlabel>Text Search</textsearchlabel>
+		<resultslabel>Results</resultslabel>
+		<layerlabel>Search Layer:</layerlabel>
+		<layerfieldlabel>Search Layer Field:</layerfieldlabel>
+		<nolayerlabel>No search layer defined.</nolayerlabel>
+		<submitlabel>Search</submitlabel>
+		<pointlabel>Select by Point</pointlabel>
+		<linelabel>Select by Line</linelabel>
+		<rectanglelabel>Select by Rectangle</rectanglelabel>
+		<polygonlabel>Select by Polygon</polygonlabel>
+		<clearlabel>Clear</clearlabel>
+		<loadinglabel>Loading...</loadinglabel>
+		<selectionlabel>Features Selected:</selectionlabel>
+		<gridresultslabel>Show Results in Grid</gridresultslabel>
+		<csvdefaultname>Selected Records</csvdefaultname>
+		<relatescsvdefaultname>Related Records</relatescsvdefaultname>
+		<exportbtnlabel>Export...</exportbtnlabel>
+		<export2csvoptionlabel>Export to CSV...</export2csvoptionlabel>
+		<export2txtoptionlabel>Export to Txt...</export2txtoptionlabel>
+		<bufferlabel>apply a search distance:</bufferlabel>
+		<spatialsearchlabel>Spatial search</spatialsearchlabel>
+		<applybufferlabel>Apply buffer</applybufferlabel>
+		<searchlayerlabel>Search entities of:</searchlayerlabel>
+		<enablemultipartsearch>enable multi-part graphics</enablemultipartsearch>
+		<zoomalllabel>Zoom</zoomalllabel>
+		<zoomalltip>Zoom to all results</zoomalltip>
+		<bufferalpha>Fill opacity</bufferalpha>
+		<buffercolor>Fill color</buffercolor>
+		<nobuffercolor>No fill color</nobuffercolor>
+		<bufferoutlinecolor>Outline color</bufferoutlinecolor>
+		<nobufferoutlinecolor>No outline color</nobufferoutlinecolor>
+		<bufferoutlinewidth>Outline Width</bufferoutlinewidth>
+		<configbuffergra>Configure buffer graphic properties...</configbuffergra>
+		<required>*</required>
+		<requiredtooltip>This field is required.&#13;Enter a value to enable search button</requiredtooltip>
+		<selectmethodtip>Click to change the selection method</selectmethodtip>
+		<newselectionmethodtip>Create new selection</newselectionmethodtip>
+		<addselectionmethodtip>Add to current selection</addselectionmethodtip>
+		<removeselectionmethodtip>Remove from current selection</removeselectionmethodtip>
+	</labels>
+	<symbols>
+		<simplefillsymbol color="0x00ffff" alpha="0.5">
+			<outline color="0xff0000" alpha="0.8" width="2" />
+		</simplefillsymbol>
+		<!-- You can have one or the other, either simplemarkersymbol or picturemarkersymbol 
+			defined for your point results NOT BOTH. picturemarkersymbol will override 
+			simplemarkersymbol if you do not have it commented out. -->
+		<!-- <simplemarkersymbol style="square" size="12" color="0xff0000" alpha="0.5" 
+			xoffset="0" yoffset="0" angle="0"> <outline style="solid" color="0x000000" 
+			alpha="1" width="1"/> </simplemarkersymbol> -->
+		<picturemarkersymbol url="assets/images/i_search.png" height="30" width="30" xoffset="0" yoffset="0" />
+		<simplelinesymbol color="0xff0000" alpha="0.8" width="2" />
+	</symbols>
+</configuration>
