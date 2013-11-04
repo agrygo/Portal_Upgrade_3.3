@@ -122,7 +122,12 @@
                 icon="assets/images/i_search.png"
                 config="widgets/Search/SearchWidget_Louisville.xml"
                 url="widgets/Search/SearchWidget.swf"/>
-        
+
+		<widget label="Layers" left="100" top="400" 
+        		icon="assets/images/Final-Flex-Map-Layers.png"
+        		 config="widgets/TOC/TOCWidget.xml"
+                url="widgets/TOC/TOCWidget.swf"/>       
+
         <widget label="Draw & Measure" left="60" top="400"
                 icon="assets/images/Final-Flex-Draw.png"
                 config="widgets/eDraw/eDrawWidget.xml"

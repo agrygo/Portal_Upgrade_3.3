@@ -46,6 +46,7 @@
     <module application="src/index.mxml" destPath="widgets/StaticImage/StaticImageWidget.swf" optimize="true" sourcePath="src/widgets/StaticImage/StaticImageWidget.mxml"/>
     <module application="src/index.mxml" destPath="widgets/Coordinate/CoordinateWidget.swf" optimize="true" sourcePath="src/widgets/Coordinate/CoordinateWidget.mxml"/>
     <module application="src/index.mxml" destPath="widgets/eDraw/eDrawWidget.swf" optimize="true" sourcePath="src/widgets/eDraw/eDrawWidget.mxml"/>
+    <module application="src/index.mxml" destPath="widgets/TOC/TOCWidget.swf" optimize="true" sourcePath="src/widgets/TOC/TOCWidget.mxml"/>
   </modules>
   <workers/>
   <buildCSSFiles/>
