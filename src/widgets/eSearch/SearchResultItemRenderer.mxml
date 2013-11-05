@@ -137,8 +137,8 @@
 					selected = searchResult.selected;
 					
 					//Modified 7/14/2011 PWA setting icon for clear button
-					clearicon = "assets/images/i_clear_search.png";
-					linkicon = "assets/images/w_link.png";
+					clearicon = "assets/images/Final-Flex-ClearResult.png";
+					linkicon = "assets/images/Final-Flex-PushResults.png";
 					selectFillIcon = "assets/images/selectNoFill.png";
 
 					for(var l:int = 0; l < searchResult.links.length; l++){
@@ -239,18 +239,21 @@
 			<mx:Image width="18" height="18"
 					  buttonMode="true"
 					  click="toggleSymbolRecord(event)"
-					  source="{selectFillIcon}" />
+					  source="{selectFillIcon}"
+					  toolTip="Toggle fill off/on"/>
 			<!-- Modified 7/14/2011 PWA Added Clear Button to results -->
 			<mx:Image width="18" height="18"
 					  buttonMode="true"
 					  includeInLayout="{searchResult.selectedLayerName == searchResult.parcelLayerName}"
 					  click="navigateToResultsTab(event)"
 					  source="{linkicon}"
-					  visible="{searchResult.selectedLayerName == searchResult.parcelLayerName}"/>
+					  visible="{searchResult.selectedLayerName == searchResult.parcelLayerName}"
+					  toolTip="Push to Results Tab"/>
 			<!-- Modified 7/14/2011 PWA Added Clear Button to results -->
 			<mx:Image width="18" height="18"
 					  buttonMode="true"
 					  click="clearSelectedRecord(event)"
-					  source="{clearicon}" />
+					  source="{clearicon}"
+					  toolTip="Remove result from list"/>
 	</s:HGroup>
 </s:ItemRenderer>

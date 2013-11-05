@@ -8,11 +8,11 @@
 			<enableexport>true</enableexport>
 			<enableprintgrid title="Selected Parcels">true</enableprintgrid>
 			<name>Parcels</name>
-			<url>http://arcgiswaprod/ArcGIS/rest/services/Planning/Portal_Base/MapServer/0</url>
+			<url>http://arcgiswaprod/arcgis/rest/services/Planning/CLE_PLSS_Cadastral_Parcels/MapServer/17</url>
 			<expressions>
-				<expression alias="Parcel Identification Number" textsearchlabel="Search by Parcel Identification Number" isvaluerequired="true">
+				<expression alias="Parcel Identification Number" textsearchlabel="Search by Parcel Identification Number" isvaluerequired="false">
 					<values>
-						<value prompt="Example: 010-0010-00010" isvaluerequired="true">upper(PRCL_NBR) LIKE upper('%[value]%')</value>					
+						<value prompt="Example: 010-0010-00010" isvaluerequired="false">upper(PRCL_NBR) LIKE upper('%[value]%')</value>					
 					</values>
 				</expression>
 			</expressions>
@@ -58,12 +58,12 @@
                 <field name= "LEGAL" alias = "Legal Description" gridfield ="true" gridfieldonly = "true"/>
 			</fields>
 			<links/>
-			<zoomscale usegeometry="true" zoompercent="1.2"></zoomscale>
+			<zoomscale usegeometry="true" zoompercent="2"></zoomscale>
 			<autoopendatagrid>false</autoopendatagrid>
 			<queryattachments>false</queryattachments>
 			<relates/>
 			<symbology>
-				<simplefillsymbol color="0xff0000" alpha="0.5">
+				<simplefillsymbol color="0xff0000" alpha="0.3">
 					<outline color="0xff0000" alpha="0.8" width="2" />
 				</simplefillsymbol>
 			</symbology>
@@ -75,7 +75,7 @@
 		<definitionexpression></definitionexpression>
 			<enableexport>true</enableexport>
 			<name>Name</name>
-			<url>http://gis.stlouiscountymn.gov/arcgis/rest/services/Planning/CLE_PLSS_Cadastral_Parcels/MapServer/27</url>
+			<url>http://arcgiswaprod/arcgis/rest/services/Planning/CLE_PLSS_Cadastral_Parcels/MapServer/17</url>
 			<expressions>
 				<br></br>
 				<expression alias="Owner Name" textsearchlabel="Enter owner LAST name for the most results;  LAST name  FIRST name for fewer results"  isvaluerequired="false">
@@ -228,7 +228,7 @@
 			<definitionexpression></definitionexpression>
 			<enableexport>false</enableexport>
 			<name>Subdivision Plat</name>
-			<url>http://gis.stlouiscountymn.gov/arcgis/rest/services/Planning/CLE_PLSS_Cadastral_Parcels/MapServer/13</url>
+			<url>http://arcgiswaprod/arcgis/rest/services/Planning/CLE_PLSS_Cadastral_Parcels/MapServer/13</url>
 			<expressions>
 				<expression alias="PlatName" textsearchlabel="Select plat name from list" isvaluerequired="false">
 					<values>
@@ -271,7 +271,7 @@
 			<definitionexpression></definitionexpression>
 			<enableexport>false</enableexport>
 			<name>Township and Range Numbers</name>
-			<url>http://gis.stlouiscountymn.gov/arcgis/rest/services/Planning/CLE_PLSS_Cadastral_Parcels/MapServer/2</url>
+			<url>http://arcgiswaprod/arcgis/rest/services/Planning/CLE_PLSS_Cadastral_Parcels/MapServer/2</url>
 			<expressions>
 				<expression alias="Township" textsearchlabel="Search by Township and Range:" 
 				isvaluerequired="false">
@@ -309,7 +309,7 @@
 			<definitionexpression></definitionexpression>
 			<enableexport>false</enableexport>
 			<name>Township Range Section</name>
-			<url>http://gis.stlouiscountymn.gov/arcgis/rest/services/Planning/CLE_PLSS_Cadastral_Parcels/MapServer/2</url>
+			<url>http://arcgiswaprod/arcgis/rest/services/Planning/CLE_PLSS_Cadastral_Parcels/MapServer/2</url>
 			<expressions>
 				<expression alias="Township" textsearchlabel="Search by Township, Range, and Section:" 
 				isvaluerequired="false">

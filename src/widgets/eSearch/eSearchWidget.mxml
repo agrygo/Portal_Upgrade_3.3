@@ -6418,7 +6418,7 @@
 	<viewer:WidgetTemplate id="wTemplate"
 						   closed="widgetClosedHandler(event)"
 						   open="widgetOpenedHandler(event)"
-						   width="450" height="400"
+						   width="450" height="450"
 						   minHeight="160"
 						   minWidth="210"
 						   visible="false" >
