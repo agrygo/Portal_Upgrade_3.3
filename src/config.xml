@@ -22,6 +22,7 @@
     <widget left="10"  top="50"    config="widgets/Navigation/NavigationWidget.xml" url="widgets/Navigation/NavigationWidget.swf"/>
     <widget right="0" bottom="0"   config="widgets/OverviewMap/OverviewMapWidget.xml" url="widgets/OverviewMap/OverviewMapWidget.swf"/>
     <widget right="20" top="55"    config="widgets/MapSwitcher/MapSwitcherWidget.xml" url="widgets/MapSwitcher/MapSwitcherWidget.swf"/>
+    <widget right="20" top="55"    config="widgets/BaseMapSwitcher/BaseMapSwitcherWidget.xml" url="widgets/BaseMapSwitcher/BaseMapSwitcherWidget.swf"/>
     <widget left="0"   top="0"     config="widgets/HeaderController/HeaderControllerWidget.xml" url="widgets/HeaderController/HeaderControllerWidget.swf"/>
     <widget left="5" bottom="50"    config="widgets/Coordinate/CoordinateWidget.xml" url="widgets/Coordinate/CoordinateWidget.swf"/>
     
@@ -52,8 +53,11 @@
         		<layer label="Bing Roads" type="bing" visible="false" style="road" culture="en-US" icon="assets/images/bing_road.png"/>
         		<layer label="Esri Streets" type="tiled" visible="false" url="http://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer" icon="assets/images/basemap_streets.jpg"/>
 	            <layer label="Esri Imagery"  type="tiled" visible="false" url="http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer" icon="assets/images/basemap_imagery.jpg"/>
-	           	<layer label="USGS Topo" type="tiled" visible="false" url="http://server.arcgisonline.com/ArcGIS/rest/services/USA_Topo_Maps/MapServer" icon="assets/images/basemap_topographic.jpg"/>
-	  			<layer label="2013 County Imagery" type="dynamic" visible="false" url="http://arcgiswaprod/ArcGIS/rest/services/Planning/Pictometry_2013/MapServer" icon="assets/images/bsmp_CountyImagery.png"/> 
+  			
+	  			<layer label="2013 County Imagery" type="dynamic" visible="false" url="http://arcgiswaprod/ArcGIS/rest/services/Planning/Pictometry_2013/MapServer" icon="assets/images/bsmp_CountyImagery.png"/>
+	  			<layer label="Open Street Map" type="osm" visible="false"/> 
+	  			<layer label="National Geographic" type="tiled" visible="false" url="http://services.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer"/> 
+	  			<layer label="USGS Topo" type="tiled" visible="false" url="http://server.arcgisonline.com/ArcGIS/rest/services/USA_Topo_Maps/MapServer" icon="assets/images/basemap_topographic.jpg"/>
 				
           </basemaps>
         <operationallayers>

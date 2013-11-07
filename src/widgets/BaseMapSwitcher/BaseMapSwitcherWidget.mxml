@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     ////////////////////////////////////////////////////////////////////////////////
+     //
+     // Copyright (c) 2010 ESRI
+     //
+     // All rights reserved under the copyright laws of the United States.
+     // You may freely redistribute and use this software, with or
+     // without modification, provided you include the original copyright
+     // and use restrictions.  See use restrictions in the file:
+     // <install location>/License.txt
+     //
+     ////////////////////////////////////////////////////////////////////////////////
+-->
+<viewer:BaseWidget xmlns:fx="http://ns.adobe.com/mxml/2009"
+                   xmlns:s="library://ns.adobe.com/flex/spark"
+                   xmlns:mx="library://ns.adobe.com/flex/mx"
+                   xmlns:viewer="com.esri.viewer.*"
+                   xmlns:toccomp="com.esri.viewer.components.toc.*"
+                   widgetConfigLoaded="widgetConfigLoadedHandler()"				   
+				   >
+
+    <viewer:states>
+        <s:State name="normal"/>
+        <s:State name="noBasemaps"/>
+		<s:State name="infoOpen" />
+    </viewer:states>
+
+    <fx:Script>
+        <![CDATA[
+			import com.esri.viewer.AppEvent;
+			import com.esri.viewer.ViewerContainer;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Image;
+			import mx.core.FlexGlobals;
+			import mx.events.FlexEvent;
+			
+			import spark.events.IndexChangeEvent;            
+
+            [Bindable]
+            private var mapList:ArrayCollection;           
+
+            private function widgetConfigLoadedHandler():void
+            {
+				// base maps
+				mapList = new ArrayCollection(configData.basemaps);
+				 
+                           
+            }
+
+            private function getExcludeLayers():ArrayCollection
+            {
+                var result:ArrayCollection = new ArrayCollection();
+
+                if (configData && configData.basemaps)
+                {
+                    // exclude basemaps
+                    for (var i:int = 0; i < configData.basemaps.length; i++)
+                    {
+                        result.addItem(configData.basemaps[i].label);
+                    }
+                }
+
+                if (configXML)
+                {
+                    // exclude these layers
+                    var layers:XMLList = configXML.layerlist.excludelayer as XMLList;
+                    for (var j:int = 0; j < layers.length(); j++)
+                    {
+                        result.addItem(layers[j].toString());
+                    }
+                }
+
+                return result;
+            }
+
+            private function tbb_changeHandler(event:IndexChangeEvent):void
+            {
+                 AppEvent.dispatch(AppEvent.BASEMAP_SWITCH, mapList[event.newIndex].id);
+            }
+
+			protected function image_clickHandler(event:MouseEvent):void
+			{
+				this.currentState="normal";
+				var id:Number = -1;
+				for(var i:Number=0; i<mapList.length; i++)
+				{
+					var imageControl:Image = event.currentTarget as Image;
+					if(mapList[i].label == imageControl.toolTip)
+					{
+						id = i;
+						break;
+					}
+				}
+				
+				if(id != -1)
+				{					 
+					AppEvent.dispatch(AppEvent.BASEMAP_SWITCH, mapList[id].id);	
+				}				
+			}
+
+
+			protected function mapBox_creationCompleteHandler(event:FlexEvent):void
+			{
+				if (mapList.length <= 1)
+				{
+					this.currentState = "noBasemaps";
+				}
+				else
+				{
+					if(configXML)
+					{
+						var baseMaps:XMLList = configXML..basemap;
+						
+						for (var i:Number = 0; i < baseMaps.length(); i++)
+						{	
+							var url:String = String(baseMaps[i].source);							
+							var image:Image = new Image();
+							image.x = i%3 * 100 + (10*((i%3)+1));
+							image.y = int(i/3) * 100 + (10*(int(i/3)+1));
+							image.width = 100;
+							image.height = 100;
+							image.buttonMode = true;
+							image.toolTip = mapList[i].label;
+							image.source = url;
+							image.addEventListener(MouseEvent.CLICK,image_clickHandler); 
+							mapBox.addElement(image);						
+							
+							mapList[i].mapsource = url;
+						}												
+					}
+				}
+			}
+
+        ]]>
+    </fx:Script>
+
+	
+	<viewer:transitions>
+		<mx:Transition fromState="*" toState="*">
+			<mx:Sequence>
+				<s:Fade target="{popupanchor.popUp}" duration="1500"/>
+			</mx:Sequence>
+		</mx:Transition> 
+	</viewer:transitions>
+	
+	<s:VGroup>		
+		<mx:Image height="100%"
+				   width="100%"
+				   toolTip="Basemaps"					   
+				   click="currentState = 'infoOpen'" 
+				   buttonMode="true"
+				   source="@Embed('assets/images/basemap.png')"/>
+		<s:PopUpAnchor id="popupanchor"		    
+					   popUpPosition="below"  
+					   includeIn="infoOpen" 
+					   displayPopUp.normal="false" 
+					   displayPopUp.infoOpen="true"
+					   >
+			<s:BorderContainer id="mapBox" 
+							   cornerRadius="10" 
+							   height="460" 
+							   width="340" 
+							   dropShadowVisible="true"
+							   backgroundAlpha="1" 
+							   backgroundColor="0x000000"
+							   borderWeight="1"
+							   borderColor="0x3FB6FF"
+							   borderAlpha="1"
+							   borderVisible="true"
+							   creationComplete="mapBox_creationCompleteHandler(event)">				
+							
+			</s:BorderContainer>
+		</s:PopUpAnchor>
+	</s:VGroup>
+	
+	<!--<mx:Canvas id="mapBox" width="340" height="340" backgroundAlpha=".5" backgroundColor="0xFFFFFF"/>-->
+
+</viewer:BaseWidget>

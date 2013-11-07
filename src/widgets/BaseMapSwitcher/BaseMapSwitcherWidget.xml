@@ -1,0 +1,59 @@
+<?xml version="1.0" ?>
+<configuration>
+    <layerlist>
+        <excludelayer>Europe</excludelayer>
+        <excludelayer>Pirates</excludelayer>
+    </layerlist>
+    <!-- Bing Hybrid -->
+    <basemap>
+    	<source>assets/images/bing_aerialWithLabels.png</source>
+    </basemap>
+    <!-- Bing Aerial -->
+    <basemap>
+    	<source>assets/images/bing_aerial.png</source>
+    </basemap>
+    <!-- Bing Roads -->
+    <basemap>
+    	<source>assets/images/bing_road.png</source>
+    </basemap>
+   
+    
+    <!-- esri Streets -->
+    <basemap>
+    	<source>assets/images/basemap_streets.png</source>
+    </basemap>    
+    <!-- esri Imagery -->
+    <basemap>
+    	<source>assets/images/basemap_imagery.png</source>
+    </basemap>
+    
+   
+    
+    <!-- SLC imagery -->
+  	<basemap>
+  		<source>assets/images/bsmp_CountyImagery.png</source>
+    </basemap>
+     <!-- Open Street Map -->
+    <basemap>
+    	<source>assets/images/bsmp_OSM.png</source>
+    </basemap>
+    <!-- National Geographic -->
+    <basemap>
+    	<source>assets/images/bsmp_NationalGeo.png</source>
+    </basemap>
+    <!-- esri Topo -->
+    <basemap>
+    	<source>assets/images/basemap_topographic.png</source>
+    </basemap>
+  
+    
+    <!-- Esri Gray Canvas
+    <basemap>
+    	<source>assets/images/bsmp_gray_canvas.png</source>
+    </basemap>-->
+    
+    
+    
+   
+  
+</configuration>
