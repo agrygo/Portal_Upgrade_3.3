@@ -59,7 +59,7 @@
 			</fields>
 			<links/>
 			<zoomscale usegeometry="true" zoompercent="2"></zoomscale>
-			<autoopendatagrid>false</autoopendatagrid>
+			<autoopendatagrid>true</autoopendatagrid>
 			<queryattachments>false</queryattachments>
 			<relates/>
 			<symbology>
@@ -253,7 +253,7 @@
 		
 			
 			<zoomscale usegeometry="true" zoompercent="2" />
-			<autoopendatagrid>false</autoopendatagrid>
+			<autoopendatagrid>true</autoopendatagrid>
 			<relates></relates>
 			<queryattachments>false</queryattachments>
 			<symbology>
@@ -293,7 +293,7 @@
 			</fields>
 			<links/>
 			<zoomscale usegeometry="true" zoompercent="1"></zoomscale>
-			<autoopendatagrid>false</autoopendatagrid>
+			<autoopendatagrid>true</autoopendatagrid>
 			<queryattachments>false</queryattachments>
 			<relates/>
 			<symbology>
@@ -333,7 +333,7 @@
 			</fields>
 			<links/>
 			<zoomscale usegeometry="true" zoompercent="1"></zoomscale>
-			<autoopendatagrid>false</autoopendatagrid>
+			<autoopendatagrid>true</autoopendatagrid>
 			<queryattachments>false</queryattachments>
 			<relates/>
 			<symbology>

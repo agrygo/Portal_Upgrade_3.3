@@ -1088,13 +1088,13 @@
 					wTemplate.addTitlebarButton(WIDGET_URL + "i_table2.png", gridresultsLabel,showGridResults,false);
 				}
 				if(!disGra){
-					wTemplate.addTitlebarButton(ICON_URL + "i_searchgraphical.png", graphicalsearchLabel, showStateGraphicalSearch);
+					wTemplate.addTitlebarButton(ICON_URL + "search_graphic.png", graphicalsearchLabel, showStateGraphicalSearch);
 				}
 				if (configSearchText.length && disText != true){
-					wTemplate.addTitlebarButton(ICON_URL + "i_searchtext.png", textsearchLabel, showStateTextSearch);
+					wTemplate.addTitlebarButton(ICON_URL + "search_text.png", textsearchLabel, showStateTextSearch);
 				}
 				if (configSpatialSearchLayers.length && disSpat != true){
-					wTemplate.addTitlebarButton(WIDGET_URL + "i_searchspatial.png", spatialsearchLabel, showStateSpatialSearch);
+					wTemplate.addTitlebarButton(ICON_URL + "search_spatial.png", spatialsearchLabel, showStateSpatialSearch);
 				}
 				if(!disGrid && !disResult ){
 					wTemplate.addTitlebarButton(ICON_URL + "i_table.png", resultsLabel, showStateResults);

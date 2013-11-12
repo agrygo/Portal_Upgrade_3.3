@@ -151,7 +151,7 @@
 				   toolTip="Basemaps"					   
 				   click="currentState = 'infoOpen'" 
 				   buttonMode="true"
-				   source="@Embed('assets/images/basemap.png')"/>
+				   source="@Embed('assets/images/ChangeBasemap.png')"/>
 		<s:PopUpAnchor id="popupanchor"		    
 					   popUpPosition="below"  
 					   includeIn="infoOpen" 
@@ -159,14 +159,14 @@
 					   displayPopUp.infoOpen="true"
 					   >
 			<s:BorderContainer id="mapBox" 
-							   cornerRadius="10" 
-							   height="460" 
+							   cornerRadius="15" 
+							   height="375" 
 							   width="340" 
 							   dropShadowVisible="true"
-							   backgroundAlpha="1" 
+							   backgroundAlpha=".7" 
 							   backgroundColor="0x000000"
 							   borderWeight="1"
-							   borderColor="0x3FB6FF"
+							   borderColor="0xA9A9A9"
 							   borderAlpha="1"
 							   borderVisible="true"
 							   creationComplete="mapBox_creationCompleteHandler(event)">				

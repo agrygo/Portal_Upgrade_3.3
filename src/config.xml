@@ -20,8 +20,9 @@
 	<bing key="Ajm6CVlSoCbfdagQS4AsSiUYFxu0sxoc05XEsqNji7P9R0E0bM4DB4djiC747xak"/>
     <!-- UI elements -->
     <widget left="10"  top="50"    config="widgets/Navigation/NavigationWidget.xml" url="widgets/Navigation/NavigationWidget.swf"/>
+    <widget left="0" bottom="0"    config="widgets/eSearch/SearchWidgetFixedDG.xml" url="widgets/eSearch/SearchWidgetFixedDG.swf"/>
     <widget right="0" bottom="0"   config="widgets/OverviewMap/OverviewMapWidget.xml" url="widgets/OverviewMap/OverviewMapWidget.swf"/>
-    <widget right="20" top="55"    config="widgets/MapSwitcher/MapSwitcherWidget.xml" url="widgets/MapSwitcher/MapSwitcherWidget.swf"/>
+    <!-- <widget right="20" top="55"    config="widgets/MapSwitcher/MapSwitcherWidget.xml" url="widgets/MapSwitcher/MapSwitcherWidget.swf"/>-->
     <widget right="20" top="55"    config="widgets/BaseMapSwitcher/BaseMapSwitcherWidget.xml" url="widgets/BaseMapSwitcher/BaseMapSwitcherWidget.swf"/>
     <widget left="0"   top="0"     config="widgets/HeaderController/HeaderControllerWidget.xml" url="widgets/HeaderController/HeaderControllerWidget.swf"/>
     <widget left="5" bottom="50"    config="widgets/Coordinate/CoordinateWidget.xml" url="widgets/Coordinate/CoordinateWidget.swf"/>
