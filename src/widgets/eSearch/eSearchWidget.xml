@@ -57,7 +57,12 @@
                 <field name= "TaxableMarketValue" alias = "Taxable Market Value" gridfield= "true" currencyformat ="$|2|,|." gridfieldonly= "true" />
                 <field name= "LEGAL" alias = "Legal Description" gridfield ="true" gridfieldonly = "true"/>
 			</fields>
-			<links/>
+			<links>
+				<link alias="View Oblique Imagery" disablelinksifnull="true">
+					<![CDATA[http://arcgiswaprod.co.st-louis.mn.us/PictometryIPA/VisualIpa.aspx?PRCL_NBR={PRCL_NBR}]]>
+					<icon><![CDATA[assets/images/i_lego.png]]></icon>
+				</link>
+			</links>
 			<zoomscale usegeometry="true" zoompercent="2"></zoomscale>
 			<autoopendatagrid>true</autoopendatagrid>
 			<queryattachments>false</queryattachments>
