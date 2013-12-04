@@ -33,7 +33,10 @@
     <defaulttool>polygon</defaulttool>
     <labels>
         <textlabel>Label text</textlabel>
-        <textrotationlabel>Rotation</textrotationlabel>
+        <textrotationlabel>Text angle</textrotationlabel>
+        <markerStyleLabel>Point type</markerStyleLabel>
+        <markerColorLabel>Point color</markerColorLabel>
+        <markerAlphaLabel>Fill Transparency</markerAlphaLabel>
         <markerrotationlabel>Angle</markerrotationlabel>
         <pointunitslabel>Point Units</pointunitslabel>
         <savelabel>Save Graphics Layer</savelabel>

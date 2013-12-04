@@ -357,8 +357,8 @@
                     // points
                     drawPointLabel = configXML.labels.drawpointlabel || getDefaultString("drawPointLabel");
                     addTextLabel = configXML.labels.addtextlabel || getDefaultString("addTextLabel");
-                    markerColorLabel = configXML.labels.markercolorlabel || getDefaultString("markerColorLabel");
-                    markerAlphaLabel = configXML.labels.markeralphalabel || getDefaultString("markerAlphaLabel");
+                    markerColorLabel = configXML.labels.markercolorlabel || "Point color";
+                    markerAlphaLabel = configXML.labels.markeralphalabel || "Transparency";
                     markerSizeLabel = configXML.labels.markersizelabel || getDefaultString("markerSizeLabel");
                     markerStyleLabel = configXML.labels.markerstylelabel || getDefaultString("markerStyleLabel");
                     markerOutlineColorLabel = configXML.labels.markeroutlinecolorlabel || getDefaultString("markerOutlineColorLabel");
@@ -2606,7 +2606,7 @@
     </fx:Declarations>
 <!-- Add width, height, minWith, minHeight -->
     <viewer:WidgetTemplate id="wTemplate"
-                           width="420" height="280"
+                           width="450" height="280"
                            closed="wTemplate_closeHandler(event)"
                            open="wTemplate_openHandler(event)"
                            minHeight="240"
@@ -2727,45 +2727,35 @@
                      paddingBottom="0"
                      verticalGap="0"
                      verticalScrollPolicy="off">
+				
+<!-- Text  -->				
 				<s:HGroup width="100%"
 						  horizontalAlign="left" gap="8" paddingBottom="5">
 					<s:Label includeInLayout="{addingText}" visible="{addingText}" fontWeight="bold" text="Type in text and click on map to add label"/>
 					
 				</s:HGroup>
-						  
-				
-				
-				
-				<!--<s:FormItem includeInLayout="{addingText}"  visible="{addingText}" textAlign="left" >-->
+	
 				  <s:HGroup  width="100%"
-							 horizontalAlign="left" gap="8" includeInLayout="{addingText}"  visible="{addingText}" textAlign="left" paddingBottom="5">	
+							 horizontalAlign="left" gap="8" includeInLayout="{addingText}"  visible="{addingText}" textAlign="left" verticalAlign="middle" paddingBottom="5">	
 					
-					<mx:Label text="Label text"/>
+					<s:Label text="Label text"/>
 				
 					<s:TextInput id="txtLabel"
 								 width="100%"
 								 text=""/>
-					<mx:Label text="{textSizeLabel}"/>
+					<s:Label text="{textSizeLabel}"/>
 					<mx:NumericStepper id="numTextSize"
 										   maximum="100"
 										   minimum="0"
 										   value="{defaultTextFontSize}"/>		
 				  </s:HGroup>						   	 
-				<!--</s:FormItem>-->
 				
-				<!--<eDraw:FormItemVerticalAlign verticalAlign="middle" width="100%"
-                             includeInLayout="{addingText}"
-                             label="{textLabel}"
-                             visible="{addingText}"
-							 toolTip="Type in text for label">-->
-                    
-                <!--</eDraw:FormItemVerticalAlign>-->
 			
 				<s:HGroup width="100%"
-						  horizontalAlign="left" verticalAlign="middle" gap="8">
+						  horizontalAlign="left" includeInLayout="{addingText}"  visible="{addingText}" textAlign="left" gap="8" verticalAlign="middle" paddingBottom="5">
 					
 						<s:Label text="Font"/>
-<!--My Add-->
+
                    
                         <s:ComboBox id="fontNameSelection"
                                     dataProvider="{fontList}"
@@ -2789,131 +2779,104 @@
 										label="{textUnderlineLabel}"
 										textDecoration="underline"
 										toolTip="{textUnderlineTooltip}"/><!-- Added fontSize="11" -->
-						
-						
-						
-						
-                   
+	       
 				</s:HGroup>
-<!--End My Add-->
-               
 
-                <eDraw:FormItemVerticalAlign verticalAlign="middle" width="100%"
-                             includeInLayout="{addingText}"
-                             label="{textColorLabel}"
-                             visible="{addingText}">
-                    <s:HGroup width="100%"
-                              gap="4"
-                              verticalAlign="middle">
-						
+				<s:HGroup width="100%"
+						  horizontalAlign="left" includeInLayout="{addingText}"  visible="{addingText}" textAlign="left" verticalAlign="middle" gap="8" paddingBottom="5">
+
+                		<s:Label text="{textColorLabel}"/> 
+                     
 						<mx:ColorPicker id="cpText" selectedColor="{defaultDrawColor}"/>
 						
 						<s:Label text="White background"/>
 						<s:CheckBox id="AddTextHaloSel"  click="{isHaloEnabled}" />
                         
-						<!-- My Add -->
-                        <mx:Label text="{textRotateLabel}"/>
+						<mx:Label text="{textRotateLabel}"/>
                         <mx:NumericStepper id="numTextRotation"
                                            maximum="360"
                                            minimum="-360"
                                            value="0" width="50"/>
-<!-- End My Add -->
-                    </s:HGroup>
-                </eDraw:FormItemVerticalAlign>
 
-                <eDraw:FormItemVerticalAlign verticalAlign="middle" width="100%"
-                             includeInLayout="{drawingPoint}"
-                             label="{markerColorLabel}" labelWidth="80"
-                             visible="{drawingPoint}">
-                    <s:HGroup width="100%"
-                              gap="55"
-                              verticalAlign="middle">
-                        <mx:ColorPicker id="cpMarker" selectedColor="{defaultDrawColor}"/>
-
-                        <s:HGroup width="100%"
-                                  gap="24"
-                                  verticalAlign="middle">
-                            <mx:Label text="{markerStyleLabel}"/>
-
-                            <s:DropDownList id="markerStyle"
-                                            width="100%"
-                                            labelField="name"
-                                            selectedIndex="0">
-                                <s:typicalItem>
-                                    <fx:Object name="{getLongestString('markerStyleCircle',
-                                                                       'markerStyleCross',
-                                                                       'markerStyleDiamond',
-                                                                       'markerStyleSquare',
-                                                                       'markerStyleX')}"/>
-                                </s:typicalItem>
-                                <s:ArrayList>
-                                    <fx:Object name="{getDefaultString('markerStyleCircle')}" style="{SimpleMarkerSymbol.STYLE_CIRCLE}"/>
-                                    <fx:Object name="{getDefaultString('markerStyleCross')}" style="{SimpleMarkerSymbol.STYLE_CROSS}"/>
-                                    <fx:Object name="{getDefaultString('markerStyleDiamond')}" style="{SimpleMarkerSymbol.STYLE_DIAMOND}"/>
-                                    <fx:Object name="{getDefaultString('markerStyleSquare')}" style="{SimpleMarkerSymbol.STYLE_SQUARE}"/>
-                                    <!-- triangle style is not supported by the 10.1 print task -->
-                                    <!--<fx:Object name="{getDefaultString('markerStyleTriangle')}" style="{SimpleMarkerSymbol.STYLE_TRIANGLE}"/>-->
-                                    <fx:Object name="{getDefaultString('markerStyleX')}" style="{SimpleMarkerSymbol.STYLE_X}"/>
-                                </s:ArrayList>
-                            </s:DropDownList>
-                        </s:HGroup>
-                    </s:HGroup>
-                </eDraw:FormItemVerticalAlign>
-
-                <eDraw:FormItemVerticalAlign verticalAlign="middle" width="100%"
-                             includeInLayout="{drawingPoint}"
-                             label="{markerSizeLabel}" labelWidth="80"
-                             visible="{drawingPoint}">
-                    <s:HGroup width="100%"
-                              gap="7"
-                              verticalAlign="middle">
-<!-- Change gap from 21 to 7 -->
-                        <mx:NumericStepper id="numMarkerSize"
-                                           maximum="50"
-                                           minimum="0"
-                                           value="15"/>
-                        <s:Label text="{markerAlphaLabel}"/>
-
-                        <mx:NumericStepper id="numMarkerAlpha"
-                                           maximum="1"
-                                           minimum="0"
-                                           stepSize="0.1"
-                                           value="1"/>
-<!-- My Add -->
-                        <s:Label text="{markerRotationLabel}"/>
-                        <mx:NumericStepper id="numMarkerAngle"
-                                           maximum="360"
-                                           minimum="-360"
-                                           stepSize="1"
-                                           value="0"
-                                           width="50"/>
-<!-- End My Add -->
-                    </s:HGroup>
-                </eDraw:FormItemVerticalAlign>
-
-                <eDraw:FormItemVerticalAlign verticalAlign="middle" width="100%"
-                             includeInLayout="{drawingPoint}"
-                             label="{markerOutlineColorLabel}" labelWidth="80"
-                             visible="{drawingPoint}">
-                    <s:HGroup width="100%"
-                              gap="55"
-                              verticalAlign="middle">
-                        <mx:ColorPicker id="cpMarkerOutline" selectedColor="0x00000"/>
-
-                        <s:HGroup width="100%"
-                                  gap="24"
-                                  verticalAlign="middle">
-                            <s:Label text="{markerOutlineWidthLabel}"/>
-
-                            <mx:NumericStepper id="numMarkerOutlineWidth"
-                                               maximum="5"
-                                               minimum="0"
-                                               stepSize="1"
-                                               value="1"/>
-                        </s:HGroup>
-                    </s:HGroup>
-                </eDraw:FormItemVerticalAlign>
-
+                </s:HGroup>
+<!--  /Text   -->
+<!--  Point   -->				
+                
+				<s:HGroup width="100%"   horizontalAlign="left" gap="8" paddingBottom="5">
+					<s:Label includeInLayout="{drawingPoint}" visible="{drawingPoint}" fontWeight="bold" text="Choose graphic options first then click on map to add"/>
+				</s:HGroup>
+				
+				<s:HGroup width="100%" includeInLayout="{drawingPoint}"  visible="{drawingPoint}" verticalAlign="middle" horizontalAlign="left" gap="10" paddingBottom="7">
+					<!--Point color -->
+					<s:Label text="{markerColorLabel}"/>
+					<mx:ColorPicker id="cpMarker" selectedColor="{defaultDrawColor}"/>
+					
+					<!--Point style -->
+					<s:Label text="{markerStyleLabel}"/>
+					<s:DropDownList id="markerStyle"
+									width="75"
+									labelField="name"
+									selectedIndex="0">
+						<s:typicalItem>
+							<fx:Object name="{getLongestString('markerStyleCircle',
+									   'markerStyleCross',
+									   'markerStyleDiamond',
+									   'markerStyleSquare',
+									   'markerStyleX')}"/>
+						</s:typicalItem>
+						<s:ArrayList>
+							<fx:Object name="{getDefaultString('markerStyleCircle')}" style="{SimpleMarkerSymbol.STYLE_CIRCLE}"/>
+							<fx:Object name="{getDefaultString('markerStyleCross')}" style="{SimpleMarkerSymbol.STYLE_CROSS}"/>
+							<fx:Object name="{getDefaultString('markerStyleDiamond')}" style="{SimpleMarkerSymbol.STYLE_DIAMOND}"/>
+							<fx:Object name="{getDefaultString('markerStyleSquare')}" style="{SimpleMarkerSymbol.STYLE_SQUARE}"/>
+							<!-- triangle style is not supported by the 10.1 print task -->
+							<!--<fx:Object name="{getDefaultString('markerStyleTriangle')}" style="{SimpleMarkerSymbol.STYLE_TRIANGLE}"/>-->
+							<fx:Object name="{getDefaultString('markerStyleX')}" style="{SimpleMarkerSymbol.STYLE_X}"/>
+						</s:ArrayList>
+					</s:DropDownList>
+				</s:HGroup>	
+				
+				<s:HGroup width="100%" includeInLayout="{drawingPoint}"  visible="{drawingPoint}" verticalAlign="middle" horizontalAlign="left" gap="8" paddingBottom="5">        
+					<!--Point size -->
+					<mx:Label text="{markerSizeLabel}"/>
+					<mx:NumericStepper id="numMarkerSize"
+									   maximum="50"
+									   minimum="0"
+									   value="15"/>
+					<!--Point transparency -->
+					<mx:Label text="{markerAlphaLabel}"/>
+					<mx:NumericStepper id="numMarkerAlpha"
+									   maximum="1"
+									   minimum="0"
+									   stepSize="0.1"
+									   value="1"/>
+					<!--Point angle -->					
+					<s:Label text="{markerRotationLabel}"/>
+					<mx:NumericStepper id="numMarkerAngle"
+									   maximum="360"
+									   minimum="-360"
+									   stepSize="1"
+									   value="0"
+									   width="50"/>
+				</s:HGroup>
+				
+				<s:HGroup width="100%" includeInLayout="{drawingPoint}"  visible="{drawingPoint}" verticalAlign="middle" horizontalAlign="left" gap="8" paddingBottom="5">      
+					<!--Point outline color -->
+					<s:Label text="{markerOutlineColorLabel}"/>
+					<mx:ColorPicker id="cpMarkerOutline" selectedColor="0x00000"/>
+					
+					<!--Point outline width -->
+					<s:Label text="{markerOutlineWidthLabel}"/>
+					
+					<mx:NumericStepper id="numMarkerOutlineWidth"
+									   maximum="5"
+									   minimum="0"
+									   stepSize="1"
+									   value="1"/>
+				</s:HGroup>	
+                
+<!--  Point   -->
+<!--  Polygon  -->			
                 <eDraw:FormItemVerticalAlign verticalAlign="middle" width="100%"
                              includeInLayout="{drawingPolygon}"
                              label="{fillColorLabel}"
