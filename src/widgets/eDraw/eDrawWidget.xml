@@ -32,6 +32,7 @@
     <dmsnumericlabelprecision>2</dmsnumericlabelprecision>
     <defaulttool>polygon</defaulttool>
     <labels>
+        <textlabel>Label text</textlabel>
         <textrotationlabel>Rotation</textrotationlabel>
         <markerrotationlabel>Angle</markerrotationlabel>
         <pointunitslabel>Point Units</pointunitslabel>

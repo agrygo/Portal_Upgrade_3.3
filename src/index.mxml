@@ -19,7 +19,8 @@
 <s:Application xmlns:fx="http://ns.adobe.com/mxml/2009"
                xmlns:s="library://ns.adobe.com/flex/spark"
                xmlns:viewer="com.esri.viewer.*"
-               xmlns:managers="com.esri.viewer.managers.*"
+			   xmlns="http://ns.adobe.com/air/application/3.9"
+			   xmlns:managers="com.esri.viewer.managers.*"
                pageTitle="ArcGIS Viewer for Flex">
 
     <fx:Style source="defaults.css"/>

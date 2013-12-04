@@ -136,12 +136,7 @@
                 {
                     mapManager.map.setFocus();
                 }
-	//Modified 5/4/2012 Setting up callbacks to communicate between map and portal app
-				ExternalInterface.addCallback("selectFeaturesFromResultsOnMap", selectFeaturesFromResultsOnMap); 
-				ExternalInterface.addCallback("selectParcelFeatureOnMap", selectParcelFeatureOnMap); 
 
-				
-                //tell the modules it's on business.
                 AppEvent.dispatch(ViewerContainer.CONTAINER_INITIALIZED);
             }
 
@@ -358,66 +353,6 @@
             {
                 AppEvent.showError(value, VIEWER_CONTAINER);
             }
-			
-			
-			//Modified 7/15/2011 PWA used for showing results on map from Datagrid
-			public function selectParcelFeatureOnMap(pin:String):void{
-				
-				var id:Number = ViewerContainer.getInstance().getWidgetId("Search");
-				if(isNaN(id))
-					return;
-				var bWidget:Object = widgetManager.getWidget(id,true);
-				try{
-					//bWidget.queryFromURL(tableName);
-					if(bWidget != null)	
-					{
-						//setTimeout(bWidget.queryFromURL,2000,tableName);
-						setTimeout(bWidget.selectParcelOnMap,2000,pin);
-						return;
-					}
-					
-					setTimeout(selectParcelFeatureOnMap,2500,pin);
-				}catch(err:Error)
-				{
-					Alert.show(err.getStackTrace());
-				}
-			}
-			
-			
-			//Modified 7/15/2011 PWA used for showing results on map from Datagrid
-			public function selectFeaturesFromResultsOnMap(tableName:String):void{
-				
-				var id:Number = ViewerContainer.getInstance().getWidgetId("Search");
-				if(isNaN(id))
-					return;
-				var bWidget:Object = widgetManager.getWidget(id,true);
-				try{
-					//bWidget.queryFromURL(tableName);
-					if(bWidget != null)	
-					{
-						//setTimeout(bWidget.queryFromURL,2000,tableName);
-						setTimeout(bWidget.queryFromURL,2000,tableName);
-						return;
-					}
-					
-					setTimeout(selectFeaturesFromResultsOnMap,2500,tableName);
-				}catch(err:Error)
-				{
-					Alert.show(err.getStackTrace());
-				}
-			}
-			
-			public function getWidgetId(widgetLabel:String):Number
-			{
-				var id:Number;
-				for (var i:Number = 0; i < configData.widgets.length; i++)
-				{
-					if (configData.widgets[i].label == widgetLabel)
-						id = configData.widgets[i].id;
-				}
-				return id;
-			}
-
 
             private var m_localConnection:LocalConnection;
 

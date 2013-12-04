@@ -16,10 +16,10 @@ package widgets.eDraw
 			// vertically align (top by default)
 			var verticalAlign:String = getStyle("verticalAlign");
 			if (verticalAlign == "middle") {   
-				itemLabel.y = Math.max(0, (h - itemLabel.height) / 2);
+				//itemLabel.y = Math.max(0, (h - itemLabel.height) / 2);
 			} else if (verticalAlign == "bottom") {
 				var padBottom:Number = getStyle("paddingBottom");
-				itemLabel.y = Math.max(0, h - itemLabel.height - padBottom);
+				//itemLabel.y = Math.max(0, h - itemLabel.height - padBottom);
 			}
 		}
 	}

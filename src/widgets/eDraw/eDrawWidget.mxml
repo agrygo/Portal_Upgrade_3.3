@@ -332,7 +332,7 @@
                     initializeFontList();
 
                     defaultDrawColor = configXML.defaultdrawcolor || 0x3FAFDC;
-                    defaultTextFontSize = configXML.defaulttextfontsize || 20;
+                    defaultTextFontSize = configXML.defaulttextfontsize || 12;
                     // drawing labels
                     textLabel = configXML.labels.textlabel || getDefaultString("textLabel");
                     textColorLabel = configXML.labels.textcolorlabel || getDefaultString("textColorLabel");
@@ -345,7 +345,7 @@
                     textUnderlineLabel = configXML.labels.textunderlinelabel || getDefaultString("textUnderlineLabel");
                     textUnderlineTooltip = configXML.labels.textunderlinetooltip || getDefaultString("textUnderlineTooltip");
 //My Add
-                    textRotateLabel = configXML.labels.textrotationlabel || "Rotation";
+                    textRotateLabel = configXML.labels.textrotationlabel || "Text angle";
                     WIDGET_URL = config.substring(0,config.lastIndexOf("/")) + "/assets/images/";
                     AddHaloLbl = configXML.labels.addhalolabel || "Add Halo";
                     isHaloEnabled = configXML.addhalototext && configXML.addhalototext == "true";
@@ -2616,7 +2616,7 @@
             <s:HGroup id="drawImageGroup"
                       width="100%"
                       gap="2"
-                      horizontalAlign="center">
+                      horizontalAlign="left">
                 <components:FocusableImage name="{DrawTool.MAPPOINT}"
                                            width="40" height="40"
                                            buttonMode="true"
@@ -2709,67 +2709,94 @@
             </s:HGroup>
 
             <s:HGroup width="100%"
-                      horizontalAlign="right"
+                      horizontalAlign="left"
                       paddingRight="10"
                       paddingTop="2">
                 <s:Label buttonMode="true"
                          click="clear()"
                          fontWeight="bold"
                          includeInLayout="{hasDrawnGraphics}"
-                         text="{clearLabel}"
-                         textDecoration="underline"
-                         visible="{hasDrawnGraphics}"/>
+                         text="Click to clear ALL drawings.  Right-click drawing to clear individual"
+                         fontStyle="normal"
+						 textAlign="left"
+						 visible="{hasDrawnGraphics}"/>
             </s:HGroup>
 <!--Add eDraw:FormItemVerticalAlign and labelWidth to all form items-->
             <mx:Form id="frmDraw"
                      width="100%" height="100%"
                      paddingBottom="0"
-                     verticalGap="8"
+                     verticalGap="0"
                      verticalScrollPolicy="off">
-                <eDraw:FormItemVerticalAlign verticalAlign="middle" width="100%"
+				<s:HGroup width="100%"
+						  horizontalAlign="left" gap="8" paddingBottom="5">
+					<s:Label includeInLayout="{addingText}" visible="{addingText}" fontWeight="bold" text="Type in text and click on map to add label"/>
+					
+				</s:HGroup>
+						  
+				
+				
+				
+				<!--<s:FormItem includeInLayout="{addingText}"  visible="{addingText}" textAlign="left" >-->
+				  <s:HGroup  width="100%"
+							 horizontalAlign="left" gap="8" includeInLayout="{addingText}"  visible="{addingText}" textAlign="left" paddingBottom="5">	
+					
+					<mx:Label text="Label text"/>
+				
+					<s:TextInput id="txtLabel"
+								 width="100%"
+								 text=""/>
+					<mx:Label text="{textSizeLabel}"/>
+					<mx:NumericStepper id="numTextSize"
+										   maximum="100"
+										   minimum="0"
+										   value="{defaultTextFontSize}"/>		
+				  </s:HGroup>						   	 
+				<!--</s:FormItem>-->
+				
+				<!--<eDraw:FormItemVerticalAlign verticalAlign="middle" width="100%"
                              includeInLayout="{addingText}"
                              label="{textLabel}"
-                             visible="{addingText}">
-                    <s:HGroup width="100%" verticalAlign="middle">
-                        <s:TextInput id="txtLabel"
-                                     width="100%"
-                                     text=""/>
-
-                        <s:ToggleButton id="bold" fontSize="11"
-                                        width="32"
-                                        fontWeight="bold"
-                                        label="{textBoldLabel}"
-                                        toolTip="{textBoldTooltip}"/><!-- Added fontSize="11" -->
-
-                        <s:ToggleButton id="italic"
-                                        width="32" fontSize="11"
-                                        fontStyle="italic"
-                                        fontWeight="bold"
-                                        label="{textItalicLabel}"
-                                        toolTip="{textItalicTooltip}"/><!-- Added fontSize="11" -->
-
-                        <s:ToggleButton id="underline"
-                                        width="32" fontSize="11"
-                                        fontWeight="bold"
-                                        label="{textUnderlineLabel}"
-                                        textDecoration="underline"
-                                        toolTip="{textUnderlineTooltip}"/><!-- Added fontSize="11" -->
-                    </s:HGroup>
-                </eDraw:FormItemVerticalAlign>
-
-                <eDraw:FormItemVerticalAlign verticalAlign="middle" width="100%"
-                             includeInLayout="{addingText}"
-                             label="{textFontLabel}"
-                             visible="{addingText}">
+                             visible="{addingText}"
+							 toolTip="Type in text for label">-->
+                    
+                <!--</eDraw:FormItemVerticalAlign>-->
+			
+				<s:HGroup width="100%"
+						  horizontalAlign="left" verticalAlign="middle" gap="8">
+					
+						<s:Label text="Font"/>
 <!--My Add-->
-                    <s:HGroup width="100%" gap="8" verticalAlign="middle">
+                   
                         <s:ComboBox id="fontNameSelection"
                                     dataProvider="{fontList}"
                                     requireSelection="true"/>
-                        <s:CheckBox id="AddTextHaloSel" label="{AddHaloLbl}" selected="@{isHaloEnabled}" />
-                    </s:HGroup>
+						<s:ToggleButton id="bold" fontSize="11"
+										width="32"
+										fontWeight="bold"
+										label="{textBoldLabel}"
+										toolTip="{textBoldTooltip}"/><!-- Added fontSize="11" -->
+						
+						<s:ToggleButton id="italic"
+										width="32" fontSize="11"
+										fontStyle="italic"
+										fontWeight="bold"
+										label="{textItalicLabel}"
+										toolTip="{textItalicTooltip}"/><!-- Added fontSize="11" -->
+						
+						<s:ToggleButton id="underline"
+										width="32" fontSize="11"
+										fontWeight="bold"
+										label="{textUnderlineLabel}"
+										textDecoration="underline"
+										toolTip="{textUnderlineTooltip}"/><!-- Added fontSize="11" -->
+						
+						
+						
+						
+                   
+				</s:HGroup>
 <!--End My Add-->
-                </eDraw:FormItemVerticalAlign>
+               
 
                 <eDraw:FormItemVerticalAlign verticalAlign="middle" width="100%"
                              includeInLayout="{addingText}"
@@ -2778,15 +2805,13 @@
                     <s:HGroup width="100%"
                               gap="4"
                               verticalAlign="middle">
-                        <mx:ColorPicker id="cpText" selectedColor="{defaultDrawColor}"/>
-
-                        <mx:Label text="{textSizeLabel}"/>
-
-                        <mx:NumericStepper id="numTextSize"
-                                           maximum="100"
-                                           minimum="0"
-                                           value="{defaultTextFontSize}"/>
-<!-- My Add -->
+						
+						<mx:ColorPicker id="cpText" selectedColor="{defaultDrawColor}"/>
+						
+						<s:Label text="White background"/>
+						<s:CheckBox id="AddTextHaloSel"  click="{isHaloEnabled}" />
+                        
+						<!-- My Add -->
                         <mx:Label text="{textRotateLabel}"/>
                         <mx:NumericStepper id="numTextRotation"
                                            maximum="360"

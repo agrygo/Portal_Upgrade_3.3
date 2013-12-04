@@ -49,11 +49,11 @@
 			<lod resolution="1222.99245256249" scale="4622324.434309"/>
     </lods>
         <basemaps>
-        		<layer label="Bing Hybrid" type="bing" visible="true" style="aerialWithLabels" culture="en-US" icon="assets/images/bing_aerialWithLabels.png"/>
+        		<layer label="Bing Hybrid" type="bing" visible="false" style="aerialWithLabels" culture="en-US" icon="assets/images/bing_aerialWithLabels.png"/>
         		<layer label="Bing Aerial" type="bing" visible="false" style="aerial" culture="en-US" icon="assets/images/bing_aerial.png" />
         		<layer label="Bing Roads" type="bing" visible="false" style="road" culture="en-US" icon="assets/images/bing_road.png"/>
         		<layer label="Esri Streets" type="tiled" visible="false" url="http://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer" icon="assets/images/basemap_streets.jpg"/>
-	            <layer label="Esri Imagery"  type="tiled" visible="false" url="http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer" icon="assets/images/basemap_imagery.jpg"/>
+	            <layer label="Esri Imagery"  type="tiled" visible="true" url="http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer" icon="assets/images/basemap_imagery.jpg"/>
   			
 	  			<layer label="2013 County Imagery" type="dynamic" visible="false" url="http://arcgiswaprod/ArcGIS/rest/services/Planning/Pictometry_2013/MapServer" icon="assets/images/bsmp_CountyImagery.png"/>
 	  			<layer label="Open Street Map" type="osm" visible="false"/> 
@@ -62,6 +62,8 @@
 				
           </basemaps>
         <operationallayers>
+          	<layer label="Esri World Boundaries and Places" type="tiled" visible="true" url="http://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer"/>
+          	<layer label="Esri World Transportation" type="tiled" visible="true" url="http://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer"/>
           	<layer label="2013 Imagery" type="dynamic" visible="false" url="http://arcgiswaprod/ArcGIS/rest/services/Planning/Pictometry_2013/MapServer"/>
 			<layer label="General Structures"  type="dynamic" visible="false" url="http://arcgiswaprod/ArcGIS/rest/services/Planning/Portal_Structures/MapServer"/>
 			<layer label="QA-QC"  type="dynamic" visible="false" url="http://arcgiswaprod/ArcGIS/rest/services/Planning/Portal_QA_QC/MapServer"/>
