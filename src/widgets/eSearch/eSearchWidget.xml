@@ -8,7 +8,7 @@
 			<enableexport>true</enableexport>
 			<enableprintgrid title="Selected Parcels">true</enableprintgrid>
 			<name>Parcels</name>
-			<url>http://arcgiswaprod/arcgis/rest/services/Planning/CLE_PLSS_Cadastral_Parcels/MapServer/17</url>
+			<url>http://arcgiswaprod/arcgis/rest/services/Planning/Portal_Base/MapServer/0</url>
 			<expressions>
 				<expression alias="Parcel Identification Number" textsearchlabel="Search by Parcel Identification Number" isvaluerequired="false">
 					<values>
@@ -56,7 +56,7 @@
                 <field name= "TAXABLE_BUILDING" alias = "Taxable Bldg Mkt Value" gridfield= "true" currencyformat ="$|2|,|." gridfieldonly= "true" />
                 <field name= "TaxableMarketValue" alias = "Taxable Market Value" gridfield= "true" currencyformat ="$|2|,|." gridfieldonly= "true" />
                 <field name= "LEGAL" alias = "Legal Description" gridfield ="true" gridfieldonly = "true"/>
-                <field name= "OBJECTID" alias="ObjectID" gridfield="true"/>
+                <field name= "OBJECTID" alias="ObjectID" gridfield="true" gridfieldonly = "true"/>
 			</fields>
 			<links>
 				<link alias="View Oblique Imagery" disablelinksifnull="true">
@@ -81,7 +81,7 @@
 		<definitionexpression></definitionexpression>
 			<enableexport>true</enableexport>
 			<name>Name</name>
-			<url>http://arcgiswaprod/arcgis/rest/services/Planning/CLE_PLSS_Cadastral_Parcels/MapServer/17</url>
+			<url>http://arcgiswaprod/arcgis/rest/services/Planning/Portal_Base/MapServer/0</url>
 			<expressions>
 				<br></br>
 				<expression alias="Owner Name" textsearchlabel="Enter owner LAST name for the most results;  LAST name  FIRST name for fewer results"  isvaluerequired="false">
@@ -135,6 +135,7 @@
                 <field name= "TAXABLE_BUILDING" alias = "Taxable Bldg Mkt Value" gridfield= "true" currencyformat ="$|2|,|." gridfieldonly= "true" />
                 <field name= "TaxableMarketValue" alias = "Taxable Market Value" gridfield= "true" currencyformat ="$|2|,|." gridfieldonly= "true" />
                 <field name= "LEGAL" alias = "Legal Description" gridfield ="true" gridfieldonly = "true"/>
+                <field name= "OBJECTID" alias="ObjectID" gridfield="true" gridfieldonly = "true"/>
 			</fields>
 			<links/>
 			<zoomscale usegeometry="true" zoompercent="2"></zoomscale>
@@ -153,7 +154,7 @@
 		<definitionexpression></definitionexpression>
 			<enableexport>true</enableexport>
 			<name>Address</name>
-			<url>http://gis.stlouiscountymn.gov/arcgis/rest/services/Planning/CLE_PLSS_Cadastral_Parcels/MapServer/17</url>
+			<url>http://arcgiswaprod/arcgis/rest/services/Planning/Portal_Base/MapServer/0</url>
 			<expressions>
 				<expression alias="Physical Address" textsearchlabel="Enter street address using abbreviations (St, Rd, Ave)"  isvaluerequired="false">
 					<values>
@@ -211,6 +212,7 @@
                 <field name= "TAXABLE_BUILDING" alias = "Taxable Building Market Value" gridfield= "true" currencyformat ="$|2|,|." gridfieldonly= "true" />
                 <field name= "TaxableMarketValue" alias = "Taxable Market Value" gridfield= "true" currencyformat ="$|2|,|." gridfieldonly= "true" />
                 <field name= "LEGAL" alias = "Legal Description" gridfield ="true" gridfieldonly = "true"/>
+                <field name= "OBJECTID" alias="ObjectID" gridfield="true" gridfieldonly = "true"/>
 			</fields>
 			<links>
                 <link alias="Parcel Tax Lookup"> 
@@ -269,6 +271,62 @@
 			</symbology>
 			
 		</layer>
+		
+		<!-- SURVEY CONTROL POINTS SEARCH  -->
+		<layer>
+			<definitionexpression></definitionexpression>
+			<enableexport>false</enableexport>
+			<name>Survey Control Points</name>
+			<url>http://arcgiswaprod/arcgis/rest/services/Planning/CLE_PLSS_Cadastral_Parcels/MapServer/0</url>
+			<expressions>
+				<expression alias="Point ID" textsearchlabel="Enter a Control Point ID to search" isvaluerequired="false">
+					<values>
+						<value prompt="" isvaluerequired="false">(Point_ID2) LIKE ('%[value]%')</value>
+					</values>
+				</expression>
+				
+			</expressions>
+			<graphicalsearchlabel>Click on a graphic below to select a control point</graphicalsearchlabel>
+			<spatialsearchlayer>true</spatialsearchlayer>
+			<titlefield>"Survey Control Point "Point_ID2</titlefield>
+			<fields all="false">
+				<field name="Point_ID2" alias="Survey Control Point ID #" visible="true"/>         
+        		<field name="Northing_Feet" alias="Northing (feet) " visible="true" gridfield="true"/>
+		        <field name="Easting_Feet" alias="Easting (feet) " visible="true" gridfield="true"/>
+				<field name="CornerCertificate" alias="Corner Certificate" hyperlinkgridfield="true" hyperlinkaliastext="Open Corner Certificate"  hyperlinkgridfieldonly="true"/>
+		        <field name="CornerReport" alias="Corner Report" hyperlinkgridfield="true" hyperlinkaliastext="Open Corner Report"  hyperlinkgridfieldonly="true"/>
+				 
+			</fields>
+			<links>
+                <link alias="Corner Report" >
+                	<![CDATA[{CornerReport}]]>
+                   	<icon><![CDATA[assets/images/TableOpen32.png]]></icon> 
+                </link>
+                
+                <link alias="View Corner Certificate (IE browser only)" >
+                	<![CDATA[{CornerCertificate}]]>
+                  <icon><![CDATA[assets/images/i_cert.png]]></icon> 
+                </link>
+                            
+                                            
+                <link alias="About St. Louis County Survey Control Points "> 
+                  <![CDATA[http://www.stlouiscountymn.gov/GOVERNMENT/OnlineServices/SearchControlPoints.aspx]]>
+                  <icon><![CDATA[assets/images/i_about.png]]></icon> 
+                </link>
+            </links>
+		
+			
+			<zoomscale usegeometry="true" zoompercent="2" />
+			<autoopendatagrid>true</autoopendatagrid>
+			<relates></relates>
+			<queryattachments>false</queryattachments>
+			<symbology>
+				<simplefillsymbol color="0xff0033" alpha="0.3">
+					<outline color="0x990000" alpha="0.8" width="2" />
+				</simplefillsymbol>
+			</symbology>
+		</layer>
+		
 		
 			
 		<!-- TOWNSHIP & RANGE SEARCH -->

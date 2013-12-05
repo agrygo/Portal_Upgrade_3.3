@@ -32,7 +32,7 @@
     
     <lods>
     		<lod resolution="0.07461264922529845" scale="282"/>
-			<lod resolution="0.1492252984505969" scale="564"/>-->
+			<lod resolution="0.1492252984505969" scale="564"/>
 			<lod resolution="0.29858214164761665" scale="1128.4971760000001"/>
 			<lod resolution="0.59716428355981721" scale="2256.994353"/>
 			<lod resolution="1.19432856685505" scale="4513.988705"/>
