@@ -56,6 +56,7 @@
                 <field name= "TAXABLE_BUILDING" alias = "Taxable Bldg Mkt Value" gridfield= "true" currencyformat ="$|2|,|." gridfieldonly= "true" />
                 <field name= "TaxableMarketValue" alias = "Taxable Market Value" gridfield= "true" currencyformat ="$|2|,|." gridfieldonly= "true" />
                 <field name= "LEGAL" alias = "Legal Description" gridfield ="true" gridfieldonly = "true"/>
+                <field name= "OBJECTID" alias="ObjectID" gridfield="true"/>
 			</fields>
 			<links>
 				<link alias="View Oblique Imagery" disablelinksifnull="true">
@@ -422,7 +423,7 @@
     <enablegraphicsbuffering>true</enablegraphicsbuffering>
 	<selectedgraphicaltool></selectedgraphicaltool><!-- possible values are extent or polygon or mappoint or polyline or nothing -->
 	<multipartgraphicsearch>false</multipartgraphicsearch>
-	<floatorfixed>float</floatorfixed><!-- possible values are fixed and float -->
+	<floatorfixed>fixed</floatorfixed><!-- possible values are fixed and float -->
 	<relatetooltip>Show Relates</relatetooltip>
 	<relateicon>widgets/eSearch/assets/images/i_relate.png</relateicon>
 	<labels>

@@ -4,7 +4,7 @@
 				   xmlns:mx="library://ns.adobe.com/flex/mx"
 				   xmlns:viewer="com.esri.viewer.*"
 				   xmlns:Search="widgets.eSearch.*"
-				   height="200" width="800"
+				   height="200" width="100%"
 				   widgetConfigLoaded="init()" verticalScrollPolicy="off">	
 	
 	<fx:Declarations>
