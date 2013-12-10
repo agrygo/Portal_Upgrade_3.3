@@ -7,9 +7,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 -->
 <configuration>
-    <title>LAND INFORMATION PORTAL</title>
+    <!-- <title>LAND INFORMATION PORTAL</title>
     <subtitle>St. Louis County, Minnesota</subtitle>
-    <logo>assets/images/la.png</logo>
+    <logo>assets/images/la.png</logo>-->
     <style>
         <colors>0xFFFFFF,0x333333,0x101010,0x000000,0xffffff</colors>
         <alpha>0.8</alpha>

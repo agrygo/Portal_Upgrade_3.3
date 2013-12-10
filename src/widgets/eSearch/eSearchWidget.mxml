@@ -432,8 +432,8 @@
 					lineLabel = configXML.labels.linelabel || "Select by Line";
 					rectangleLabel = configXML.labels.rectanglelabel || "Select by Rectangle";
 					polygonLabel = configXML.labels.polygonlabel || "Select by Polygon";
-					clearLabel = configXML.labels.clearlabel || "Clear";
-					zoomallLabel = configXML.labels.zoomalllabel || "Zoom";
+					clearLabel = configXML.labels.clearlabel || "Clear all";
+					zoomallLabel = configXML.labels.zoomalllabel || "Zoom all";
 					zoomallTip = configXML.labels.zoomalltip || "Zoom to all results";
 					loadingLabel = configXML.labels.loadinglabel || "Loading...";
 					selectionLabel = configXML.labels.selectionlabel || "Features Selected:";
@@ -6809,9 +6809,9 @@
 						 click="pushToResults()"
 						 fontWeight="bold"
 						 includeInLayout="{featLyrLen &gt; 0}"
-						 text="Push To Results"
+						 text="Save to Results"
 						 textDecoration="underline"
-						 toolTip="Push to Results Table"
+						 toolTip="Save to Results"
 						 visible="{featLyrLen &gt; 0}"/>
 				<s:Label buttonMode="true" textAlign="right"
 						 click="zoomAll()"

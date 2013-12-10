@@ -98,6 +98,7 @@
 			}
 			
 			//Created 7/14/2011 PWA function that handles the click event for the clear record button
+			//AMG - this is actually the View Details button
 			private function navigateToResultsTab(event:MouseEvent):void
 			{
 				event.stopImmediatePropagation(); // don't dispatch SEARCH_RESULT_CLICK since we don't want to zoom to feature
@@ -137,8 +138,9 @@
 					selected = searchResult.selected;
 					
 					//Modified 7/14/2011 PWA setting icon for clear button
+					//AMG  Toggle Fill - View Details - Delete Record
 					clearicon = "assets/images/Final-Flex-ClearResult.png";
-					linkicon = "assets/images/Final-Flex-PushResults.png";
+					linkicon = "assets/images/Final-Flex-ViewDetails.png";
 					selectFillIcon = "assets/images/selectNoFill.png";
 
 					for(var l:int = 0; l < searchResult.links.length; l++){
@@ -242,13 +244,14 @@
 					  source="{selectFillIcon}"
 					  toolTip="Toggle fill off/on"/>
 			<!-- Modified 7/14/2011 PWA Added Clear Button to results -->
+			<!-- AMG  - this is actually the View Details button -->
 			<mx:Image width="18" height="18"
 					  buttonMode="true"
 					  includeInLayout="{searchResult.selectedLayerName == searchResult.parcelLayerName}"
 					  click="navigateToResultsTab(event)"
 					  source="{linkicon}"
 					  visible="{searchResult.selectedLayerName == searchResult.parcelLayerName}"
-					  toolTip="Push to Results Tab"/>
+					  toolTip="View Details"/>
 			<!-- Modified 7/14/2011 PWA Added Clear Button to results -->
 			<mx:Image width="18" height="18"
 					  buttonMode="true"
