@@ -61,8 +61,6 @@
 				
           </basemaps>
         <operationallayers>
-          	<layer label="Esri World Boundaries and Places" type="tiled" visible="true" url="http://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer"/>
-          	<layer label="Esri World Transportation" type="tiled" visible="true" url="http://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer"/>
           	<layer label="2013 Imagery" type="dynamic" visible="false" url="http://arcgiswaprod/ArcGIS/rest/services/Planning/Pictometry_2013/MapServer"/>
 			<layer label="General Structures"  type="dynamic" visible="false" url="http://arcgiswaprod/ArcGIS/rest/services/Planning/Portal_Structures/MapServer"/>
 			<layer label="QA-QC"  type="dynamic" visible="false" url="http://arcgiswaprod/ArcGIS/rest/services/Planning/Portal_QA_QC/MapServer"/>
@@ -138,6 +136,16 @@
                 icon="assets/images/Final-Flex-Draw.png"
                 config="widgets/eDraw/eDrawWidget.xml"
                 url="widgets/eDraw/eDrawWidget.swf"/>
+                
+        <widget label="Google Street View" width="380"
+                icon="widgets/StreetView/assets/images/i_gsv.png"
+                config="widgets/StreetView/StreetViewWidget.xml"
+                url="widgets/StreetView/StreetViewWidget.swf"/>
+                
+        <widget label="Drive Directions" 
+    			icon="widgets/Route/assets/images/i_route.png" 
+				config="widgets/Route/RouteWidget.xml"
+				url="widgets/Route/RouteWidget.swf"/>
                 
         <widget label="Print" left="390" top="400"
                 icon="assets/images/i_print.png"

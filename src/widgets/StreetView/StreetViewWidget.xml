@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" ?>
+<configuration>
+    <hidestreetviewvwidowwhenminimized>true</hidestreetviewvwidowwhenminimized>
+    <width>500</width>
+    <height>600</height>
+    <!--  Google API key, user: agrygo.slc@gmail.com -->
+    <apikey>AIzaSyDxY6i38KqAzaz3uO3ATeATpx3iv6izM8A</apikey> 
+    <streetviewpanoramaoptions>
+        <addresscontrol controlposition="TOP_RIGHT">true</addresscontrol>
+        <clicktogo>true</clicktogo>
+        <disabledoubleclickzoom>true</disabledoubleclickzoom>
+        <imagedatecontrol>true</imagedatecontrol>
+        <linkscontrol>true</linkscontrol>
+        <pancontrol controlposition="TOP_LEFT">true</pancontrol>
+        <zoomcontrol controlposition="TOP_LEFT" controlstyle="SMALL">true</zoomcontrol>
+    </streetviewpanoramaoptions>
+    <labels>
+        <clearlabel>Clear</clearlabel>
+        <status>Show Google Street View</status>
+        <nostreetviewimageavailablemsg>No Street View Image Available&lt;br /&gt;or you have not yet dragged the Google&#174; Street View man&lt;br /&gt;onto the map to set your location.</nostreetviewimageavailablemsg>
+        <instructions>Drag the Google&#174; Street View man onto the street you want to see a panorama for. You can also drag the street view man around on the map once he has been placed.</instructions>
+        <operamsg>Because you are using Opera as your web browser you may need to perform the following steps</operamsg>
+        <operamsgtitle>Opera Browser Detected</operamsgtitle>
+        <popupblockermsg>This widget uses a popup window to show Google Street View panoramas. You need to enable popups in your browser.</popupblockermsg>
+        <popupblockererrortitle>Popup Blocker Detected</popupblockererrortitle>
+    </labels>
+</configuration>

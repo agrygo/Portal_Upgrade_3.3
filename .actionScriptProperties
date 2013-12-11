@@ -49,6 +49,8 @@
     <module application="src/index.mxml" destPath="widgets/eSearch/eSearchWidget.swf" optimize="true" sourcePath="src/widgets/eSearch/eSearchWidget.mxml"/>
     <module application="src/index.mxml" destPath="widgets/BaseMapSwitcher/BaseMapSwitcherWidget.swf" optimize="true" sourcePath="src/widgets/BaseMapSwitcher/BaseMapSwitcherWidget.mxml"/>
     <module application="src/index.mxml" destPath="widgets/eSearch/SearchWidgetFixedDG.swf" optimize="true" sourcePath="src/widgets/eSearch/SearchWidgetFixedDG.mxml"/>
+    <module application="src/index.mxml" destPath="widgets/StreetView/StreetViewWidget.swf" optimize="true" sourcePath="src/widgets/StreetView/StreetViewWidget.mxml"/>
+    <module application="src/index.mxml" destPath="widgets/Route/RouteWidget.swf" optimize="true" sourcePath="src/widgets/Route/RouteWidget.mxml"/>
   </modules>
   <workers/>
   <buildCSSFiles/>

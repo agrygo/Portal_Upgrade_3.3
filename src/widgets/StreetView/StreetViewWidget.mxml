@@ -1,0 +1,684 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+////////////////////////////////////////////////////////////////////////////////
+//
+// Developed by Robert Scheitlin 
+// some code credit Mansour Raad, Andrew McNaughton
+//
+// Tested on Safari for windows 5.1.7, Internet Explorer 9,
+// Opera 12.15, FireFox 21.0, and Chrome 27.0.1453.110 m
+////////////////////////////////////////////////////////////////////////////////
+-->
+<viewer:BaseWidget xmlns:fx="http://ns.adobe.com/mxml/2009"
+                   xmlns:s="library://ns.adobe.com/flex/spark"
+                   xmlns:mx="library://ns.adobe.com/flex/mx"
+                   xmlns:viewer="com.esri.viewer.*"
+                   xmlns:esri="http://www.esri.com/2008/ags"
+                   xmlns:mxeffects="com.adobe.ac.mxeffects.*"
+                   xmlns:util="widgets.StreetView.util.*"
+                   layout="absolute"
+                   widgetConfigLoaded="init()">
+    <fx:Script>
+        <![CDATA[
+            import com.esri.ags.Graphic;
+            import com.esri.ags.SpatialReference;
+            import com.esri.ags.events.GeometryServiceEvent;
+            import com.esri.ags.geometry.MapPoint;
+            import com.esri.ags.layers.GraphicsLayer;
+            import com.esri.ags.tasks.supportClasses.ProjectParameters;
+            import com.esri.ags.tools.NavigationTool;
+            import com.esri.ags.utils.WebMercatorUtil;
+            import com.esri.viewer.AppEvent;
+            import com.esri.viewer.WidgetStates;
+            
+            import flash.utils.setTimeout;
+            
+            import mx.collections.ArrayCollection;
+            import mx.controls.Alert;
+            import mx.core.FlexGlobals;
+            import mx.events.CloseEvent;
+            import mx.rpc.events.FaultEvent;
+            
+            import spark.components.Image;
+            
+            private var graphicsLayer:GraphicsLayer;
+            private var gAPIKey:String;
+            private var wBGColor:String;
+            private var showAddressControl:Boolean;
+            private var addressControlPosition:String;
+            private var panControlPosition:String;
+            private var zoomControlPosition:String;
+            private var showPanControl:Boolean;
+            private var showZoomControl:Boolean;
+            private var zoomControlStyle:String;
+            private var showImageDateControl:Boolean;
+            private var clickToGo:Boolean;
+            private var disableDoubleclickzoom:Boolean;
+            private var windowWidth:Number;
+            private var windowHeight:Number;
+            private var hideStreetviewWindowWhenMin:Boolean;
+            private var showLinkControl:Boolean;
+            private const EPSG_GEOGRAPHIC:Number = 4326;
+            private var gsvHeading:Number = 0;
+            private var noSVImageAvailableMsg:String;
+            [Bindable] private var operaMsg:String;
+            [Bindable] private var operaMsgTitle:String;
+            private var wStatus:String;
+            private var DragProxyImg:Image;
+            [Bindable] private var wInstructions:String;
+            [Bindable] private var pbErrorMsg:String;
+            [Bindable] private var pbErrorTitle:String;
+            [Bindable] private var clearLabel:String;
+            [Bindable] private var gsvGraLen:int = 0;
+            private var lastDragX:Number = 0;
+            private var svWinIsReady:Boolean;
+            private var attempts:int = 0;
+            
+            //Build Constants
+            protected const VERSION:String = "3.3.2";
+            protected const BUILDDATE:String = "6/20/2013";
+            
+            //Resources
+            [Embed(source="assets/images/i_about.png")]
+            private var iconClass:Class;
+            
+            [Embed(source="assets/images/opera_logo.png")]
+            private var operaClass:Class;
+            
+            [Embed(source="assets/images/blocker.png")]
+            private var blockerClass:Class;
+            
+            [Embed(source="assets/images/i_warning.png")]
+            private var warnClass:Class;
+            
+            [Embed(source="assets/images/gsv_button_over.png")]
+            private var gsvBtnOvr:Class;
+            
+            [Embed(source="assets/images/gsv_button_norm.png")]
+            [Bindable] private var gsvBtnNorm:Class;
+            
+            [Embed(source="assets/images/gsv_button_down.png")]
+            private var gsvBtnDown:Class;
+            
+            private var popupsBlocked:Boolean;
+            
+            private function init():void
+            {
+                DragProxyImg = new Image();
+                DragProxyImg.source = "widgets/StreetView/assets/images/flying_gsv_man_e.png";
+                DragProxyImg.height = 40;
+                DragProxyImg.width = 40;
+                
+                graphicsLayer = new GraphicsLayer();
+                map.addLayer(graphicsLayer);
+                AppEvent.addListener(AppEvent.SET_STATUS, statusSet);
+                
+                if (configXML){
+                    clearLabel = configXML.labels.clearlabel || "Clear";
+                    gAPIKey = configXML.apikey;
+                    operaMsg = configXML.labels.operamsg || "Because you are using Opera as your web browser you may need to perfrom the following steps";
+                    operaMsgTitle = configXML.labels.operamsgtitle || "Opera Browser Detected";
+                    showAddressControl = configXML.streetviewpanoramaoptions.addresscontrol && configXML.streetviewpanoramaoptions.addresscontrol == "true";
+                    addressControlPosition = configXML.streetviewpanoramaoptions.addresscontrol.@controlposition.toString() || "TOP_CENTER";
+                    showPanControl = configXML.streetviewpanoramaoptions.pancontrol && configXML.streetviewpanoramaoptions.pancontrol == "true";
+                    panControlPosition = configXML.streetviewpanoramaoptions.pancontrol.@controlposition.toString() || "TOP_LEFT";
+                    showZoomControl = configXML.streetviewpanoramaoptions.zoomcontrol && configXML.streetviewpanoramaoptions.zoomcontrol == "true";
+                    zoomControlPosition = configXML.streetviewpanoramaoptions.zoomcontrol.@controlposition.toString() || "TOP_LEFT";
+                    zoomControlStyle = configXML.streetviewpanoramaoptions.zoomcontrol.@controlstyle.toString() || "SMALL";
+                    showImageDateControl = configXML.streetviewpanoramaoptions.imagedatecontrol && configXML.streetviewpanoramaoptions.imagedatecontrol == "true";
+                    clickToGo = configXML.streetviewpanoramaoptions.clicktogo && configXML.streetviewpanoramaoptions.clicktogo == "true";
+                    disableDoubleclickzoom = configXML.streetviewpanoramaoptions.disabledoubleclickzoom && configXML.streetviewpanoramaoptions.disabledoubleclickzoom == "true";
+                    showLinkControl = configXML.streetviewpanoramaoptions.linkscontrol && configXML.streetviewpanoramaoptions.linkscontrol == "true";
+                    windowWidth = configXML.width || 610;
+                    windowHeight = configXML.height || 700;
+                    wBGColor = getStyle('contentBackgroundColor').toString(16);
+                    hideStreetviewWindowWhenMin = configXML.hidestreetviewvwidowwhenminimized && configXML.hidestreetviewvwidowwhenminimized == "true";
+                    noSVImageAvailableMsg = configXML.labels.nostreetviewimageavailablemsg || "No Street View Image Available<br />or you have not yet dragged the Google® Street View man<br />onto the map to set your location.";
+                    wStatus = configXML.labels.status || "Show Google Street View";
+                    wInstructions = configXML.labels.instructions || "Drag the Google® Street View man onto the street you want to see a panorama for. You can also drag the street view man around on the map once he has been placed.";
+                    pbErrorMsg = configXML.labels.popupblockermsg || "This widget uses a popup window to show Google Street View panoramas. You need to enable popups in your browser.";
+                    pbErrorTitle = configXML.labels.popupblockererrortitle || "Popup Blocker Detected";
+                }
+                wTemplate.header.addEventListener(MouseEvent.CLICK, DisplayVersion);
+                CheckForPopUpBlockers();
+            }
+            
+            private function CheckForPopUpBlockers():void
+            {
+                if (ExternalInterface.available){
+                    const result:Boolean = ExternalInterface.call("document.setFlexApp", ExternalInterface.objectID);
+                    if (result === false){
+                        Alert.show("Error using ExternalInterface", "Application Error", 4, null, null, warnClass);
+                    }else{
+                        var chrome:Boolean;
+                        ExternalInterface.addCallback("setChromeBlockerResponce", ChromeBlockerResponce);
+                        if(ExternalInterface.call("document.checkIfChrome")){
+                            ExternalInterface.call("document.detectChromeBlocker");
+                        }else{
+                            if(ExternalInterface.call("document.detectBlocker")){
+                                popupWasBlocked();
+                            }else{
+                                popupNotBlocked();
+                            }
+                        }
+                    }
+                }
+            }
+            
+            private function ChromeBlockerResponce(wasBlocked:Boolean):void
+            {
+                if(wasBlocked){
+                    popupWasBlocked();
+                }else{
+                    popupNotBlocked();
+                }
+            }
+            
+            private function popupWasBlocked():void
+            {
+                popupsBlocked = true;
+                var data:Object = {
+                    id: this.widgetId,
+                        state: WidgetStates.WIDGET_CLOSED
+                }
+                Alert.show(pbErrorMsg, pbErrorTitle, 4, null, function(event:CloseEvent):void
+                {
+                    if (event.detail == Alert.OK){
+                        AppEvent.dispatch(AppEvent.WIDGET_CHANGE_STATE, data);
+                    }
+                }
+                    , blockerClass);
+            }
+            
+            private function popupNotBlocked():void
+            {
+                popupsBlocked = false;
+                ExternalInterface.addCallback("setLatLonYaw", setLatLonYawHandler);
+                ExternalInterface.addCallback("setNoStreetView", noStreetViewAvailable);
+                ExternalInterface.addCallback("windowReady", svWindowIsReady);
+                ExternalInterface.addCallback("windowIsClosing", svWindowIsClosing);
+                
+                ExternalInterface.call("document.openSVwin",wBGColor,noSVImageAvailableMsg,gAPIKey,windowWidth,windowHeight);
+                if(ExternalInterface.call("document.checkIfOpera")){
+                    Alert.show(operaMsg + ":\nPreferences > Advanced > Content > JavaScript options > Allow raising of windows", 
+                        "Opera Browser Detected", 4, null, null, operaClass);
+                }
+            }
+            
+            private function svWindowIsReady():void
+            {
+                svWinIsReady = true;
+            }
+            
+            private function svWindowIsClosing():void
+            {
+                svWinIsReady = false;
+            }
+            
+            private function noStreetViewAvailable():void
+            {
+                var osvgGraphic:Graphic = graphicsLayer.graphicProvider[0];
+                clear();
+                var atts:Object = {
+                    rotation: gsvHeading
+                };
+                var svgGraphic:Graphic = new Graphic(osvgGraphic.geometry, pmGSVM, atts);
+                svgGraphic.useHandCursor = true;
+                svgGraphic.mouseChildren = true;
+                svgGraphic.addEventListener(MouseEvent.MOUSE_DOWN, svgMouseDown);
+                graphicsLayer.add(svgGraphic);
+            }
+            
+            private function setLatLonYawHandler(lat:Number, lon:Number, rotation:Number):void
+            {
+                var svgGraphic:Graphic = graphicsLayer.graphicProvider[0];
+                svgGraphic.attributes.rotation = gsvHeading = rotation;
+                //Don't reproject point if the lat and Lon are not different
+                if(svgGraphic.attributes.lat != lat || svgGraphic.attributes.lng != lon){
+                    svgGraphic.attributes.lat = lat;
+                    svgGraphic.attributes.lng = lon;
+                    const gPnt:MapPoint = svgGraphic.geometry as MapPoint;
+                    var mPoint:MapPoint = new MapPoint(lon,lat, new SpatialReference(EPSG_GEOGRAPHIC));
+                    if (map.spatialReference.wkid == EPSG_GEOGRAPHIC || map.spatialReference.isWebMercator()){
+                        if(map.spatialReference.wkid == EPSG_GEOGRAPHIC){
+                            svgGraphic.geometry = mPoint;
+                        }else{
+                            mPoint = WebMercatorUtil.geographicToWebMercator(mPoint) as MapPoint;
+                        }
+                        
+                        if (mPoint.x != gPnt.x && mPoint.y != gPnt.y){
+                            map.centerAt(mPoint);
+                            svgGraphic.geometry = mPoint;
+                        }
+                        svgGraphic.refresh();
+                    }else{
+                        const projectParameters:ProjectParameters = new ProjectParameters;
+                        projectParameters.geometries = [mPoint];
+                        projectParameters.outSpatialReference = map.spatialReference;
+                        geometryService.addEventListener(GeometryServiceEvent.PROJECT_COMPLETE, project2Map);
+                        geometryService.project(projectParameters);
+                    }
+                }else{
+                    svgGraphic.refresh();
+                }
+            }
+            
+            private function checkForSVPano(lat:String, lng:String):void
+            {
+                if(svWinIsReady){
+                    attempts = 0;
+                    ExternalInterface.call("winobj.checkForSVpano", lat, lng, showAddressControl.toString(), showPanControl.toString(), showZoomControl.toString(), showImageDateControl.toString(), panControlPosition, addressControlPosition, clickToGo.toString(), disableDoubleclickzoom.toString(), zoomControlPosition, zoomControlStyle, showLinkControl.toString(), gsvHeading);
+                }else{
+                    if(attempts < 4){
+                        var timeout:uint = setTimeout(function():void{checkForSVPano(lat, lng);}, 200);
+                    }
+                    attempts++;
+                }
+            }
+            
+            private function project2Geographic(event:GeometryServiceEvent):void
+            {
+                try{
+                    var mPoint:MapPoint = (event.result as Array)[0]as MapPoint;
+                    var lng:String = mPoint.x.toFixed(12);
+                    var lat:String = mPoint.y.toFixed(12);
+                    var svgGraphic:Graphic = graphicsLayer.graphicProvider[0];
+                    svgGraphic.attributes.lat = lat;
+                    svgGraphic.attributes.lng = lng;
+                    trace("Lat: " + lat + ", " + "Lon: " + lng);
+                    ExternalInterface.call("document.openSVwin",wBGColor,noSVImageAvailableMsg,gAPIKey,windowWidth,windowHeight);
+                    checkForSVPano(lat, lng);
+                }catch (error:Error){
+                    Alert.show(error.toString());
+                }
+                geometryService.removeEventListener(GeometryServiceEvent.PROJECT_COMPLETE, project2Geographic);
+            }
+            
+            private function project2Map(event:GeometryServiceEvent):void
+            {
+                try{
+                    var mPoint:MapPoint = (event.result as Array)[0] as MapPoint;
+                    if (mPoint){
+                        var svgGraphic:Graphic = graphicsLayer.graphicProvider[0];
+                        var gPnt:MapPoint = svgGraphic.geometry as MapPoint;
+                        svgGraphic.attributes.rotation = gsvHeading;
+                        if (mPoint.x != gPnt.x && mPoint.y != gPnt.y){
+                            map.centerAt(mPoint);
+                            svgGraphic.geometry = mPoint;
+                        }
+                        svgGraphic.refresh();
+                    }
+                }catch(err:Error){
+                    Alert.show(err.toString());
+                }
+                geometryService.removeEventListener(GeometryServiceEvent.PROJECT_COMPLETE, project2Map);
+            }
+            
+            private function svgMouseDown(event:MouseEvent):void
+            {
+                var svgGraphic:Graphic = graphicsLayer.graphicProvider[0];
+                map.addEventListener(MouseEvent.MOUSE_MOVE, svgMoveHandler, true);
+                map.addEventListener(MouseEvent.MOUSE_UP, svgMoveDoneHandler);
+                DragProxyImg.x = event.stageX;
+                DragProxyImg.y = event.stageY;
+                map.staticLayer.addElement(DragProxyImg);
+            }
+            
+            private function svgMoveHandler(event:MouseEvent):void
+            {
+                DragProxyImg.x = event.stageX - (DragProxyImg.width /2);
+                DragProxyImg.y = event.stageY - (DragProxyImg.height /2);
+                if(lastDragX < event.stageX){
+                    if(DragProxyImg.source !== "widgets/StreetView/assets/images/flying_gsv_man_e.png"){
+                        DragProxyImg.source = "widgets/StreetView/assets/images/flying_gsv_man_e.png";
+                        DragProxyImg.validateNow();
+                    }
+                }else if(lastDragX > event.stageX){
+                    if(DragProxyImg.source !== "widgets/StreetView/assets/images/flying_gsv_man_w.png"){
+                        DragProxyImg.source = "widgets/StreetView/assets/images/flying_gsv_man_w.png";
+                        DragProxyImg.validateNow();
+                    }
+                }
+                lastDragX = event.stageX;
+            }
+            
+            private function svgMoveDoneHandler(event:MouseEvent):void
+            {
+                map.staticLayer.removeElement(DragProxyImg);
+                var mPoint:MapPoint = map.toMapFromStage(event.stageX, event.stageY);
+                map.centerAt(mPoint);
+                var svgGraphic:Graphic = graphicsLayer.graphicProvider[0];
+                svgGraphic.geometry = mPoint;
+                svgGraphic.visible =  true;
+                svgGraphic.symbol = new StreetViewManSymbol();
+                svgGraphic.removeEventListener(MouseEvent.MOUSE_MOVE, svgMoveHandler);
+                map.removeEventListener(MouseEvent.MOUSE_UP, svgMoveDoneHandler);
+                
+                if (map.spatialReference.wkid == EPSG_GEOGRAPHIC || map.spatialReference.isWebMercator()){
+                    var gPoint:MapPoint;
+                    if(map.spatialReference.wkid == EPSG_GEOGRAPHIC){
+                        gPoint = mPoint;
+                    }else{
+                        mPoint = WebMercatorUtil.webMercatorToGeographic(mPoint) as MapPoint;
+                    }
+                    var lng:String = mPoint.x.toFixed(12);
+                    var lat:String = mPoint.y.toFixed(12);
+                    svgGraphic.attributes.lat = lat;
+                    svgGraphic.attributes.lng = lng;
+                    ExternalInterface.call("document.openSVwin",wBGColor,noSVImageAvailableMsg,gAPIKey,windowWidth,windowHeight);
+                    checkForSVPano(lat, lng);
+                }else{
+                    var outSR:SpatialReference = new SpatialReference(EPSG_GEOGRAPHIC);
+                    const projectParameters:ProjectParameters = new ProjectParameters;
+                    projectParameters.geometries = [mPoint];
+                    projectParameters.outSpatialReference = outSR;
+                    geometryService.addEventListener(GeometryServiceEvent.PROJECT_COMPLETE, project2Geographic);
+                    geometryService.project(projectParameters);
+                }
+            }
+            
+            private function clear2():void
+            {
+                gsvButton.setStyle("icon", gsvBtnNorm);
+                gsvGraLen = 0;
+                clear();
+            }
+            
+            private function clear():void
+            {
+                if(graphicsLayer){
+                    graphicsLayer.clear();
+                }
+            }
+            
+            private function widgetClosedHandler(event:Event):void
+            {
+                ExternalInterface.call("winobj.close()");
+                graphicsLayer.visible = false;
+                setMapAction(null, null, null, null);
+                setMapNavigation(NavigationTool.PAN, "Pan Map");
+            }
+            
+            private function widgetOpenedHandler(event:Event):void
+            {
+                attempts = 0;
+                if(graphicsLayer){
+                    graphicsLayer.visible = true;
+                }
+                if(hideStreetviewWindowWhenMin){
+                    if(popupsBlocked){
+                        var data:Object = {
+                            id: this.widgetId,
+                                state: WidgetStates.WIDGET_CLOSED
+                        };
+                        Alert.show(pbErrorMsg, pbErrorTitle, 4, null, function(event:CloseEvent):void
+                        {
+                            if (event.detail == Alert.OK){
+                                AppEvent.dispatch(AppEvent.WIDGET_CHANGE_STATE, data);
+                            }
+                        }
+                            , blockerClass);
+                    }else{
+                        ExternalInterface.call("document.openSVwin",wBGColor,noSVImageAvailableMsg,gAPIKey,windowWidth,windowHeight);
+                        if(graphicsLayer && graphicsLayer.graphicProvider && (graphicsLayer.graphicProvider as ArrayCollection).length > 0){
+                            var svgGraphic:Graphic = graphicsLayer.graphicProvider[0];
+                            checkForSVPano(svgGraphic.attributes.lat, svgGraphic.attributes.lng);
+                        }
+                    }
+                }
+            }
+            
+            private function statusSet(event:AppEvent):void
+            {
+                if (event.data){
+                    wStatus = event.data as String;
+                }
+            }
+            
+            private function widgetMinimizedHandler(event:Event):void
+            {
+                if(hideStreetviewWindowWhenMin){
+                    if(graphicsLayer){
+                        graphicsLayer.visible = false;
+                    }
+                    ExternalInterface.call("winobj.close()");
+                }
+            }
+            
+            /*
+            * Display the current version and build date of the Streetview Widget when holding the ALT key
+            * and clicking on the widget title
+            */
+            private function DisplayVersion(evt:MouseEvent):void
+            {
+                if(evt.altKey){
+                    Alert.show("Streetview Widget Version: " + VERSION + "\nBuild Date: " + BUILDDATE, 
+                        wTemplate.widgetTitle, 4, null, null, iconClass);
+                }
+            }
+            
+            /*
+            * Show an alert box with the geometry service fault text
+            */
+            private function geometryService_faultHandler(event:FaultEvent):void
+            {
+                Alert.show(event.fault.toString(), wTemplate.widgetTitle, 4, wTemplate);
+            }
+            
+            protected function gsvButton_mouseOverHandler(event:MouseEvent):void
+            {
+                gsvButton.setStyle("icon", gsvBtnOvr);
+            }
+            
+            protected function gsvButton_mouseOutHandler(event:MouseEvent):void
+            {
+                if(event.buttonDown){
+                    gsvButton.setStyle("icon", gsvBtnDown);
+                }else{
+                    if(graphicsLayer && graphicsLayer.graphicProvider && (graphicsLayer.graphicProvider as ArrayCollection).length == 0){
+                        gsvButton.setStyle("icon", gsvBtnNorm);
+                    }else{
+                        gsvButton.setStyle("icon", gsvBtnDown);
+                    }
+                }
+            }
+            
+            protected function gsvButton_mouseDownHandler(event:MouseEvent):void
+            {
+                FlexGlobals.topLevelApplication.addEventListener(MouseEvent.MOUSE_MOVE, gsvMoveHandler, true);
+                FlexGlobals.topLevelApplication.addEventListener(MouseEvent.MOUSE_UP, gsvMap_mouseUpHandler);
+                DragProxyImg.x = event.stageX;
+                DragProxyImg.y = event.stageY;
+                FlexGlobals.topLevelApplication.addElementAt(DragProxyImg, FlexGlobals.topLevelApplication.numElements);
+            }
+            
+            private function gsvMoveHandler(event:MouseEvent):void
+            {
+                DragProxyImg.x = event.stageX - (DragProxyImg.width /2);
+                DragProxyImg.y = event.stageY - (DragProxyImg.height /2);
+                if(lastDragX < event.stageX){
+                    if(DragProxyImg.source !== "widgets/StreetView/assets/images/flying_gsv_man_e.png"){
+                        DragProxyImg.source = "widgets/StreetView/assets/images/flying_gsv_man_e.png";
+                    }
+                }else if(lastDragX > event.stageX){
+                    if(DragProxyImg.source !== "widgets/StreetView/assets/images/flying_gsv_man_w.png"){
+                        DragProxyImg.source = "widgets/StreetView/assets/images/flying_gsv_man_w.png";
+                    }
+                }
+                lastDragX = event.stageX;
+            }
+            
+            private function gsvMap_mouseUpHandler(event:MouseEvent):void
+            {
+                gsvGraLen = 1;
+                FlexGlobals.topLevelApplication.removeElement(DragProxyImg);
+                clear();
+                var atts:Object = {
+                    rotation: gsvHeading,
+                    lat: 0,
+                    lng: 0
+                };
+                var dPoint:MapPoint = map.toMapFromStage(event.stageX, event.stageY);
+                map.centerAt(dPoint);
+                var svgGraphic:Graphic = new Graphic(dPoint);
+                svgGraphic.attributes = atts;
+                svgGraphic.symbol = new StreetViewManSymbol();
+                svgGraphic.useHandCursor = true;
+                svgGraphic.mouseChildren = true;
+                svgGraphic.addEventListener(MouseEvent.MOUSE_DOWN, svgMouseDown);
+                graphicsLayer.add(svgGraphic);
+                FlexGlobals.topLevelApplication.removeEventListener(MouseEvent.MOUSE_UP, gsvMap_mouseUpHandler);
+                FlexGlobals.topLevelApplication.removeEventListener(MouseEvent.MOUSE_MOVE, gsvMoveHandler);
+                
+                if (map.spatialReference.wkid == EPSG_GEOGRAPHIC || map.spatialReference.isWebMercator()){
+                    var mPoint:MapPoint;
+                    if(map.spatialReference.wkid == EPSG_GEOGRAPHIC){
+                        mPoint = dPoint;
+                    }else{
+                        mPoint = WebMercatorUtil.webMercatorToGeographic(dPoint) as MapPoint;
+                    }
+                    var lng:String = mPoint.x.toFixed(12);
+                    var lat:String = mPoint.y.toFixed(12);
+                    svgGraphic.attributes.lat = lat;
+                    svgGraphic.attributes.lng = lng;
+                    ExternalInterface.call("document.openSVwin",wBGColor,noSVImageAvailableMsg,gAPIKey,windowWidth,windowHeight);
+                    checkForSVPano(lat, lng);
+                }else{
+                    var outSR:SpatialReference = new SpatialReference(4326);
+                    const projectParameters:ProjectParameters = new ProjectParameters;
+                    projectParameters.geometries = [svgGraphic.geometry];
+                    projectParameters.outSpatialReference = outSR;
+                    geometryService.addEventListener(GeometryServiceEvent.PROJECT_COMPLETE, project2Geographic);
+                    geometryService.project(projectParameters);
+                }
+            }
+            
+        ]]>
+    </fx:Script>
+    <fx:Declarations>
+        <esri:GeometryService id="geometryService"
+                              fault="geometryService_faultHandler(event)"
+                              url="http://tasks.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer"/>
+        <esri:PictureMarkerSymbol id="pmGSV" source="widgets/StreetView/assets/images/i_gsv.png" width="20" height="20" />
+        <esri:PictureMarkerSymbol id="pmGSVM" source="widgets/StreetView/assets/images/graySVM.png" />
+        <util:JavaScript>
+            <![CDATA[
+            document.flexApp = null;
+            document.winobj = null;
+            document.openSVwin = function(wBGColor,nSVImageAvailableMsg,gAPIKey,winWidth,winHeight) {
+            try {
+            if (typeof(winobj) == 'undefined' || winobj.closed) {
+            var url  = "widgets/StreetView/StreetView.html?wbgColor=" + wBGColor + "&nSVImageAvailableMsg=" + nSVImageAvailableMsg + "&gAPIKey=" + gAPIKey, windowName = "StreetView", features = "modal=yes,alwaysRaised=yes,toolbar=no,location=no,resizable=yes,directories=no,status=no,scrollbars=no,copyhistory=no,width=" + winWidth + ",height=" + winHeight;
+            if (typeof(document.parentWindow) !== 'undefined') {
+            winobj = document.parentWindow.open(url, windowName, features);
+            } else {
+            winobj = window.open(url, "_blank", features);
+            }
+            } else {
+            winobj.focus();
+            }            
+            } catch (e) {
+            alert(e.message);
+            }
+            };
+            
+            document.checkIfOpera = function() {
+            var isOpera = !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
+            return isOpera;
+            };
+            
+            document.checkIfChrome = function() {
+            var isChrome = !!window.chrome;
+            return isChrome;
+            };
+            
+            document.setFlexApp = function(objectID) {
+            var rc = false;
+            try {
+            if (navigator.appName.indexOf("Microsoft") === -1) {
+            flexApp = window[objectID];
+            if (flexApp === null) {
+            flexApp = document.getElementById(objectID);
+            }
+            } else {
+            flexApp = document[objectID];
+            }
+            rc = true;
+            } catch (e) {
+            alert(e.message);
+            }
+            return rc;
+            };
+            
+            window.onunload = function() {
+            winobj.close();
+            };
+            
+            document.detectBlocker = function() {
+            var pop = window.open("about:blank", "new_window_123", "height=150, width=150");
+            var isblock = false;
+            try {
+            if(!pop || pop.closed || pop.closed == "undefined" || pop == "undefined" || parseInt(pop.innerWidth) == 0){
+            isblock = true;
+            }
+            pop && pop.close();
+            } catch (e) {
+            isblock = true;
+            };
+            return isblock;
+            };
+            
+            document.detectChromeBlocker = function() {
+            console.log('chrome detected');
+            var pop = window.open("about:blank", "new_window_123", "height=150,width=150");
+            setTimeout(function() {
+            if(pop.document.documentElement.clientWidth != 150 || pop.document.documentElement.clientHeight != 150){
+            pop && pop.close();
+            console.log('poup was blocked');
+            flexApp.setChromeBlockerResponce(true);
+            }else{
+            pop && pop.close();
+            console.log('poup was NOT blocked');
+            flexApp.setChromeBlockerResponce(false);
+            }
+            }, 1000);
+            };
+            ]]>
+        </util:JavaScript>
+    </fx:Declarations>
+    <viewer:WidgetTemplate id="wTemplate"
+                           closed="widgetClosedHandler(event)"
+                           open="widgetOpenedHandler(event)"
+                           minimized="widgetMinimizedHandler(event)"
+                           skinClass="com.esri.viewer.skins.WidgetTemplateSkin"
+                           height="200"
+                           width="370">
+        <s:VGroup width="100%" height="100%" 
+                  gap="4"  paddingTop="2"
+                  horizontalAlign="center" 
+                  verticalAlign="top" >
+            <s:Label text="{wInstructions}" 
+                     styleName="WidgetLabel" width="90%" textAlign="center"/>
+            <s:HGroup width="100%" height="100%" 
+                      gap="15" 
+                      horizontalAlign="center"
+                      verticalAlign="middle">
+                <s:Button id="gsvButton" label="" icon="{gsvBtnNorm}" skinClass="widgets.StreetView.skins.MyButtonSkin"
+                          mouseOver="gsvButton_mouseOverHandler(event)" mouseOut="gsvButton_mouseOutHandler(event)"
+                          mouseDown="gsvButton_mouseDownHandler(event)" />
+            </s:HGroup>
+            <s:HGroup width="100%"
+                      horizontalAlign="right"
+                      paddingRight="10"
+                      paddingTop="2">
+                <s:Label buttonMode="true"
+                         click="clear2()"
+                         fontWeight="bold"
+                         text="{clearLabel}"
+                         includeInLayout="{gsvGraLen &gt; 0}"
+                         visible="{gsvGraLen &gt; 0}"
+                         textDecoration="underline"/>
+            </s:HGroup>
+        </s:VGroup>
+    </viewer:WidgetTemplate>
+</viewer:BaseWidget>

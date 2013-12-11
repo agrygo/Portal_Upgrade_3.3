@@ -1,0 +1,65 @@
+<?xml version="1.0" ?>
+<!--
+////////////////////////////////////////////////////////////////////////////////
+//
+// Routing Widget developed by Robert Scheitlin (original developed by Imtiaz Ahmed
+// using the esri routing sample).
+//
+//  dirlengthunits: esriMiles or esriKilometers
+//  
+////////////////////////////////////////////////////////////////////////////////
+-->
+<configuration>
+	<!-- <routetasksolver>http://tasks.arcgisonline.com/ArcGIS/rest/services/NetworkAnalysis/ESRI_Route_NA/NAServer/Route</routetasksolver> -->
+	<routetasksolver>http://route.arcgis.com/arcgis/rest/services/World/Route/NAServer/Route_World</routetasksolver>
+	<!-- <reversegeocode>http://tasks.arcgisonline.com/ArcGIS/rest/services/Locators/TA_Address_NA_10/GeocodeServer</reversegeocode> -->
+	<!-- <reversegeocode>http://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer</reversegeocode>-->
+	<reversegeocode>http://arcgiswaprod/arcgis/rest/services/County/MAR_AddressLocator/GPServer</reversegeocode>
+	<!-- <singlelinegeocode>http://tasks.arcgisonline.com/ArcGIS/rest/services/Locators/TA_Address_NA_10/GeocodeServer</singlelinegeocode> -->
+	<!-- <singlelinegeocode>http://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer</singlelinegeocode>-->
+	<singlelinegeocode>http://arcgiswaprod/arcgis/rest/services/County/MAR_AddressLocator/GPServer</singlelinegeocode>
+	<directionslanguage>en_US</directionslanguage>
+	<dirlengthunits>esriMiles</dirlengthunits>
+	<!-- alttxtbgclr = Route directions alternating text background color -->
+	<alttxtbgclr>0xd7d7d7</alttxtbgclr><!-- pale gray -->
+	<routesegment color="0xfbec5b" animate="true" alpha="0.8" width="8" />
+	<showdirectionarrows>true</showdirectionarrows>
+	<manualaddtooltip>Click on Map to Add</manualaddtooltip>
+	<prepmap>Preparing Map</prepmap>
+	<genpdf>Generating PDF...</genpdf>
+	<createroutetooltip>Create Route</createroutetooltip>
+	<dirbtntooltip>Directions</dirbtntooltip>
+	<printtooltip>Print</printtooltip>
+	<addbarrierlabel>Add Barrier</addbarrierlabel>
+	<addstoplabel>Add Stop</addstoplabel>
+	<resetbtnlabel>Reset</resetbtnlabel>
+	<resetbtntooltip>Reset/Clear Stops</resetbtntooltip>
+	<locateinstructions>Enter an address, then press enter.</locateinstructions>
+	<printmapbtnlabel>Print Map</printmapbtnlabel>
+	<exportpdfbtnlabel>Save Map to PDF</exportpdfbtnlabel>
+	<includemaplabel>Include Map</includemaplabel>
+	<pdfgenerationwarning>If you choose to save a PDF then please be patient.&lt;br /&gt;A save dialog will open once the PDF has been generated.</pdfgenerationwarning>
+	<computingmsg>Computing Route...</computingmsg>
+	<promotestoptooltip>Promote selected stop</promotestoptooltip>
+	<demotestoptooltip>Demote selected stop</demotestoptooltip>
+	<calculateshortestlbl>Calculate Shortest:</calculateshortestlbl>
+	<timeradiobtnlbl>Time</timeradiobtnlbl>
+	<distanceradiobtnlbl>Distance</distanceradiobtnlbl>
+	<findbestseqlbl>Find Best Sequence</findbestseqlbl>
+	<return2firststop>Return to First Stop</return2firststop>
+	<zoomfullroutetooltip>Click to zoom to full route</zoomfullroutetooltip>
+	<getdirectionslbl>Click 'Get Directions' above to display driving directions here...</getdirectionslbl>
+	<summarydistancelbl>Total Distance:</summarydistancelbl>
+	<summarytimelbl>Total Time:</summarytimelbl>
+	<routeerrormsg>Clear and start again or add another valid stop.</routeerrormsg>
+	<directionssegmenttooltip>Click individual segment to zoom to that segment.</directionssegmenttooltip>
+	<stopaddresslbl>Address</stopaddresslbl>
+	<barrierlbl>Barrier</barrierlbl>
+	<alertmaxstops>Routes are limited to 10 stops</alertmaxstops>
+	<alertmaxstopstitle>Max Stops Reached</alertmaxstopstitle>
+	<alertmaxbarriers>Routes are limited to 10 barriers</alertmaxbarriers>
+	<alertmaxbarrierstitle>Max Barriers Reached</alertmaxbarrierstitle>
+	<manualaddstatus>Add Route Locations</manualaddstatus>
+	<reversegeocodeerror>This location does not have a known address</reversegeocodeerror>
+	<nolocationlabel>This loaction was not found.</nolocationlabel>
+</configuration>

@@ -1,0 +1,1961 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+////////////////////////////////////////////////////////////////////////////////
+//
+// Ported and Enhanced by Robert Scheitlin
+//
+// Originaly developed by: Imtiaz Ahmed using esri samples
+//
+////////////////////////////////////////////////////////////////////////////////
+-->
+<viewer:BaseWidget 
+				   xmlns:fx="http://ns.adobe.com/mxml/2009"
+				   xmlns:s="library://ns.adobe.com/flex/spark"
+				   xmlns:mx="library://ns.adobe.com/flex/mx"
+				   xmlns:viewer="com.esri.viewer.*"
+				   xmlns:supportClasses="com.esri.ags.tasks.supportClasses.*"
+				   xmlns:Route="widgets.Route.*"
+				   xmlns:tasks="com.esri.ags.tasks.*"
+				   xmlns:symbols="com.esri.ags.symbols.*"
+				   xmlns:ve="com.esri.ags.virtualearth.*"
+				   xmlns:local="*"
+				   x="600" y="300"
+				   widgetConfigLoaded="init()"
+				   currentState="routeInput">
+
+	<viewer:states>
+		<s:State name="routeDirections"/>
+		<s:State name="routeInput"/>
+		<s:State name="routeOutput"/>
+	</viewer:states>
+
+	<viewer:transitions>
+		<s:Transition autoReverse="true" toState="*">
+			<s:Fade targets="{[routeInput, routeDirections]}"/>
+		</s:Transition>
+	</viewer:transitions>
+
+	<fx:Declarations>
+		<tasks:RouteTask id="routeTask"
+						 concurrency="last"
+						 fault="faultHandler(event)"
+						 requestTimeout="30"
+						 showBusyCursor="true"
+						 solveComplete="solveCompleteHandler(event)"/>
+		<supportClasses:RouteParameters id="routeParams"  
+										stops="{stops}"
+										ignoreInvalidLocations="true"
+										outSpatialReference="{map.spatialReference}"
+										returnStops="false"
+										returnDirections="true"
+										returnPolygonBarriers="false"
+										returnPolylineBarriers="false"
+										returnRoutes="true"
+										returnPointBarriers="false"
+										pointBarriers="{barriers}"
+										useTimeWindows="false"
+										outputGeometryPrecision="0"
+										restrictionAttributes="Avoid Private Roads,Avoid Ferries,Driving an Automobile"
+										restrictUTurns="esriNFSBAllowBacktrack"
+										useHierarchy="true"
+										directionsLengthUnits="{directionlengthunits}"
+										impedanceAttribute = "TravelTime"
+										directionsLanguage="{dirLanguage}"
+										preserveLastStop = "{(Best_Sequence.selected)?false:true}"
+										findBestSequence = "{Best_Sequence.selected}"/>
+		<supportClasses:RouteParameters id="routeParams_old"  
+										stops="{stops}"
+										returnDirections="true"
+										returnStops="true"
+										useTimeWindows="false"
+										outputGeometryPrecision="0"
+										directionsTimeAttribute="Time"
+										restrictionAttributes="OneWay,Avoid Private Roads,Avoid Ferries"
+										restrictUTurns="esriNFSBAllowBacktrack"
+										ignoreInvalidLocations="true"
+										useHierarchy="true"
+										directionsLengthUnits="{directionlengthunits}"
+										impedanceAttribute = "Time"
+										outputLines="esriNAOutputLineTrueShape"
+										preserveFirstStop = "true"
+										directionsLanguage="{dirLanguage}"
+										preserveLastStop = "{(Best_Sequence.selected)?false:true}"
+										findBestSequence = "{Best_Sequence.selected}"
+										outSpatialReference="{map.spatialReference}"
+										pointBarriers="{barriers}"/>
+		<symbols:SimpleMarkerSymbol id="barrierSymbol2" size="15" style="x" color="0xFF0000">
+			<symbols:SimpleLineSymbol width="4"/>
+		</symbols:SimpleMarkerSymbol>
+		<symbols:PictureMarkerSymbol id="barrierSymbol" source="widgets/Route/assets/images/i_road-closed.png"/>
+		<symbols:SimpleLineSymbol id="routeSymbol" color="0x000099" alpha="0.6" width="5"/>
+		<symbols:SimpleLineSymbol id="segmentSymbol" color="{segHighLightClr}" alpha="{segHighLightAlpha}" width="{segHighLightWidth}"/>
+
+		<tasks:Locator id="locateTask"
+					   url="{reverseGeocodeURL}" 
+					   concurrency="last"
+					   outSpatialReference="{map.spatialReference}"
+					   fault="onFault(event)"/>
+		<tasks:Locator id="locateTask2"
+					   url="{singleLineGeocodeURL}"
+					   concurrency="last"
+					   outSpatialReference="{map.spatialReference}"
+					   fault="onFault(event)"/>
+		<local:ExtendPolylineEffect id="fxExtendLines" duration="4000" />
+		<s:BevelFilter id="bFilter" />
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+            import com.esri.ags.FeatureSet;
+            import com.esri.ags.Graphic;
+            import com.esri.ags.events.DrawEvent;
+            import com.esri.ags.events.LocatorEvent;
+            import com.esri.ags.events.PanEvent;
+            import com.esri.ags.events.RouteEvent;
+            import com.esri.ags.events.ZoomEvent;
+            import com.esri.ags.geometry.Geometry;
+            import com.esri.ags.geometry.MapPoint;
+            import com.esri.ags.layers.GraphicsLayer;
+            import com.esri.ags.symbols.CompositeSymbol;
+            import com.esri.ags.symbols.SimpleMarkerSymbol;
+            import com.esri.ags.symbols.Symbol;
+            import com.esri.ags.symbols.TextSymbol;
+            import com.esri.ags.tasks.supportClasses.AddressCandidate;
+            import com.esri.ags.tasks.supportClasses.AddressToLocationsParameters;
+            import com.esri.ags.tasks.supportClasses.DirectionsFeatureSet;
+            import com.esri.ags.tasks.supportClasses.RouteResult;
+            import com.esri.ags.tools.DrawTool;
+            import com.esri.ags.utils.WebMercatorUtil;
+            import com.esri.viewer.AppEvent;
+            
+            import mx.collections.ArrayCollection;
+            import mx.collections.ItemResponder;
+            import mx.controls.Alert;
+            import mx.core.ClassFactory;
+            import mx.events.FlexEvent;
+            import mx.graphics.ImageSnapshot;
+            import mx.rpc.events.FaultEvent;
+            import mx.utils.StringUtil;
+            
+            import spark.components.Label;
+            
+            import flashx.textLayout.conversion.TextConverter;
+            
+            import org.alivepdf.colors.RGBColor;
+            import org.alivepdf.display.Display;
+            import org.alivepdf.drawing.Blend;
+            import org.alivepdf.events.PageEvent;
+            import org.alivepdf.fonts.CoreFont;
+            import org.alivepdf.fonts.FontFamily;
+            import org.alivepdf.fonts.IFont;
+            import org.alivepdf.images.ColorSpace;
+            import org.alivepdf.images.ImageFormat;
+            import org.alivepdf.layout.Layout;
+            import org.alivepdf.layout.Orientation;
+            import org.alivepdf.layout.Size;
+            import org.alivepdf.layout.Unit;
+            import org.alivepdf.saving.Download;
+            import org.alivepdf.saving.Method;
+
+			private var sheet:Sprite;
+
+			private var myPDF:RoutePDF;
+
+			[Bindable] private var dirLanguage:String;
+
+			[Bindable] private var segHighLightClr:uint;
+
+			[Bindable] private var segHighLightAlpha:Number;
+
+			[Bindable] private var segHighLightWidth:int;
+
+			[Bindable] private var msgVisible:Boolean = false;
+
+			[Bindable] private var msgVisible2:Boolean = false;
+
+			private var routeAltTxtBgClr:uint;
+
+			private var graphicsLayer:GraphicsLayer;
+
+			private var graphicsLayer_R:GraphicsLayer;
+
+			private var sharedwidgets:String;
+
+			[Bindable] private var locateResultAC:ArrayCollection;	
+
+			private const ICON_URL:String = "assets/images/";
+
+			private const WIDGET_URL:String = "widgets/Route/assets/images/"
+
+			private const START_POINT:String = "startPoint";
+
+			private const END_POINT:String = "endPoint";
+
+			private const NL:String = "\n";
+
+			private var resultSymbol:Symbol;
+
+			private var stopCount:int = 2;
+
+			private var barrierCount:int = 0;
+
+			private var lastRS:routeStop = null;
+
+			private var lastRB:routeBarrier = null;
+
+			private var showDirArrows:Boolean = false;
+
+			[Bindable] private var stops:FeatureSet = new FeatureSet([]);
+
+			[Bindable] private var barriers:FeatureSet = new FeatureSet([]);
+
+			[Bindable] private var lastRoute:Graphic;
+
+			[Bindable] private var directionsFS:DirectionsFeatureSet;
+
+			private var segmentGraphic:Graphic;
+
+			[Bindable] private var reverseGeocodeURL:String;
+
+			[Bindable] private var singleLineGeocodeURL:String;
+
+			private var aniRouteSeg:Boolean;
+
+			//labels			
+			[Bindable] private var addStopLabel:String;
+
+			[Bindable] private var addBarrierLabel:String;
+
+			[Bindable] private var locateInstructions:String;
+
+			[Bindable] private var noResultLabel:String;
+
+			[Bindable] private var locationLabel:String;
+
+			[Bindable] private var addlocationLabel:String;
+
+			[Bindable] private var submitLabel:String;
+
+			[Bindable] private var clearLabel:String;
+
+			[Bindable] private var addToolTip:String;
+
+			[Bindable] private var titleLabel:String;
+
+			[Bindable] private var subtitleLabel:String;
+
+			[Bindable] private var title:String;
+
+			[Bindable] private var subtitle:String;
+
+			[Bindable] private var footer:String;
+
+			[Bindable] private var directionlengthunits:String;
+
+			[Bindable] private var distunitslabel:String;
+
+			[Bindable] private var prepMapLabel:String;
+
+			[Bindable] private var genPDF:String;
+
+			[Bindable] private var createRouteTooltip:String;
+
+			[Bindable] private var dirBtnTooltip:String;
+
+			[Bindable] private var printTooltip:String;
+
+			[Bindable] private var resetBtnLabel:String;
+
+			[Bindable] private var resetBtnTooltip:String;
+
+			[Bindable] private var savePdfBtnLbl:String;
+
+			[Bindable] private var printMapBtnLbl:String;
+
+			[Bindable] private var includeMapLbl:String;
+
+			[Bindable] private var pdfGenerationWarningLbl:String;
+
+			[Bindable] private var computingMsg:String;
+
+			[Bindable] private var promoteStopTooltip:String;
+
+			[Bindable] private var demoteStopTooltip:String;
+
+			[Bindable] private var calculateShortestLbl:String;
+
+			[Bindable] private var timeRadioBtnLbl:String;
+
+			[Bindable] private var distanceRadioBtnLbl:String;
+
+			[Bindable] private var findBestSeqLbl:String;
+
+			[Bindable] private var return2FirstStop:String;
+
+			[Bindable] private var zoomFullRouteTooltip:String;
+
+			[Bindable] private var getDirectionsLbl:String;
+
+			[Bindable] private var summaryDistanceLbl:String;
+
+			[Bindable] private var summaryTimeLbl:String;
+
+			[Bindable] private var routeErrorMsg:String;
+
+			[Bindable] private var directionsSegmentTooltip:String;
+
+			[Bindable] private var stopAddressLbl:String;
+
+			[Bindable] private var barrierLbl:String;
+
+			[Bindable] private var alertMaxStops:String;
+
+			[Bindable] private var alertMaxStopsTitle:String;
+
+			[Bindable] private var alertMaxBarriers:String;
+
+			[Bindable] private var alertMaxBarriersTitle:String;
+
+			[Bindable] private var manualAddStatus:String;
+
+			[Bindable] private var reversegeocodeerror:String;
+
+			[Embed(source="widgets/Route/assets/images/rdUnknown.png")]
+			private var unkCls:Class;
+
+			[Embed(source="widgets/Route/assets/images/rdStop.png")]
+			private var stopCls:Class;
+
+			[Embed(source="widgets/Route/assets/images/rdStraight.png")]
+			private var straightCls:Class;			
+
+			[Embed(source="widgets/Route/assets/images/rdBearLeft.png")]
+			private var bearrightCls:Class;
+
+			[Embed(source="widgets/Route/assets/images/rdBearLeft.png")]
+			private var bearleftCls:Class;
+
+			[Embed(source="widgets/Route/assets/images/rdRight.png")]
+			private var rightCls:Class;
+
+			[Embed(source="widgets/Route/assets/images/rdLeft.png")]
+			private var leftCls:Class;	
+
+			[Embed(source="widgets/Route/assets/images/rdSharpRight.png")]
+			private var sharprightCls:Class;
+
+			[Embed(source="widgets/Route/assets/images/rdSharpLeft.png")]
+			private var sharpleftCls:Class;
+
+			[Embed(source="widgets/Route/assets/images/rdUturn.png")]
+			private var uturnCls:Class;
+
+			[Embed(source="widgets/Route/assets/images/rdFerry.png")]
+			private var ferryCls:Class;
+
+			[Embed(source="widgets/Route/assets/images/rdRoundAbout.png")]
+			private var rndaboutCls:Class;
+
+			[Embed(source="widgets/Route/assets/images/rdMergeHwy.png")]
+			private var mergehwyCls:Class;
+
+			[Embed(source="widgets/Route/assets/images/rdExitHwy.png")]
+			private var exithwyCls:Class;
+
+			[Embed(source="widgets/Route/assets/images/rdStayStraight.png")]
+			private var centerforkCls:Class;
+
+			[Embed(source="widgets/Route/assets/images/rdForkKeepLeft.png")]
+			private var leftforkCls:Class;
+
+			[Embed(source="widgets/Route/assets/images/rdForkKeepRight.png")]
+			private var rightforkCls:Class;
+
+			[Embed(source="widgets/Route/assets/images/rdFerryEnd.png")]
+			private var ferryendCls:Class;
+
+			private var oldRouteParams:Boolean;
+            
+            //Build Constants
+            protected const VERSION:String = "3.3";
+            protected const BUILDDATE:String = "5/6/2013";
+            
+            //Resources
+            [Embed(source="widgets/Route/assets/images/i_about.png")]
+            private var iconClass:Class;
+
+			private function init():void
+			{
+				savePDF.addEventListener(MouseEvent.MOUSE_DOWN, pdfMd);
+				savePDF.addEventListener(MouseEvent.MOUSE_UP, printPDF);
+
+				graphicsLayer = new GraphicsLayer();
+				graphicsLayer_R = new GraphicsLayer();
+
+				graphicsLayer_R.graphicProvider=lastRoute; 
+				graphicsLayer_R.symbol=routeSymbol;
+
+				Shortest_Time.selected = true;
+				stops = new FeatureSet([]);
+				barriers = new FeatureSet([]);
+				lastRoute = new Graphic;
+
+				map.addLayer(graphicsLayer_R);
+				map.addLayer(graphicsLayer);
+
+				if (configXML){
+					reverseGeocodeURL = configXML.reversegeocode || "http://tasks.arcgisonline.com/ArcGIS/rest/services/Locators/TA_Address_NA/GeocodeServer";
+					singleLineGeocodeURL = configXML.singlelinegeocode || "http://tasks.arcgisonline.com/ArcGIS/rest/services/Locators/TA_Address_NA_10/GeocodeServer";
+					directionlengthunits = configXML.dirlengthunits || "esriMiles";
+					routeTask.url = configXML.routetasksolver;
+					addStopLabel = configXML.addstoplabel || "Add Stop";
+					addBarrierLabel = configXML.addbarrierlabel || "Add Barrier";
+					addToolTip = configXML.manualaddtooltip || "Click on Map to Add";
+					locateInstructions = configXML.locateinstructions || "Enter an address, then press enter.";
+					prepMapLabel = configXML.prepmap || "Preparing Map";
+					genPDF = configXML.genpdf || "Generating PDF...";
+					createRouteTooltip = configXML.createroutetooltip || "Create Route";
+					dirBtnTooltip = configXML.dirbtntooltip || "Directions";
+					printTooltip = configXML.printtooltip || "Print";
+					resetBtnLabel = configXML.resetbtnlabel || "Reset";
+					resetBtnTooltip = configXML.resetbtntooltip || "Reset/Clear Stops";
+					savePdfBtnLbl = configXML.exportpdfbtnlabel || "Save Map to PDF";
+					printMapBtnLbl = configXML.printmapbtnlabel || "Print Map";
+					includeMapLbl = configXML.includemaplabel || "Include Map";
+					pdfGenerationWarningLbl = configXML.pdfgenerationwarning || "If you choose to save a PDF then please be patient.&lt;br /&gt;A save dialog will open once the PDF has been generated.";
+					computingMsg = configXML.computingmsg || "Computing Route...";
+					promoteStopTooltip = configXML.promotestoptooltip || "Promote selected stop";
+					demoteStopTooltip = configXML.demotestoptooltip || "Demote selected stop";
+					calculateShortestLbl = configXML.calculateshortestlbl || "Calculate Shortest:";
+					timeRadioBtnLbl = configXML.timeradiobtnlbl || "Time";
+					distanceRadioBtnLbl = configXML.distanceradiobtnlbl || "Distance";
+					findBestSeqLbl = configXML.findbestseqlbl || "Find Best Sequence";
+					return2FirstStop = configXML.return2firststop || "Return to First Stop";
+					zoomFullRouteTooltip = configXML.zoomfullroutetooltip || "Click to zoom to full route";
+					getDirectionsLbl = configXML.getdirectionslbl || "Click 'Get Directions' above to display driving directions here...";
+					summaryDistanceLbl = configXML.summarydistancelbl || "Total Distance:";
+					summaryTimeLbl = configXML.summarytimelbl || "Total Time:";
+					routeErrorMsg = configXML.routeerrormsg || "Clear and start again or add another valid stop.";
+					directionsSegmentTooltip = configXML.directionssegmenttooltip || "Click individual segment to zoom to that segment.";
+					stopAddressLbl = configXML.stopaddresslbl || "Address";
+					barrierLbl = configXML.barrierlbl || "Barrier";
+					alertMaxStops = configXML.alertmaxstops || "Routes are limited to 10 stops";
+					alertMaxStopsTitle = configXML.alertmaxstopstitle || "Max Stops Reached";
+					alertMaxBarriers = configXML.alertmaxbarriers || "Routes are limited to 10 barriers";
+					alertMaxBarriersTitle = configXML.alertmaxbarrierstitle || "Max Barriers Reached";
+					manualAddStatus = configXML.manualaddstatus || "Add Route Locations";
+					reversegeocodeerror = configXML.reversegeocodeerror || "This location does not have a known address";
+					noResultLabel = configXML.nolocationlabel || "This location was not found";
+
+					//Start setting up the address locator fields
+					dirLanguage = configXML.directionslanguage || resourceManager.localeChain[0];
+					routeAltTxtBgClr = configXML.alttxtbgclr || 0xd7d7d7;
+					aniRouteSeg = (configXML.routesegment.@animate == "true")?true:false;
+					showDirArrows = configXML.showdirectionarrows[0] && configXML.showdirectionarrows == "true";
+					segHighLightClr = configXML.routesegment.@color || 0xfbec5b;
+					segHighLightAlpha = configXML.routesegment.@alpha || 0.8;
+					segHighLightWidth = configXML.routesegment.@width || 8;
+				}
+
+				wTemplate.addTitlebarButton(WIDGET_URL + "i_route.png", createRouteTooltip, showRoute);
+				wTemplate.addTitlebarButton(ICON_URL + "i_table.png", dirBtnTooltip, showDirections);
+				wTemplate.addTitlebarButton(WIDGET_URL + "i_print3.png", printTooltip, showOutput);
+
+				if (directionlengthunits == "esriMiles"){
+					distunitslabel = "Miles";
+				}else{
+					distunitslabel = "Km.";	
+				}
+				AppEvent.addListener(AppEvent.DATA_PUBLISH, sharedDataUpdated);	
+
+				if(routeTask.url.indexOf("Route_World") > -1){
+					oldRouteParams = false;
+				}else{
+					oldRouteParams = true;
+				}
+                wTemplate.header.addEventListener(MouseEvent.CLICK, DisplayVersion);
+			}
+
+			private function sharedDataUpdated(event:AppEvent):void
+			{
+				var data:Object = event.data;
+
+				if (data.key == "Deactivate_DrawTool"){
+					setMapAction(null, null, null, null);
+				}
+			}
+
+			private function ClearBarrierLocTool(event:Event):void
+			{
+				barrierCount--;
+				lastRB = event.currentTarget as routeBarrier;
+				lastRB.AddressText = "";
+				for(var g:int = barriers.features.length - 1; g>=0; g--){
+					if(barriers.features[g].name == lastRB.name){
+						graphicsLayer.remove(barriers.features[g]);
+						barriers.features.splice(g,1);	
+					}
+				}
+				frmLocateAddress.removeElement(lastRB);
+				if (stops.features.length > 1){  
+					if(Return2Origin.selected){
+						if(stops.features[stops.features.length -1] !== stops.features[0]){
+							stops.features.push(stops.features[0]);
+						}
+                    }
+					graphicsLayer_R.clear();
+					directionsFS = null;
+					theDirections.removeAllElements();
+					theDirections.toolTip = null;
+					theRouteName.toolTip = null;
+					theSummary.toolTip = null;
+					segmentGraphic = null;  
+					showMessage(computingMsg, true);
+					routeTask.solve((oldRouteParams)?routeParams_old:routeParams);
+				}
+				if (barrierCount < 10){
+					addBarrierButton.enabled = true;
+				}
+			}
+
+			private function ClearRouteLocTool(event:Event):void
+			{
+				lastRS = event.currentTarget as routeStop;
+				lastRS.AddressText = "";
+				if(stopCount > 2){
+					stopCount--;
+				}
+				for(var g:int = stops.features.length - 1; g>=0; g--){
+					if(stops.features[g].name == lastRS.name){
+						graphicsLayer.remove(stops.features[g]);
+						stops.features.splice(g,1);	
+					}
+				}
+				if(lastRS.AddressId > 2){
+					frmLocateAddress.removeElement(lastRS);
+					if (stops.features.length > 1){
+						if(Return2Origin.selected)
+							if(stops.features[stops.features.length -1] !== stops.features[0]){
+								stops.features.push(stops.features[0]);
+							}
+						graphicsLayer_R.clear();
+						directionsFS = null;
+						theDirections.removeAllElements();
+						theDirections.toolTip = null;
+						theRouteName.toolTip = null;
+						theSummary.toolTip = null;
+						segmentGraphic = null;  
+						showMessage(computingMsg, true);
+						routeTask.solve((oldRouteParams)?routeParams_old:routeParams);
+					}
+				}
+				if (stopCount < 10){
+					addStopButton.enabled = true;
+				}
+			}
+
+			private function addStop():void
+			{
+				if (stopCount < 10){
+					stopCount++;
+					var rs:routeStop = new routeStop();
+					rs.AddressId = stopCount;
+					rs.AddressLbl = stopAddressLbl + " " + (stopCount) + ":";
+					rs.name = stopAddressLbl + stopCount;
+					rs.addEventListener(routeStop.ADD_ROUTE_LOC,AddRouteLocTool);
+					rs.addEventListener(routeStop.CLEAR_ROUTE_LOC, ClearRouteLocTool);
+					rs.addEventListener(routeStop.ADDRESS_TEXT_ITEM_ENTER, addressTextItemEnterHandler);
+					rs.clearToolTip = getDefaultString('clearLabel');
+					rs.addToolTip = addToolTip;
+					frmLocateAddress.addElement(rs);
+				}else{
+					Alert.show(alertMaxStops, alertMaxStopsTitle);
+					addStopButton.enabled = false;
+				}
+			}
+
+			private function addBarrier():void
+			{
+				if (barrierCount < 10){
+					barrierCount++;
+					var rb:routeBarrier = new routeBarrier();
+					rb.BarrierId = barrierCount;
+					rb.name = barrierLbl + barrierCount
+					rb.BarrierLbl = barrierLbl +" " + (barrierCount) + ":";
+					rb.addEventListener(routeBarrier.ADD_BARRIER_LOC, AddBarrierLocTool);
+					rb.addEventListener(routeBarrier.CLEAR_BARRIER_LOC, ClearBarrierLocTool);
+					rb.addEventListener(routeBarrier.ADDRESS_TEXT_ITEM_ENTER, barrierTextItemEnterHandler);
+					rb.clearToolTip = getDefaultString('clearLabel');
+					rb.addToolTip = addToolTip;
+					rb.searchToolTip = getDefaultString('searchSubmitLabel');
+					frmLocateAddress.addElement(rb);
+				}else{
+					Alert.show(alertMaxBarriers, alertMaxBarriersTitle);
+					addBarrierButton.enabled = false;
+				}
+			}
+
+			private function addressTextItemEnterHandler(event:FlexEvent):void
+			{
+				lastRS = event.currentTarget as routeStop;
+				graphicsLayer_R.clear();
+				var myAddress:Object;
+				for(var g:int = stops.features.length - 1; g>=0; g--){
+					if(stops.features[g].name == lastRS.name){
+						graphicsLayer.remove(stops.features[g]);
+						stops.features.splice(g,1);	
+					}
+				}
+				var data:AddressToLocationsParameters = new AddressToLocationsParameters();
+				myAddress = { SingleLine: lastRS.AddressText };
+				data.address = myAddress;
+				locateTask2.addressToLocations(data, new ItemResponder(locateResult, locateError));
+			}
+
+			private function barrierTextItemEnterHandler(event:FlexEvent):void
+			{
+				lastRB = event.currentTarget as routeBarrier;
+				var data:AddressToLocationsParameters = new AddressToLocationsParameters();
+				var myAddress:Object = { SingleLine: lastRB.AddressText };
+				data.address = myAddress;
+				locateTask2.addressToLocations(data, new ItemResponder(locateResult2, locateError));
+			}
+
+			private function locateResult(data:Array, token:Object = null):void
+			{
+				if (data.length > 0){
+					locateResultAC = createLocateResults(data);
+
+					// share data
+					addSharedData(widgetTitle, locateResultAC);
+
+					AddRouteClick( null, locateResultAC[0] );
+				}else{
+					showMessage(noResultLabel, false);
+				}
+			}
+
+			private function locateResult2(data:Array, token:Object = null):void
+			{
+				if (data.length > 0){
+					locateResultAC = createLocateResults(data);
+
+					// share data
+					addSharedData(widgetTitle, locateResultAC);
+
+					AddBarrierClick( null, locateResultAC[0] );
+				}else{
+					showMessage(noResultLabel, false);
+				}
+			}
+
+			private function locateError(info:Object, token:Object = null):void
+			{
+				showMessage(info.toString(), false);
+			}
+
+			//create locate results
+			private function createLocateResults(data:Array):ArrayCollection
+			{
+				var result:ArrayCollection = new ArrayCollection();
+				var mapWKID:Number = map.spatialReference ? map.spatialReference.wkid : NaN;
+				var mapIsWebMercator:Boolean = map.spatialReference.isWebMercator();
+
+				for each (var addrCandidate:AddressCandidate in data)
+				{
+					var locateResult:LocateResult = new LocateResult();
+					locateResult.address = addrCandidate.address.toString();
+					locateResult.score = addrCandidate.score.toString();
+					locateResult.point = addrCandidate.location;
+					result.addItem(locateResult);
+				}
+				return result;
+			}
+
+			private function printDirections():void
+			{
+				var pageArray:Array = [];
+				var printJob:PrintJob = new PrintJob();
+				sheet = new Sprite();
+                var browserName:String = getUserAgent();
+                var startX:Number = ((browserName=="Chrome")?0:36);
+				if (printJob.start()){
+					try{
+						var mpageWidth:Number = printJob.paperWidth - 72; //this equals a .5 inch margin on left and right
+						var mpageHeight:Number = printJob.paperHeight - 72; //this equals a .5 inch margin on left and right
+						var topM:int = startX;
+						map.zoomSliderVisible = false;
+						var bitmap:BitmapData = ImageSnapshot.captureBitmapData(map);
+						var m:Matrix = new Matrix();
+						var sx:Number = mpageWidth / bitmap.width;
+						var sy:Number = mpageHeight / bitmap.height;
+						var scale:Number = Math.min(sx, sy);
+						m.scale(scale, scale);
+						m.tx = startX;
+						m.ty = startX + ((browserName=="Chrome")?35:24);
+
+						var nWid:Number = mpageWidth;
+						var nHgt:Number = (nWid/bitmap.width)* bitmap.height;
+
+						var header:TextField = new TextField();
+						header.x = startX
+						header.y = ((browserName=="Chrome")?0:25);
+						header.width = mpageWidth;
+						header.height = 35;
+						header.multiline = true;
+						header.focusRect = new ClassFactory(null);
+						var format:TextFormat = new TextFormat();
+						format.font = "Helvetica";
+						format.align = TextFormatAlign.CENTER;
+						format.color = 0x000000;
+						format.size = 12;
+						format.bold = true;
+
+						header.defaultTextFormat = format;
+						format.bold = false;
+						format.size = 10;
+						header.autoSize = TextFieldAutoSize.CENTER;
+						header.text = theRouteName.text + "\n" + formatDistance(directionsFS.totalLength) + " Total Time: " + formatTime(directionsFS.totalTime);
+						header.setTextFormat(format,theRouteName.text.length + 1, header.text.length);
+						sheet.addChild(header);
+
+						if(incMap.selected){
+							sheet.graphics.lineStyle(0,0,0);
+							sheet.graphics.beginBitmapFill(bitmap, m, false, true);
+							sheet.graphics.drawRect(startX, startX + ((browserName=="Chrome")?35:24), nWid, nHgt);
+							sheet.graphics.endFill(); 
+							topM = nHgt + startX + 15;
+						}else{
+							topM = 35;
+						}
+
+						var myBGColor:uint = 0xffffff;
+						var currPos:int = topM;
+						var txt:TextField = new TextField();
+
+						for (var e:int=0; e<theDirections.numElements; e++){
+							currPos += 28
+							if (currPos > mpageHeight){
+								currPos = 61;
+								pageArray.push(sheet);
+								sheet = new Sprite();
+								header = new TextField();
+								header.x = startX
+								header.y = 30;
+								header.width = printJob.paperWidth;
+								header.height = 30;
+								header.focusRect = new ClassFactory(null);
+								format = new TextFormat();
+								format.font = "Helvetica";
+								format.color = 0x000000;
+								format.size = 12;
+								format.bold = true;
+
+								header.defaultTextFormat = format;
+								header.autoSize = TextFieldAutoSize.CENTER;
+								header.text = theRouteName.text;
+								sheet.addChild(header);
+							}
+							if ((e%2) == 0) {
+								myBGColor = 0xffffff;
+							}
+							if ((e%2) == 1) {
+								myBGColor = routeAltTxtBgClr;
+							}
+							var textCntl:Label = theDirections.getElementAt(e) as Label;
+							txt = new TextField;
+							txt.wordWrap = true;
+							txt.background = true;
+							txt.backgroundColor = myBGColor;
+
+							txt.y = currPos;
+							if(showDirArrows){
+								txt.x = startX + 24;
+								txt.width = mpageWidth - 28;
+							}else{
+								txt.x = startX;
+								txt.width = mpageWidth;
+							}
+							txt.height = 28;
+							txt.focusRect = new ClassFactory(null);
+							txt.multiline = false;
+							txt.autoSize = TextFieldAutoSize.NONE;
+							var format2:TextFormat = new TextFormat();
+							format2.font = "Helvetica";
+
+							if(showDirArrows){
+								format2.indent = 5;
+                            }
+
+							format2.color = 0x000000;
+							format2.size = 12;
+							format2.align = TextFormatAlign.LEFT;
+							txt.defaultTextFormat = format2;
+							if(textCntl){
+								if(textCntl.id && showDirArrows == true){
+									m = new Matrix(1,0,0,1,startX,currPos +2)
+									sheet.graphics.lineStyle(0,0,0);
+									sheet.graphics.beginBitmapFill(getManeuverIMG(textCntl.id), m, true, true);
+									sheet.graphics.drawRect(startX, currPos + 2, 24, 24);
+									sheet.graphics.endFill();
+								}
+								txt.text = textCntl.text;
+								sheet.addChild(txt);
+							}
+						}
+						pageArray.push(sheet);
+					}
+					catch (error:Error){
+						AppEvent.showError(error.message,"Error Printing...");
+					}
+					for (var ps:int=0; ps<pageArray.length; ps++){
+						var pageSprite:Sprite = pageArray[ps] as Sprite;
+                        //Google Chrome Print work around
+                        if (stage){
+                            stage.addChild(pageSprite);
+                        }
+						var footer:TextField = new TextField();
+						footer.x = ((browserName=="Chrome")?0:36);
+						footer.y = printJob.paperHeight - ((browserName=="Chrome")?50:36);
+						footer.width = printJob.paperWidth - ((browserName=="Chrome")?126:72);
+						footer.height = 30;
+						footer.focusRect = new ClassFactory(null);
+						var formatf:TextFormat = new TextFormat();
+						formatf.font = "Helvetica";
+						formatf.color = 0x000000;
+						formatf.size = 8;
+						formatf.italic = true;
+
+						footer.defaultTextFormat = formatf;
+						footer.autoSize = TextFieldAutoSize.LEFT;
+						var pn:int = ps + 1;
+						footer.text = 'Page ' + pn + ' of ' + pageArray.length;
+						pageSprite.addChild(footer);
+
+						footer =  new TextField();
+						footer.x = 36;
+						footer.y = printJob.paperHeight - ((browserName=="Chrome")?50:36);
+						footer.width = printJob.paperWidth - ((browserName=="Chrome")?126:72);
+						footer.height = 30;
+						footer.focusRect = new ClassFactory(null);
+
+						footer.defaultTextFormat = formatf;
+						footer.autoSize = TextFieldAutoSize.RIGHT;
+						footer.text = "Route Widget";
+						pageSprite.addChild(footer);
+
+						printJob.addPage(pageSprite, new Rectangle(0, 0, printJob.paperWidth,printJob.paperHeight));
+					}
+					printJob.send();
+                    //Google Chrome Print work around
+                    for (var ps2:int=0; ps2<pageArray.length; ps2++){
+                        var pageSprite2:Sprite = pageArray[ps2] as Sprite;
+                        if (stage && stage.contains(pageSprite2)){
+                            stage.removeChild(pageSprite2);//once done remove from stage
+                        }
+                    }
+                    //Clean up Objects
+                    pageArray = null;
+                    printJob = null;
+				}
+			}
+            
+            private static function getUserAgent():String
+            {
+                var userAgent:String;
+                try
+                {
+                    userAgent = ExternalInterface.call("window.navigator.userAgent.toString");
+                    var browser:String = "[Unknown Browser]";
+                    
+                    if (userAgent.indexOf("Safari") != -1)
+                    {
+                        browser = "Safari";
+                    }
+                    if (userAgent.indexOf("Firefox") != -1)
+                    {
+                        browser = "Firefox";
+                    }
+                    if (userAgent.indexOf("Chrome") != -1)
+                    {
+                        browser = "Chrome";
+                    }
+                    if (userAgent.indexOf("MSIE") != -1)
+                    {
+                        browser = "Internet Explorer";
+                    }
+                    if (userAgent.indexOf("Opera") != -1)
+                    {
+                        browser = "Opera";
+                    }
+                }
+                catch (e:Error)
+                {
+                    //could not access ExternalInterface in containing page
+                    return "[No ExternalInterface]";
+                }
+                return browser;
+            }
+
+			private function getManeuverIMG(maneuverType:String):BitmapData
+			{
+				var bitmap:BitmapData;
+
+				switch(maneuverType){
+					case "esriDMTUnknown":{
+						bitmap = new unkCls().bitmapData;
+						break;
+					}
+					case "esriDMTStop":{
+						bitmap = new stopCls().bitmapData;
+						break;
+					}
+					case "esriDMTStraight":{
+						bitmap = new straightCls().bitmapData;
+						break;
+					}
+					case "esriDMTBearLeft":{
+						bitmap = new bearleftCls().bitmapData;
+						break;
+					}
+					case "esriDMTBearRight":{
+						bitmap = new bearrightCls().bitmapData;
+						break;
+					}
+					case "esriDMTTurnLeft":{
+						bitmap = new leftCls().bitmapData;
+						break;
+					}
+					case "esriDMTTurnRight":{
+						bitmap = new rightCls().bitmapData;
+						break;
+					}
+					case "esriDMTSharpLeft":{
+						bitmap = new sharpleftCls().bitmapData;
+						break;
+					}
+					case "esriDMTSharpRight":{
+						bitmap = new sharprightCls().bitmapData;
+						break;
+					}
+					case "esriDMTUTurn":{
+						bitmap = new uturnCls().bitmapData;
+						break;
+					}
+					case "esriDMTFerry":{
+						bitmap = new ferryCls().bitmapData;
+						break;
+					}
+					case "esriDMTRoundabout":{
+						bitmap = new rndaboutCls().bitmapData;
+						break;
+					}
+					case "esriDMTHighwayMerge":{
+						bitmap = new mergehwyCls().bitmapData;
+						break;
+					}
+					case "esriDMTHighwayExit":{
+						bitmap = new exithwyCls().bitmapData;
+						break;
+					}
+					case "esriDMTForkCenter":{
+						bitmap = new centerforkCls().bitmapData;
+						break;
+					}
+					case "esriDMTForkLeft":{
+						bitmap = new leftforkCls().bitmapData;
+						break;
+					}
+					case "esriDMTForkRight":{
+						bitmap = new rightforkCls().bitmapData;
+						break;
+					}
+					case "esriDMTEndOfFerry":{
+						bitmap = new ferryendCls().bitmapData;
+						break;
+					}
+					default:{
+						bitmap = new unkCls().bitmapData;
+						break;
+					}
+				}
+				return bitmap;
+			}
+
+			private function incMapChange():void
+			{
+				if(incMap.selected){
+					if(directionsFS){
+						if(map.extent !== directionsFS.extent){
+							printMap.enabled = false; 
+							savePDF.enabled = false;
+							showMessage2(prepMapLabel ,true);
+							map.addEventListener(ZoomEvent.ZOOM_END,function():void{printMap.enabled = true; savePDF.enabled = true;clearMessage2();})
+							map.addEventListener(PanEvent.PAN_END,function():void{printMap.enabled = true; savePDF.enabled = true;clearMessage2();})
+							zoomToFullRoute();
+						}
+                    }
+				}
+			}
+
+			private function pdfMd(Evt:Event):void
+			{
+				showMessage2(genPDF ,true);
+				this.validateNow();
+			}
+
+			private function printPDF(event:Event):void
+			{
+				myPDF = new RoutePDF(Orientation.PORTRAIT, Unit.MM, Size.LETTER, 0, theRouteName.text, 
+					formatDistance(directionsFS.totalLength) + " Total Time: " + formatTime(directionsFS.totalTime));
+				myPDF.setDisplayMode(Display.FULL_PAGE, Layout.SINGLE_PAGE); 
+				myPDF.addPage();
+				map.zoomSliderVisible = false;
+				var pInsideMar:Number = myPDF.getMargins().right - myPDF.getMargins().left;
+
+				var topM:int = 10;
+
+				if(incMap.selected){
+					var bmpMap:BitmapData = ImageSnapshot.captureBitmapData(map);
+					var nWid:Number = pInsideMar;
+					var nHgt:Number = (nWid/bmpMap.width)* bmpMap.height;
+					topM = nHgt + 15;                         
+					myPDF.addImage(map,null,0,14,nWid,nHgt,0,1,false,ImageFormat.JPG,100,Blend.NORMAL,null);
+				}else{
+					topM = 15;
+				}
+
+				var myCoreFont:IFont = new CoreFont(FontFamily.HELVETICA);
+				myPDF.setFont(myCoreFont, 12);
+				myPDF.setXY(myPDF.getMargins().left ,myPDF.getMargins().top + topM);
+				myPDF.textStyle(new RGBColor(0x000000)); 
+
+				var myBGColor:uint = 0xffffff;
+				var currPos:int = topM;
+				myPDF.setAutoPageBreak(true,15);
+				myPDF.addEventListener(PageEvent.ADDED, function():void{currPos = myPDF.getMargins().top+15});
+				for (var e:int=0; e<theDirections.numElements; e++){
+					currPos += 10
+					if ((e%2) == 0) {
+						myBGColor = 0xffffff;
+					}
+					if ((e%2) == 1) {
+						myBGColor = routeAltTxtBgClr;
+					}
+					myCoreFont = new CoreFont(FontFamily.HELVETICA);
+					myPDF.setFont(myCoreFont, 12);
+					myPDF.beginFill(new RGBColor(myBGColor));
+					var textCntl:Label = theDirections.getElementAt(e) as Label;
+					myPDF.setXY((showDirArrows)?myPDF.getMargins().left + 10:myPDF.getMargins().left, currPos);
+
+					if(textCntl){
+						myPDF.addMultiCell((showDirArrows)?pInsideMar - 10:pInsideMar,10,textCntl.text,0,"L",1);
+						if(textCntl.id && showDirArrows == true){
+							//Use a custom PNG Encoder to get past the issue AlivePDF has with PNG Alpha Channel.
+							var pngEnc:PNGEncoderSekvens = new PNGEncoderSekvens()
+							myPDF.addImageStream(pngEnc.encode(getManeuverIMG(textCntl.id)),ColorSpace.DEVICE_RGB,null,0,currPos - 10,8.466666667536852,8.466666667536852,0,1,Blend.NORMAL,null);
+						} 
+					}
+				}
+
+				myPDF.setCreator("Route Widget for Flex Viewer");
+				myPDF.setAuthor("Robert J. Scheitlin, widget developer");
+				myPDF.setKeywords("My Route, FLEX Viewer");
+				myPDF.setTitle("Flex Viewer Route Widget Directions");
+				myPDF.setSubject(theRouteName.text);
+
+				const fileReference:FileReference = new FileReference();
+				fileReference.addEventListener(Event.COMPLETE, removeCur);
+				fileReference.addEventListener(Event.CANCEL, removeCur);
+				fileReference.addEventListener(IOErrorEvent.IO_ERROR, removeCur);
+				fileReference.addEventListener(SecurityErrorEvent.SECURITY_ERROR, removeCur);
+				fileReference.save(myPDF.save(Method.LOCAL,"",Download.INLINE,"myRoute.pdf"),"myRoute.pdf");
+			}
+
+			private function removeCur(evt:Event):void
+			{
+				clearMessage2();
+			}
+
+			private function AddRouteLocTool(event:Event):void
+			{
+				var rs:routeStop = event.currentTarget as routeStop;
+				if(lastRS){
+					if (lastRS.name == rs.name){
+						lastRS.AddressText = "";
+						for(var g:int = stops.features.length - 1; g>=0; g--){
+							if(stops.features[g].name == lastRS.name){
+								graphicsLayer.remove(stops.features[g]);
+								stops.features.splice(g,1);	
+							}
+						}
+						if (stops.features.length > 1){
+							if(Return2Origin.selected){
+								if(stops.features[stops.features.length -1] !== stops.features[0]){
+									stops.features.push(stops.features[0]);
+								}
+                            }
+							graphicsLayer_R.clear();
+							directionsFS = null;
+							theDirections.removeAllElements();
+							theDirections.toolTip = null;
+							theRouteName.toolTip = null;
+							theSummary.toolTip = null;
+							segmentGraphic = null;  
+							showMessage(computingMsg, true);
+							routeTask.solve((oldRouteParams)?routeParams_old:routeParams);
+						}
+					}
+				}
+				lastRS = rs;
+				var status:String = manualAddStatus;
+				setMapAction(DrawTool.MAPPOINT, status, null, AddRouteClick, null, false, true);
+			}
+
+			private function AddRouteClick(event:DrawEvent, locRslt:LocateResult = null):void
+			{
+				if (event){
+					event.target.deactivate();
+                }
+				var stopSymbol:CompositeSymbol = new CompositeSymbol();
+				var circleSym:SimpleMarkerSymbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 20, 0x000099);
+				var textSym:TextSymbol = new TextSymbol(lastRS.AddressId.toString());
+				textSym.textFormat = new TextFormat("Verdana", null, null, true);
+				textSym.color = 0xFFFFFF;
+				stopSymbol.symbols = [circleSym, textSym];
+				var geom1:Geometry;
+				if (event){
+					geom1 = event.graphic.geometry;
+					locateTask.removeEventListener(LocatorEvent.LOCATION_TO_ADDRESS_COMPLETE ,onLocationToAddressComplete2);
+					locateTask.removeEventListener(LocatorEvent.LOCATION_TO_ADDRESS_COMPLETE ,onLocationToAddressComplete);
+					locateTask.addEventListener(LocatorEvent.LOCATION_TO_ADDRESS_COMPLETE, onLocationToAddressComplete);
+					locateTask.outSpatialReference = map.spatialReference;
+					locateTask.locationToAddress(geom1 as MapPoint, 100);
+				}else{
+					geom1 = locRslt.point;
+					var pt1:MapPoint = geom1 as MapPoint;
+					var stop:Graphic = new Graphic(pt1, stopSymbol, { name: locRslt.address, score: locRslt.score });
+					stop.name = lastRS.name;
+					if(Return2Origin.selected){
+						if(stops.features[stops.features.length -1] === stops.features[0]){
+							stops.features.splice(stops.features.length -1, 1);
+						}
+                    }
+					graphicsLayer.add(stop);
+					stops.features.push(stop);
+					if (stops.features.length > 1){
+						if(Return2Origin.selected){
+							if(stops.features[stops.features.length -1] !== stops.features[0])
+							{
+								stops.features.push(stops.features[0]);
+							}
+                        }
+						directionsFS = null;
+						theDirections.removeAllElements();
+						theDirections.toolTip = null;
+						theRouteName.toolTip = null;
+						theSummary.toolTip = null;
+						segmentGraphic = null;  	
+						showMessage(computingMsg, true);
+						routeTask.solve((oldRouteParams)?routeParams_old:routeParams);
+					}
+				}
+			}
+
+			private function onLocationToAddressComplete(event:LocatorEvent):void
+			{
+				var candidate:AddressCandidate = event.addressCandidate;
+				if (candidate != null && candidate.address){ 
+					lastRS.AddressText = "";
+					if(candidate.address.Match_addr && candidate.address.Match_addr != ""){
+						lastRS.AddressText = candidate.address.Match_addr;
+					}else{
+                        lastRS.AddressText = standardizeAddress(candidate);
+					}
+
+					var stopSymbol:CompositeSymbol = new CompositeSymbol();
+					var circleSym:SimpleMarkerSymbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 20, 0x000099);
+					var textSym:TextSymbol = new TextSymbol(lastRS.AddressId.toString());
+					textSym.textFormat = new TextFormat("Verdana", null, null, true);
+					textSym.color = 0xFFFFFF;
+					stopSymbol.symbols = [circleSym, textSym];
+
+					var mapWKID:Number = map.spatialReference ? map.spatialReference.wkid : NaN;
+					var mapIsWebMercator:Boolean = map.spatialReference.isWebMercator();
+					var mp:MapPoint;
+					if (mapIsWebMercator && (candidate.location.spatialReference.wkid != map.spatialReference.wkid)){
+						mp = WebMercatorUtil.geographicToWebMercator(candidate.location) as MapPoint;
+					}else{
+						mp = candidate.location;
+					}
+
+					var stop:Graphic = new Graphic(candidate.location, stopSymbol, {name: candidate.address.Address, score: candidate.address.score});
+					stop.name = lastRS.name;
+					if(Return2Origin.selected){
+						if(stops.features[stops.features.length -1] === stops.features[0]){
+							stops.features.splice(stops.features.length -1, 1);
+						}
+                    }
+					graphicsLayer.add(stop);
+					stops.features.push(stop);
+					if (stops.features.length > 1){
+						if(Return2Origin.selected){
+							if(stops.features[stops.features.length -1] !== stops.features[0]){
+								var stopSymbol2:CompositeSymbol = new CompositeSymbol();
+								var circleSym2:SimpleMarkerSymbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 20, 0x009900);
+								var textSym2:TextSymbol = new TextSymbol("0");
+								textSym2.textFormat = new TextFormat("Verdana", null, null, true);
+								textSym2.color = 0xFFFFFF;
+								stopSymbol2.symbols = [circleSym2, textSym2];
+
+								var oGra:Graphic = stops.features[0] as Graphic;
+								var beGra:Graphic = new Graphic(oGra.geometry, stopSymbol2, oGra.attributes);
+								stops.features.push(beGra);
+							}
+                        }
+						directionsFS = null;
+						theDirections.removeAllElements();
+						theDirections.toolTip = null;
+						theRouteName.toolTip = null;
+						theSummary.toolTip = null;
+						segmentGraphic = null;  	
+						showMessage(computingMsg, true);
+						routeTask.solve((oldRouteParams)?routeParams_old:routeParams);
+					}
+				}else{
+					Alert.show("This location does not have a known address");
+				}
+			}
+
+			private function onLocationToAddressComplete2(event:LocatorEvent):void
+			{
+				var candidate:AddressCandidate = event.addressCandidate;
+				if (candidate != null && candidate.address){ 
+					lastRB.AddressText = "";
+					if(candidate.address.Match_addr && candidate.address.Match_addr != ""){
+						lastRB.AddressText = candidate.address.Match_addr;
+					}else{
+                        lastRB.AddressText = standardizeAddress(candidate);
+					}
+
+					var mapWKID:Number = map.spatialReference ? map.spatialReference.wkid : NaN;
+					var mapIsWebMercator:Boolean = map.spatialReference.isWebMercator();
+					var mp:MapPoint;
+					if (mapIsWebMercator && (candidate.location.spatialReference.wkid != map.spatialReference.wkid)){
+						mp = WebMercatorUtil.geographicToWebMercator(candidate.location) as MapPoint;
+					}else{
+						mp = candidate.location;
+					}
+					var barrier:Graphic = new Graphic(mp, barrierSymbol, {address: candidate.address.Address, score: candidate.address.score});
+					barrier.name = lastRB.name;
+					graphicsLayer.add(barrier);
+					barriers.features.push(barrier);
+					if (stops.features.length > 1){
+						if(Return2Origin.selected){
+							if(stops.features[stops.features.length -1] !== stops.features[0]){
+								stops.features.push(stops.features[0]);
+							}
+                        }
+						directionsFS = null;
+						theDirections.removeAllElements();
+						theDirections.toolTip = null;
+						theRouteName.toolTip = null;
+						theSummary.toolTip = null;
+						segmentGraphic = null;  	
+						showMessage(computingMsg, true);
+						routeTask.solve((oldRouteParams)?routeParams_old:routeParams);
+					}
+				}else{
+					Alert.show("This location does not have a known address");
+				}
+			}
+
+			private function onFault(event:FaultEvent):void
+			{
+				Alert.show(event.fault.faultString +"\n\n" + event.fault.faultDetail);
+			}
+
+			private function AddBarrierLocTool(event:Event):void
+			{
+				var rb:routeBarrier = event.currentTarget as routeBarrier;
+				if(lastRB){
+					if (lastRB.name == rb.name){
+						barrierCount--;
+						lastRB = event.currentTarget as routeBarrier;
+						lastRB.AddressText = "";
+						for(var g:int = barriers.features.length - 1; g>=0; g--){
+							if(barriers.features[g].name == lastRB.name){
+								graphicsLayer.remove(barriers.features[g]);
+								barriers.features.splice(g,1);	
+							}
+						}
+					}
+				} 
+				lastRB = rb;
+				var status:String = manualAddStatus;
+				setMapAction(DrawTool.MAPPOINT, status, null, AddBarrierClick, null, false, true);
+			}	
+
+			private function AddBarrierClick(event:DrawEvent, locRslt:LocateResult = null):void
+			{
+				if (event){
+					event.target.deactivate();
+                }
+				var geomb:Geometry;
+				if (event){
+					geomb = event.graphic.geometry;
+					locateTask.removeEventListener(LocatorEvent.LOCATION_TO_ADDRESS_COMPLETE ,onLocationToAddressComplete);
+					locateTask.removeEventListener(LocatorEvent.LOCATION_TO_ADDRESS_COMPLETE ,onLocationToAddressComplete2);
+					locateTask.addEventListener(LocatorEvent.LOCATION_TO_ADDRESS_COMPLETE, onLocationToAddressComplete2);
+					locateTask.outSpatialReference = map.spatialReference;
+					locateTask.locationToAddress(geomb as MapPoint, 100);
+				}else{
+					geomb = locRslt.point;
+					var ptb:MapPoint = geomb as MapPoint;
+					var barrier:Graphic = new Graphic(ptb, barrierSymbol);
+					graphicsLayer.add(barrier);
+					barriers.features.push(barrier);
+					if (stops.features.length > 1){  
+						if(Return2Origin.selected){
+							if(stops.features[stops.features.length -1] !== stops.features[0]){
+								stops.features.push(stops.features[0]);
+							}
+                        }
+						directionsFS = null;
+						theDirections.removeAllElements();
+						theDirections.toolTip = null;
+						theRouteName.toolTip = null;
+						theSummary.toolTip = null;
+						segmentGraphic = null;  
+						showMessage(computingMsg, true);
+						routeTask.solve((oldRouteParams)?routeParams_old:routeParams);
+					}
+				}				
+			}	
+
+			private function SetShortestTime():void
+			{
+				if(oldRouteParams){
+					routeParams.impedanceAttribute = "Time";
+				}else{
+					routeParams.impedanceAttribute = "TravelTime";
+				}
+				if (stops.features.length > 1){
+					if(Return2Origin.selected){
+						if(stops.features[stops.features.length -1] !== stops.features[0]){
+							stops.features.push(stops.features[0]);
+						}
+                    }
+					directionsFS = null;
+					theDirections.removeAllElements();
+					theDirections.toolTip = null;
+					theRouteName.toolTip = null;
+					theSummary.toolTip = null;
+					segmentGraphic = null;  
+					showMessage(computingMsg, true);
+					routeTask.solve((oldRouteParams)?routeParams_old:routeParams);
+				}
+			}
+
+			private function SetShortestDistance():void
+			{
+				if(oldRouteParams){
+					routeParams.impedanceAttribute = "Length";
+				}else{
+					routeParams.impedanceAttribute = "Miles";
+				}
+				if (stops.features.length > 1){
+					if(Return2Origin.selected){
+						if(stops.features[stops.features.length -1] !== stops.features[0]){
+							stops.features.push(stops.features[0]);
+						}
+                    }
+					directionsFS = null;
+					theDirections.removeAllElements();
+					theDirections.toolTip = null;
+					theRouteName.toolTip = null;
+					theSummary.toolTip = null;
+					segmentGraphic = null; 
+					showMessage(computingMsg, true); 
+					routeTask.solve((oldRouteParams)?routeParams_old:routeParams);
+				}	
+			}
+
+			private function Best_Sequence_Route():void
+			{
+				if (stops.features.length > 1){
+					if(Return2Origin.selected){
+						if(stops.features[stops.features.length -1] !== stops.features[0]){
+							stops.features.push(stops.features[0]);
+						}
+                    }
+					directionsFS = null;
+					theDirections.removeAllElements();
+					theDirections.toolTip = null;
+					theRouteName.toolTip = null;
+					theSummary.toolTip = null;
+					segmentGraphic = null;  
+					showMessage(computingMsg, true);
+					routeTask.solve((oldRouteParams)?routeParams_old:routeParams);
+				}	
+			}
+
+			private function Return2Begining():void
+			{
+				if (stops.features.length > 1){
+					if(Return2Origin.selected){
+						if(stops.features[stops.features.length -1] !== stops.features[0]){
+							stops.features.push(stops.features[0]);
+						}
+					}else{
+						if(stops.features[stops.features.length -1] === stops.features[0]){
+							stops.features.splice(stops.features.length -1, 1);
+						}
+					}
+					directionsFS = null;
+					theDirections.removeAllElements();
+					theDirections.toolTip = null;
+					theRouteName.toolTip = null;
+					theSummary.toolTip = null;
+					segmentGraphic = null;  
+					showMessage(computingMsg, true);
+					routeTask.solve((oldRouteParams)?routeParams_old:routeParams);
+				}
+			}
+
+			private function showMessage2(msg:String, swfVisible:Boolean):void
+			{
+				txtMessage2.text = msg;
+				swfMessage2.visible = swfVisible;
+				msgVisible2 = true;
+			}			
+
+			private function clearMessage2():void
+			{
+				msgVisible2 = false;
+			}	
+
+			private function showMessage(msg:String, swfVisible:Boolean):void
+			{
+				txtMessage.text = msg;
+				swfMessage.visible = swfVisible;
+				msgVisible = true;
+			}			
+
+			private function clearMessage():void
+			{
+				msgVisible = false;
+			}
+
+			private function widgetClosedHandler(event:Event):void
+			{
+				graphicsLayer.visible = false;
+				graphicsLayer_R.visible = false;
+				setMapNavigation(null, null);
+			}			
+
+			private function widgetOpenedHandler(event:Event):void
+			{
+				if (graphicsLayer){
+					graphicsLayer.visible = true;
+                }
+				if (graphicsLayer_R){
+					graphicsLayer_R.visible = true;
+                }
+			}	
+
+			private function solveCompleteHandler(event:RouteEvent):void
+			{
+				var routeResult:RouteResult = event.routeSolveResult.routeResults[0];
+				lastRoute = routeResult.route;
+				directionsFS = routeResult.directions;
+				lastRoute.toolTip = routeResult.routeName;
+				if(stops.features.length > 2){
+					for(var g:int = 0; g < routeResult.stops.length; g++){
+						var stop:Graphic = routeResult.stops[g];
+						for(var og:int=0; og<stops.features.length; og++){
+							if(stops.features[og].attributes.name == stop.attributes.Name){
+								var stopSymbol:CompositeSymbol = new CompositeSymbol();
+								var circleSym:SimpleMarkerSymbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 20, 0x000099);
+								var textSym:TextSymbol = new TextSymbol(stop.attributes.Sequence);
+								textSym.textFormat = new TextFormat("Verdana", null, null, true);
+								textSym.color = 0xFFFFFF;
+								stopSymbol.symbols = [circleSym, textSym];
+								stops.features[og].symbol = stopSymbol;
+							}
+						}
+					}
+				}
+
+				if (routeResult.route.attributes.Total_Time){
+					lastRoute.toolTip += " in " + Math.round(Number(routeResult.route.attributes.Total_Time)) + " minutes.";
+				}
+				graphicsLayer_R.graphicProvider=lastRoute; 
+
+				var i:int = 1;
+				var textCntl:Label;
+				for each (var feature:Graphic in directionsFS.features){
+					textCntl = new Label();
+					textCntl.percentWidth = 100;
+					textCntl.text = i + ". " + feature.attributes.text;
+					if (i > 1 && i < directionsFS.features.length){
+						textCntl.text += " (" + formatDistance(feature.attributes.length);
+						var time:String = formatTime(feature.attributes.time);
+						if (time != ""){
+							textCntl.text += ", " + time;
+						}
+						textCntl.text += ")";
+						textCntl.id = feature.attributes.maneuverType;
+					}
+					textCntl.addEventListener(MouseEvent.CLICK, directionsSegmentClickHandler, false, 0, true);
+					theDirections.addElement(textCntl);
+					i++;
+				}
+				theDirections.toolTip = directionsSegmentTooltip;
+				theSummary.toolTip = zoomFullRouteTooltip;
+				theRouteName.toolTip = zoomFullRouteTooltip;    
+				clearMessage(); 
+
+			}
+
+			private function faultHandler(event:FaultEvent):void
+			{
+				showMessage(event.fault.faultString+". " + routeErrorMsg, false);
+			}
+
+			private function formatTime(time:Number):String
+			{
+				var result:String;
+				var hr:Number = Math.floor(time / 60);
+				var min:Number = Math.round(time % 60);
+
+				if (hr < 1 && min < 1){
+					result = "";
+				}else if (hr < 1 && min < 2){
+					result = min + " minute";
+				}else if (hr < 1){
+					result = min + " minutes";
+				}else{
+					result = hr + " hour(s) " + min + " minute(s)";
+				}
+
+				return result;
+			}
+
+			private function directionsSegmentClickHandler(event:MouseEvent):void
+			{
+				var textCntl:Label = event.currentTarget as Label;
+				var segInt:int = parseInt(textCntl.text);
+				var segment:Graphic = directionsFS.features[segInt - 1];
+				map.zoomTo(segment.geometry.extent);
+				if(aniRouteSeg == true){
+					for(var g:int=graphicsLayer.numGraphics - 1; g>=0; g--){
+						var gra:Graphic = graphicsLayer.graphicProvider[g] as Graphic;
+						if(gra.name == "routeSegment")
+							graphicsLayer.remove(gra);
+					}
+					if((segInt != directionsFS.features.length) && (segInt != 1)){
+						var segGra:Graphic = new Graphic(segment.geometry, segmentSymbol);
+						segGra.name = "routeSegment";
+						segGra.setStyle( "addedEffect", fxExtendLines );
+						graphicsLayer.add(segGra);
+					}
+				}
+
+				if(aniRouteSeg == false){
+					if (!segmentGraphic){
+						segmentGraphic = new Graphic(segment.geometry, segmentSymbol);
+						segmentGraphic.name = "routeSegment";
+						graphicsLayer.add(segmentGraphic);
+					}else{
+						segmentGraphic.geometry = segment.geometry;
+					}
+				}
+			}
+
+			private function formatDistance(dist:Number):String
+			{
+				var result:String = "";
+				var d:Number = Math.round(dist * 100) / 100;
+
+				if (d != 0){
+					result = d + " " + distunitslabel;
+				}
+				return result;
+			}
+
+			private function zoomToFullRoute():void
+			{
+				if(aniRouteSeg == false){
+					if (segmentGraphic){
+						graphicsLayer.remove(segmentGraphic);
+						segmentGraphic = null;
+					}
+				}else{
+					for(var g:int=graphicsLayer.numGraphics - 1; g>=0; g--){
+						var gra:Graphic = graphicsLayer.graphicProvider[g] as Graphic;
+						if(gra.name == "routeSegment"){
+							graphicsLayer.remove(gra);
+                        }
+					}
+				}
+				map.zoomTo(directionsFS.extent.expand(1.1));
+			}
+
+			private function buttonKeyDownHandler(event:KeyboardEvent):void
+			{
+				if (event.keyCode == Keyboard.ENTER){
+					event.target.dispatchEvent(new MouseEvent(MouseEvent.CLICK));
+				}
+			}
+
+			private function clearAll():void
+			{
+				lastRB = null;
+				lastRS = null;
+				addStopButton.enabled = true;
+				addBarrierButton.enabled = true;
+				stops = new FeatureSet([]);
+				barriers = new FeatureSet([]);
+				lastRoute = new Graphic;
+				graphicsLayer_R.clear();
+				graphicsLayer.clear();
+				directionsFS = null;
+				theDirections.removeAllElements();
+				theDirections.toolTip = null;
+				theRouteName.toolTip = null;
+				theSummary.toolTip = null;
+				segmentGraphic = null;
+				clearMessage();
+				stopCount = 2;
+				barrierCount = 0;
+				for(var e:int=frmLocateAddress.numElements -1;e>=0; e--){
+					var rs:routeStop;
+					if(frmLocateAddress.getElementAt(e) is routeBarrier){
+						frmLocateAddress.removeElementAt(e);
+					}else{
+						rs = frmLocateAddress.getElementAt(e) as routeStop;
+						rs.AddressText = ""
+						if(rs.AddressId > 2){
+							frmLocateAddress.removeElementAt(e);
+                        }
+					}
+				}
+			}
+
+			private function showRoute():void
+			{
+				currentState = "routeInput";
+			}				
+
+			private function showDirections():void
+			{
+				currentState = "routeDirections";
+			}
+
+			private function showOutput():void
+			{
+				incMap.selected = false;
+				currentState = "routeOutput";
+			}
+
+			private function promoteStop(evt:Event):void
+			{
+				var rs:routeStop;
+				var rs2:routeStop;
+				var nstops:FeatureSet = new FeatureSet([]);
+				rs = frmLocateAddress.getFocus() as routeStop;
+				var fo:* = frmLocateAddress.getFocus();
+				if(fo){
+					if(fo.parent is SearchTextInput){
+						if(fo.parent.parent is routeBarrier){
+							return;
+                        }
+						rs = fo.parent.parent;
+						if (frmLocateAddress.getElementIndex(rs) > 0){
+							frmLocateAddress.setElementIndex(rs, frmLocateAddress.getElementIndex(rs) - 1);
+						}
+						var rsNum:int = 1;
+						for(var e:int=0; e<frmLocateAddress.numElements; e++){
+							if(frmLocateAddress.getElementAt(e) is routeStop){
+								rs2 = frmLocateAddress.getElementAt(e) as routeStop;
+								rs2.AddressId = rsNum;
+								rs2.AddressLbl = stopAddressLbl + " " + (rsNum) + ":";
+								rs2.name = stopAddressLbl + rsNum;
+								if(Return2Origin.selected){
+									if(stops.features[stops.features.length -1] === stops.features[0]){
+										stops.features.splice(stops.features.length -1, 1);
+									}
+                                }
+								for(var g:int = 0; g<stops.features.length; g++){
+									if(rs2.AddressText.indexOf(String(stops.features[g].attributes.address)) > -1){
+										var stop:Graphic = stops.features[g];
+										var stopSymbol:CompositeSymbol = new CompositeSymbol();
+										var circleSym:SimpleMarkerSymbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 20, 0x000099);
+										var textSym:TextSymbol = new TextSymbol(rsNum.toString());
+										textSym.textFormat = new TextFormat("Verdana", null, null, true);
+										textSym.color = 0xFFFFFF;
+										stopSymbol.symbols = [circleSym, textSym];
+										stop.symbol = stopSymbol;
+										stop.name = rs2.name;
+										nstops.features.push(stops.features[g]);
+									}
+								}
+								rsNum++;
+							}
+						}
+						lastRS = rs2;
+						if(nstops.features.length > 0){
+							stops = nstops;
+							if(Return2Origin.selected){
+								if(stops.features[stops.features.length -1] !== stops.features[0]){
+									stops.features.push(stops.features[0]);
+								}
+                            }
+							directionsFS = null;
+							theDirections.removeAllElements();
+							theDirections.toolTip = null;
+							theRouteName.toolTip = null;
+							theSummary.toolTip = null;
+							segmentGraphic = null;  	
+							showMessage(computingMsg, true)
+							routeTask.solve((oldRouteParams)?routeParams_old:routeParams);
+						}
+					}
+                }
+			}
+
+			private function demoteStop(evt:Event):void
+			{
+				var rs:routeStop;
+				var rs2:routeStop;
+				var nstops:FeatureSet = new FeatureSet([]);
+				rs = frmLocateAddress.getFocus() as routeStop;
+				var fo:* = frmLocateAddress.getFocus();
+				if(fo){
+					if(fo.parent is SearchTextInput){
+						if(fo.parent.parent is routeBarrier){
+							return;
+                        }
+						rs = fo.parent.parent;
+						if (frmLocateAddress.getElementIndex(rs) < frmLocateAddress.numElements-1){
+							frmLocateAddress.setElementIndex(rs, frmLocateAddress.getElementIndex(rs) + 1);
+						}
+						var rsNum:int = 1;
+						for(var e:int=0; e<frmLocateAddress.numElements; e++){
+							if(frmLocateAddress.getElementAt(e) is routeStop){
+								rs2 = frmLocateAddress.getElementAt(e) as routeStop;
+								rs2.AddressId = rsNum;
+								rs2.AddressLbl = stopAddressLbl + " " + (rsNum) + ":";
+								rs2.name = stopAddressLbl + rsNum;
+								if(Return2Origin.selected)
+									if(stops.features[stops.features.length -1] === stops.features[0]){
+										stops.features.splice(stops.features.length -1, 1);
+									}
+								for(var g:int = 0; g<stops.features.length; g++){
+									if(rs2.AddressText.indexOf(String(stops.features[g].attributes.address)) > -1){
+										var stop:Graphic = stops.features[g];
+										var stopSymbol:CompositeSymbol = new CompositeSymbol();
+										var circleSym:SimpleMarkerSymbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 20, 0x000099);
+										var textSym:TextSymbol = new TextSymbol(rsNum.toString());
+										textSym.textFormat = new TextFormat("Verdana", null, null, true);
+										textSym.color = 0xFFFFFF;
+										stopSymbol.symbols = [circleSym, textSym];
+										stop.symbol = stopSymbol;
+										stop.name = rs2.name;
+										nstops.features.push(stops.features[g]);
+									}
+								}
+								rsNum++;
+							}
+						}
+						lastRS = rs2;
+						if(nstops.features.length > 0){
+							stops = nstops;
+							if(Return2Origin.selected){
+								if(stops.features[stops.features.length -1] !== stops.features[0]){
+									stops.features.push(stops.features[0]);
+								}
+                            }
+							directionsFS = null;
+							theDirections.removeAllElements();
+							theDirections.toolTip = null;
+							theRouteName.toolTip = null;
+							theSummary.toolTip = null;
+							segmentGraphic = null;  	
+							showMessage(computingMsg, true)
+							routeTask.solve((oldRouteParams)?routeParams_old:routeParams);
+						}
+					}
+                }
+			}
+            
+            private function standardizeAddress(result:AddressCandidate):String
+            {
+                var retStr:String ="";
+                if(result.address.Address){
+                    retStr += StringUtil.trim(result.address.Address) + " ";
+                }else if(result.address.Street){
+                    retStr += StringUtil.trim(result.address.Street) + " ";
+                }
+                if(result.address.City){
+                    retStr += result.address.City + ", ";
+                }
+                if(result.address.State){
+                    retStr += result.address.State + " ";
+                }else if(result.address.Region){
+                    retStr += result.address.Region + " ";
+                }
+                if(result.address.Postal){
+                    retStr += result.address.Postal;
+                }else if(result.address.Zip4){
+                    retStr += result.address.Zip4;
+                }else if(result.address.Zip){
+                    retStr += result.address.Zip;
+                }
+                if(result.address.CountryCode && result.address.CountryCode != "USA"){
+                    var cc:CountryCodes = new CountryCodes()
+                    retStr += " " + cc.find(result.address.CountryCode);
+                }
+                return retStr;
+            }
+
+            private function DisplayVersion(evt:MouseEvent):void
+            {
+                if(evt.altKey){
+                    Alert.show("Route Widget Version: " + VERSION + "\nBuild Date: " + BUILDDATE,
+                        wTemplate.widgetTitle, 4, null, null, iconClass);
+                }
+            }
+		]]>
+	</fx:Script>
+    <viewer:WidgetTemplate id="wTemplate"
+                           width="430" height="240" 
+                           closed="widgetClosedHandler(event)"
+                           open="widgetOpenedHandler(event)" >
+        <s:Group id="routeInput"
+                 width="100%" height="100%"
+                 visible="false"
+                 visible.routeInput="true">
+            <s:layout>
+                <s:VerticalLayout gap="10" horizontalAlign="center" paddingTop="10"/>
+            </s:layout>
+            <s:Scroller width="100%" height="100%">
+                <s:VGroup width="100%" height="100%" horizontalAlign="center">
+                    <s:HGroup gap="12" width="100%" paddingRight="4">
+                        <s:Label text="{locateInstructions}" height="22" verticalAlign="middle" width="100%" text.routeInput="{locateInstructions}"/>
+                        <mx:Image id="btnPromote" source="@Embed(source='assets/images/tip.png')" 
+                                  toolTip="{promoteStopTooltip}" click="promoteStop(event)"
+                                  useHandCursor="true" buttonMode="true" filters="{[bFilter]}" width="13" height="14"/>
+                        <mx:Image id="btnDemote" source="@Embed(source='assets/images/tip.png')" 
+                                  toolTip="{demoteStopTooltip}" rotation="180" click="demoteStop(event)"
+                                  useHandCursor="true" buttonMode="true" filters="{[bFilter]}" width="13" height="14"/>
+                    </s:HGroup>
+                    <s:VGroup id="frmLocateAddress"
+                              width="100%" height="100%"
+                              paddingBottom="0">
+                        <Route:routeStop AddressId="1" AddRouteLoc="AddRouteLocTool(event)" name="Address1" AddressLbl="{stopAddressLbl} 1:"
+                                         addressTextItemEnter="addressTextItemEnterHandler(event)"
+                                         searchToolTip="{getDefaultString('searchSubmitLabel')}"
+                                         ClearRouteLoc="ClearRouteLocTool(event)" width="100%"
+                                         clearToolTip="{getDefaultString('clearLabel')}"
+                                         addToolTip="{addToolTip}"/>
+                        <Route:routeStop AddressId="2" AddRouteLoc="AddRouteLocTool(event)" name="Address2" AddressLbl="{stopAddressLbl} 2:"
+                                         addressTextItemEnter="addressTextItemEnterHandler(event)"
+                                         searchToolTip="{getDefaultString('searchSubmitLabel')}"
+                                         ClearRouteLoc="ClearRouteLocTool(event)" width="100%"
+                                         clearToolTip="{getDefaultString('clearLabel')}"
+                                         addToolTip="{addToolTip}"/>
+                    </s:VGroup>
+                    <s:HGroup name="Buttons" width="100%" horizontalAlign="center">
+                        <s:Button id="addStopButton"
+                                  click="addStop()"
+                                  keyDown="buttonKeyDownHandler(event)"
+                                  label="{addStopLabel}"/>
+                        <s:Button id="addBarrierButton"
+                                  click="addBarrier()"
+                                  keyDown="buttonKeyDownHandler(event)"
+                                  label="{addBarrierLabel}"/>
+                        <s:Button id="resetButton"
+                                  click="clearAll()"
+                                  keyDown="buttonKeyDownHandler(event)"
+                                  toolTip="{resetBtnTooltip}"
+                                  label="{resetBtnLabel}"/>
+                    </s:HGroup>
+                    <s:Label id="addressRequiredFieldsLabel"
+                             color="0xff0000"
+                             visible="false"/>
+                    <s:HGroup width="100%"
+                              gap="15"
+                              horizontalAlign="center"
+                              verticalAlign="middle">
+                        <s:Label text="{calculateShortestLbl}" />
+                        <s:RadioButton click="SetShortestTime()" id="Shortest_Time" label="{timeRadioBtnLbl}"/>
+                        <s:RadioButton click="SetShortestDistance()" id="Shortest_Distance" label="{distanceRadioBtnLbl}"/>
+                    </s:HGroup>
+                    <s:HGroup width="100%"
+                              gap="15"
+                              horizontalAlign="center"
+                              verticalAlign="middle">
+                        <s:CheckBox id="Best_Sequence" click="Best_Sequence_Route()" label="{findBestSeqLbl}"/>
+                        <s:CheckBox id="Return2Origin" click="Return2Begining()" label="{return2FirstStop}"/>
+                    </s:HGroup>
+                </s:VGroup>
+            </s:Scroller>
+            <s:HGroup id="boxMessage" width="100%" includeInLayout="{msgVisible}" visible="{msgVisible}">
+                <mx:Image id="swfMessage" source="assets/images/loader.swf" visible="false"/>
+                <s:Label id="txtMessage" width="98%" text=""/>
+            </s:HGroup>
+        </s:Group>
+        <s:Group id="routeDirections"
+                 width="100%" height="100%"
+                 visible="false"
+                 visible.routeDirections="true">
+            <s:layout>
+                <s:VerticalLayout gap="10" horizontalAlign="center" paddingTop="10"/>
+            </s:layout>
+            <s:Label id="theRouteName"	
+                     click="zoomToFullRoute()"
+                     fontWeight="bold"
+                     text="{directionsFS.routeName}"
+                     toolTip="{zoomFullRouteTooltip}"
+                     width="100%"/>
+            <s:Label id="theSummary"
+                     click="zoomToFullRoute()"
+                     text="{summaryDistanceLbl} {formatDistance(directionsFS.totalLength)}{NL} {summaryTimeLbl} {formatTime(directionsFS.totalTime)}"
+                     width="100%"/>
+            <mx:HRule width="100%"/>
+            <s:Scroller width="100%" height="100%">
+                <s:VGroup id="theDirections" width="100%" styleName="WidgetText" height="100%" minHeight="0">
+                    <s:Label text="{getDirectionsLbl}"/>
+                </s:VGroup>
+            </s:Scroller>
+        </s:Group>
+        <s:Group id="routeOutput"
+                 width="100%" height="100%"
+                 visible="false"
+                 visible.routeOutput="true">
+            <s:layout>
+                <s:VerticalLayout gap="10" horizontalAlign="center" paddingTop="10" />
+            </s:layout>
+            <s:CheckBox id="incMap" selected="false" label="{includeMapLbl}" click="incMapChange()" />
+            <s:HGroup horizontalAlign="center" width="100%">
+                <mx:Button id="printMap" label="{printMapBtnLbl}" click="printDirections()" icon="@Embed(source='widgets/Route/assets/images/i_print3.png')"/>
+                <mx:Button id="savePDF" label="{savePdfBtnLbl}" icon="@Embed(source='widgets/Route/assets/images/i_pdf2.png')"/>
+            </s:HGroup>
+            <s:HGroup id="pBoxMessage" width="100%" includeInLayout="{msgVisible2}" visible="{msgVisible2}">
+                <mx:Image id="swfMessage2" source="assets/images/loader.swf" visible="false"/>
+                <s:Label id="txtMessage2" width="98%" text=""/>
+            </s:HGroup>
+            <s:TextArea id="txtArea"
+                        contentBackgroundAlpha="0"
+                        borderVisible="false"
+                        editable="false"
+                        width="90%"
+                        height="40"
+                        heightInLines="{NaN}"
+                        textFlow="{TextConverter.importToFlow(pdfGenerationWarningLbl,TextConverter.TEXT_FIELD_HTML_FORMAT)}"
+                        widthInChars="{NaN}"/>
+        </s:Group>
+        
+    </viewer:WidgetTemplate>
+</viewer:BaseWidget>
