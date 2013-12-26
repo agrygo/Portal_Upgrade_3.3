@@ -3,6 +3,11 @@
  <title>Parcel ID Number: {PRCL_NBR}</title>
  <description>
   <![CDATA[
+<a target="_blank" href="http://apps.stlouiscountymn.gov/auditor/parcelInfo2005Iframe/frmSearchNDetailREV1.aspx?ParcelID={PRCL_NBR}">Parcel Tax Lookup</a>    
+<a target="_blank" href="http://reports.stlouiscountymn.gov/ssrs_wrapper/ShowSSRSReport.aspx?reportPath=/Assessor/PropertyDetails/Main&param1=parcelnum={PRCL_NBR}&pdf=true 
+">Property Details</a>
+<a target="_blank" href="http://arcgiswaprod.co.st-louis.mn.us/PictometryIPA/VisualIpa.aspx?PRCL_NBR={PRCL_NBR}">View Pictometry</a>
+ 
  <b>Parcel Type</b> {ParcelType}
  <b>Address</b> {PHYSADDR} {PHYSCITY} {PHYSZIP}
  <b>Owner Name</b>  {OWNAME}
@@ -11,9 +16,9 @@
  <b>Address</b>   {TXADR1} {TXADR2}
  <b>Tax District</b>   {TAX_DIST_NAME}
  <b>Tax Code</b> 	{TPCLS1}
- <b>Est Land Value</b>	{LAND_EST} 
- <b>Est Building Value</b>	{BUILDING}
- <b>Taxable Market Value</b>	{TaxableMarketValue}
+ <b>Est Land Value</b>	${LAND_EST} 
+ <b>Est Building Value</b>	${BUILDING}
+ <b>Taxable Market Value</b>	${TaxableMarketValue}
  <b>Plat Description</b>   {PLDESC}
  <b>Lot</b> {LOT_NBR}  <b>Block</b>   {BLOCK_NBR}
  <b>Deeded Acres</b>   {DEEDED_ACRES}
@@ -21,10 +26,6 @@
  <b>School District</b>   {SCH_DIST}
  <b>Lake Name</b>   {LAKE_NAME}
  
- 	    
-<a target="_blank" href="http://apps.stlouiscountymn.gov/auditor/parcelInfo2005Iframe/frmSearchNDetailREV1.aspx?ParcelID={PRCL_NBR}">Parcel Tax Lookup</a>    
-<a target="_blank" href="http://reports.stlouiscountymn.gov/ssrs_wrapper/ShowSSRSReport.aspx?reportPath=/Assessor/PropertyDetails/Main&param1=parcelnum={PRCL_NBR}&pdf=true 
-">Property Details</a>
 	    ]]>
 	   
 	   

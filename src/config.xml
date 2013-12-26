@@ -155,7 +155,7 @@
                 url="widgets/Print/PrintWidget.swf"/>
                 
        <widget label="Parcel Discrepancy Reporter" right="400" top="50"
-                icon="assets/images/i_edit.png" preload="minimized"
+                icon="assets/images/Final-Flex-Parcel-Discrepancy.png" preload="minimized"
                 config="widgets/Edit/EditWidget.xml"
                 url="widgets/Edit/EditWidget.swf"/>
 
