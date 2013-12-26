@@ -31,7 +31,7 @@
     attributionvisible="false" esrilogovisible="false" minscale="1:4514" >
     
     <lods>
-    		<lod resolution="0.07461264922529845" scale="282"/>
+    		<lod resolution="0.07461264922529845" scale="282"/>  
 			<lod resolution="0.1492252984505969" scale="564"/>
 			<lod resolution="0.29858214164761665" scale="1128.4971760000001"/>
 			<lod resolution="0.59716428355981721" scale="2256.994353"/>
@@ -54,14 +54,14 @@
         		<layer label="Esri Streets" type="tiled" visible="false" url="http://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer" icon="assets/images/basemap_streets.jpg"/>
 	            <layer label="Esri Imagery"  type="tiled" visible="true" url="http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer" icon="assets/images/basemap_imagery.jpg"/>
   			
-	  			<layer label="2013 County Imagery" type="dynamic" visible="false" url="http://arcgiswaprod/ArcGIS/rest/services/Planning/Pictometry_2013/MapServer" icon="assets/images/bsmp_CountyImagery.png"/>
+	  			<layer label="2013 County Imagery" type="dynamic" visible="false" url="http://arcgiswaprod/ArcGIS/rest/services/County/Portal_Pictometry_2013/MapServer" icon="assets/images/bsmp_CountyImagery.png"/>
 	  			<layer label="Open Street Map" type="osm" visible="false"/> 
 	  			<layer label="National Geographic" type="tiled" visible="false" url="http://services.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer"/> 
 	  			<layer label="USGS Topo" type="tiled" visible="false" url="http://server.arcgisonline.com/ArcGIS/rest/services/USA_Topo_Maps/MapServer" icon="assets/images/basemap_topographic.jpg"/>
 				
           </basemaps>
         <operationallayers>
-          	<layer label="2013 Imagery" type="dynamic" visible="false" url="http://arcgiswaprod/ArcGIS/rest/services/Planning/Pictometry_2013/MapServer"/>
+          	<layer label="2013 Imagery" type="dynamic" visible="true" url="http://arcgiswaprod/ArcGIS/rest/services/County/Portal_Pictometry_2013/MapServer"/>
 			<layer label="General Structures"  type="dynamic" visible="false" url="http://arcgiswaprod/ArcGIS/rest/services/Planning/Portal_Structures/MapServer"/>
 			<layer label="QA-QC"  type="dynamic" visible="false" url="http://arcgiswaprod/ArcGIS/rest/services/Planning/Portal_QA_QC/MapServer"/>
 			<layer label="Mining and Minerals" type="dynamic" imageformat="png32" visible="false"  url="http://arcgiswaprod/ArcGIS/rest/services/Planning/Portal_MiningMinerals/MapServer"/>
@@ -83,11 +83,11 @@
 					
 			
 			
-			<layer label="Cadastral" type="dynamic" visible="false" imageformat="png32"	url="http://arcgiswaprod/ArcGIS/rest/services/Planning/Portal_Cadastral/MapServer">
-				<sublayer id="30" popupconfig="popups/PopUp_ControlPoints.xml"/>
+			<layer label="Cadastral" type="dynamic" visible="false" imageformat="png32"	url="http://arcgiswaprod/ArcGIS/rest/services/County/Portal_PLSS_Cadastral/MapServer">
+				<sublayer id="1" popupconfig="popups/PopUp_ControlPoints.xml"/>
 			</layer>	
 			<layer label="Ownership" type="dynamic" imageformat="png32"  visible="false" url="http://arcgiswaprod/ArcGIS/rest/services/Planning/Portal_Ownership/MapServer"/>
-			<layer label="Baselayers" type="dynamic" visible="true" url="http://arcgiswaprod/arcgis/rest/services/Planning/Portal_Base/MapServer">
+			<layer label="Baselayers" type="dynamic" imageformat="png32" visible="true" url="http://arcgiswaprod/arcgis/rest/services/County/Portal_Base/MapServer">
 				<sublayer id="0" popupconfig="popups/PopUp_Parcels.xml"/>
 			</layer>
 			<layer label="Administrative Boundaries"  type="dynamic" imageformat="png32" visible="false"  url="http://arcgiswaprod/arcgis/rest/services/Planning/Portal_Admin/MapServer"/>	
@@ -107,7 +107,9 @@
 			</layer>	
 	
 			<layer label="Addressing EDITS" type="dynamic" visible="false" imageformat="png32" url="http://arcgiswaprod/arcgis/rest/services/Planning/Portal_Addressing_and_Places_EDITS/MapServer"/>
-				
+			
+			<layer label="Parcel Discrepancies" type="dynamic" visible="false" url="http://arcgiswaprod/arcgis/rest/services/County/Portal_Parcel_Discrepancies/FeatureServer"/>
+			
 			
 			<!--<layer label="Addressing & Places"  type="dynamic" imageformat="png32" visible="false" url="http://nt-arcgis-prod/ArcGIS/rest/services/Planning/Portal_AddressingPlaces/MapServer"/>-->	
 			<layer label="Labels" type="dynamic" visible="false" url="http://arcgiswaprod/ArcGIS/rest/services/Planning/Portal_Labels/MapServer"/>
@@ -117,7 +119,7 @@
     <!-- widgets organized into widget containers that manage close/open etc -->
     <!-- supported layout property options: horizontal(default)|float|vertical|fix-->
     <widgetcontainer layout="float">
-        <widget label="Search" left="80" top="280" 
+        <widget label="Search" left="80" top="280" preload="open"
                 icon="assets/images/Final-Flex-Search.png"
                 config="widgets/eSearch/eSearchWidget.xml"
                 url="widgets/eSearch/eSearchWidget.swf"/>
@@ -137,7 +139,7 @@
                 config="widgets/eDraw/eDrawWidget.xml"
                 url="widgets/eDraw/eDrawWidget.swf"/>
                 
-        <widget label="Google Street View" width="380"
+       <!--  <widget label="Google Street View" width="380"
                 icon="widgets/StreetView/assets/images/i_gsv.png"
                 config="widgets/StreetView/StreetViewWidget.xml"
                 url="widgets/StreetView/StreetViewWidget.swf"/>
@@ -145,12 +147,17 @@
         <widget label="Drive Directions" 
     			icon="widgets/Route/assets/images/i_route.png" 
 				config="widgets/Route/RouteWidget.xml"
-				url="widgets/Route/RouteWidget.swf"/>
+				url="widgets/Route/RouteWidget.swf"/> -->
                 
         <widget label="Print" left="390" top="400"
                 icon="assets/images/i_print.png"
                 config="widgets/Print/PrintWidget.xml"
                 url="widgets/Print/PrintWidget.swf"/>
+                
+       <widget label="Parcel Discrepancy Reporter" right="400" top="50"
+                icon="assets/images/i_edit.png" preload="minimized"
+                config="widgets/Edit/EditWidget.xml"
+                url="widgets/Edit/EditWidget.swf"/>
 
         <!--
         <widget label="My first widget"

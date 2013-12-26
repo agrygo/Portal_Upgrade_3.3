@@ -8,27 +8,30 @@
          implements="widgets.Print.IPrintWidgetComponent">
     <fx:Script>
         <![CDATA[
-            import com.esri.ags.events.PrintEvent;
-            import com.esri.ags.events.ZoomEvent;
-            import com.esri.ags.layers.ArcGISDynamicMapServiceLayer;
-            import com.esri.ags.layers.ArcGISTiledMapServiceLayer;
-            import com.esri.ags.layers.FeatureLayer;
-            import com.esri.ags.layers.GraphicsLayer;
-            import com.esri.ags.layers.Layer;
-            import com.esri.ags.layers.supportClasses.LayerInfo;
-            import com.esri.ags.tasks.supportClasses.DataFile;
-            import com.esri.ags.tasks.supportClasses.JobInfo;
-            import com.esri.ags.tasks.supportClasses.LegendLayer;
-            import com.esri.ags.tasks.supportClasses.LegendOptions;
-            import com.esri.ags.tasks.supportClasses.ParameterValue;
-            import com.esri.ags.tasks.supportClasses.PrintServiceInfo;
-            import com.esri.viewer.BaseWidget;
-            import com.esri.viewer.utils.ErrorMessageUtil;
-            import com.esri.viewer.utils.LabelUtil;
-
-            import mx.collections.IList;
-            import mx.rpc.Fault;
-            import mx.rpc.events.FaultEvent;
+			import com.esri.ags.events.PrintEvent;
+			import com.esri.ags.events.ZoomEvent;
+			import com.esri.ags.layers.ArcGISDynamicMapServiceLayer;
+			import com.esri.ags.layers.ArcGISTiledMapServiceLayer;
+			import com.esri.ags.layers.FeatureLayer;
+			import com.esri.ags.layers.GraphicsLayer;
+			import com.esri.ags.layers.Layer;
+			import com.esri.ags.layers.supportClasses.LayerInfo;
+			import com.esri.ags.tasks.supportClasses.DataFile;
+			import com.esri.ags.tasks.supportClasses.JobInfo;
+			import com.esri.ags.tasks.supportClasses.LegendLayer;
+			import com.esri.ags.tasks.supportClasses.LegendOptions;
+			import com.esri.ags.tasks.supportClasses.ParameterValue;
+			import com.esri.ags.tasks.supportClasses.PrintServiceInfo;
+			import com.esri.viewer.BaseWidget;
+			import com.esri.viewer.utils.ErrorMessageUtil;
+			import com.esri.viewer.utils.LabelUtil;
+			
+			import mx.collections.ArrayCollection;
+			import mx.collections.IList;
+			import mx.rpc.Fault;
+			import mx.rpc.events.FaultEvent;
+			
+			import spark.events.IndexChangeEvent;
 
             [Bindable]
             private var title:String;
@@ -55,6 +58,11 @@
             private var _hostBaseWidget:BaseWidget;
 
             [Bindable]
+			public var myDP:ArrayCollection = new ArrayCollection(
+				[ {format:"PDF"},
+					{format:"JPG"} ]);
+			
+			[Bindable]
             public function get hostBaseWidget():BaseWidget
             {
                 return _hostBaseWidget;
@@ -91,7 +99,8 @@
 
                     printTask.url = configXML.taskurl;
                     printTask.getServiceInfo();
-                    printButton.label = configXML.labels.submitlabel[0] || hostBaseWidget.getDefaultString("printSubmitLabel");
+                    //printButton.label = configXML.labels.submitlabel[0] || hostBaseWidget.getDefaultString("printSubmitLabel");
+					printButton.label = "Create PDF";
                 }
             }
 
@@ -100,7 +109,7 @@
                 swfMessage.visible = true;
                 layoutOptions.title = txtTitle.text;
                 layoutOptions.author = txtAuthor.text;
-                layoutOptions.copyright = txtCopyright.text;
+                //layoutOptions.copyright = txtCopyright.text;
                 layoutOptions.legendOptions = getLegendOptions();
 
                 var oldscale:Number;
@@ -111,7 +120,7 @@
                     oldLODs = hostBaseWidget.map.lods;
 
                     hostBaseWidget.map.lods = null; //prevent LOD snapping
-                    hostBaseWidget.map.scale = Number(scaleInput.text);
+                    //hostBaseWidget.map.scale = Number(scaleInput.text);
                 }
 
                 if (printTask.getServiceInfoLastResult.isServiceAsynchronous)
@@ -202,18 +211,18 @@
                 return result;
             }
 
-            private function map_zoomEndHandler(event:ZoomEvent):void
+            /*private function map_zoomEndHandler(event:ZoomEvent):void
             {
                 if (!scaleCheckbox.selected)
                 {
                     updatePrintScale();
                 }
-            }
+            }*/
 
-            private function updatePrintScale():void
+            /*private function updatePrintScale():void
             {
                 scaleInput.text = Math.round(hostBaseWidget.map.scale).toString();
-            }
+            }*/
 
             private function printTask_executeCompleteHandler(event:PrintEvent):void
             {
@@ -254,11 +263,11 @@
             protected function printTask_getServiceInfoCompleteHandler(event:PrintEvent):void
             {
                 initTitle();
-                initCopyright();
+                //initCopyright();
                 initAuthor();
                 initUseScale();
                 initLayoutTemplates(event.serviceInfo);
-                initFormats(event.serviceInfo);
+                //initFormats(event.serviceInfo);
 
                 printButton.enabled = true;
             }
@@ -278,7 +287,7 @@
                 }
             }
 
-            private function initCopyright():void
+           /*private function initCopyright():void
             {
                 shouldShowCopyright = true;
                 copyrightFI.label = configXML.labels.copyrightlabel[0] || hostBaseWidget.getDefaultString("printCopyrightLabel");
@@ -291,13 +300,14 @@
                         shouldShowCopyright = false;
                     }
                 }
-            }
+            }*/
 
             private function initAuthor():void
             {
                 shouldShowAuthor = true;
-                authorFI.label = configXML.labels.authorlabel[0] || hostBaseWidget.getDefaultString("printAuthorLabel");
-
+                //authorFI.label = configXML.labels.authorlabel[0] || hostBaseWidget.getDefaultString("printAuthorLabel");
+				authorFI.label = "Subtitle";
+				
                 if (configXML.author[0])
                 {
                     author = configXML.author[0] || hostBaseWidget.getDefaultString("printAuthor");
@@ -311,15 +321,16 @@
             private function initUseScale():void
             {
                 shouldShowUseScale = true;
-                scaleFI.label = configXML.labels.scalelabel[0] || hostBaseWidget.getDefaultString("printScaleLabel");
-                hostBaseWidget.map.addEventListener(ZoomEvent.ZOOM_END, map_zoomEndHandler, false, 0, true);
-                updatePrintScale();
+                //scaleFI.label = configXML.labels.scalelabel[0] || hostBaseWidget.getDefaultString("printScaleLabel");
+				scaleFI.label = "Check to center map";
+                //hostBaseWidget.map.addEventListener(ZoomEvent.ZOOM_END, map_zoomEndHandler, false, 0, true);
+                //updatePrintScale();
 
                 if (configXML.usescale[0])
                 {
                     scaleCheckbox.selected = (configXML.usescale[0] == 'true');
 
-                    var scaleDefaultValue:Number = parseFloat(configXML.usescale[0].@defaultvalue);
+                    /*var scaleDefaultValue:Number = parseFloat(configXML.usescale[0].@defaultvalue);
                     if (!isNaN(scaleDefaultValue))
                     {
                         scaleInput.text = scaleDefaultValue.toString();
@@ -328,15 +339,16 @@
                     if (configXML.usescale[0].@visible[0] == 'false')
                     {
                         shouldShowUseScale = false;
-                    }
+                    }*/
                 }
             }
 
             private function initLayoutTemplates(serviceInfo:PrintServiceInfo):void
             {
                 var layoutTemplatesVisibility:Boolean = true;
-                layoutTemplatesFI.label = configXML.labels.layouttemplateslabel[0] || hostBaseWidget.getDefaultString("printLayoutTemplatesLabel");
-                var layoutTemplates:IList = serviceInfo.layoutTemplates;
+                //layoutTemplatesFI.label = configXML.labels.layouttemplateslabel[0] || hostBaseWidget.getDefaultString("printLayoutTemplatesLabel");
+				layoutTemplatesFI.label = "Choose map template";
+				var layoutTemplates:IList = serviceInfo.layoutTemplates;
 
                 if (configXML.layouttemplates[0])
                 {
@@ -504,14 +516,14 @@
                      text="{author}"/>
     </mx:FormItem>
 
-    <mx:FormItem id="copyrightFI"
+    <!--<mx:FormItem id="copyrightFI"
                  width="100%"
                  includeInLayout="{shouldShowCopyright}"
                  visible="{shouldShowCopyright}">
         <s:TextInput id="txtCopyright"
                      width="100%"
                      text="{copyright}"/>
-    </mx:FormItem>
+    </mx:FormItem>-->
 
     <mx:FormItem id="layoutTemplatesFI"
                  width="100%"
@@ -527,7 +539,7 @@
                  includeInLayout="{shouldShowFormatOptions}"
                  visible="{shouldShowFormatOptions}">
         <s:DropDownList id="formatsDDL"
-                        dataProvider="{printTask.getServiceInfoLastResult.formats}"
+						dataProvider="{printTask.getServiceInfoLastResult.formats}"
                         requireSelection="true"/>
     </mx:FormItem>
 
@@ -539,17 +551,22 @@
                  visible="{shouldShowUseScale}">
         <s:CheckBox id="scaleCheckbox"/>
 
-        <s:TextInput id="scaleInput"
+        <!--<s:TextInput id="scaleInput"
                      width="100%"
                      enabled="{scaleCheckbox.selected}"
-                     restrict="0-9"/>
+                     restrict="0-9"/>-->
     </mx:FormItem>
 
+	<s:HGroup width="100%" horizontalAlign="center">
+		<s:Label text="Map will print at 100% and crop to extent of page"/>
+	</s:HGroup>
 
     <s:HGroup width="100%" horizontalAlign="center">
-        <s:Button id="printButton"
+		
+		<s:Button id="printButton"
                   click="printButton_exportWebMapClickHandler(event)"
                   enabled="false"/>
+		
 
         <mx:Image id="swfMessage"
                   source="assets/images/loader.swf"
