@@ -515,7 +515,7 @@
 					parcelLayerName = configXML.parcelLayerName;
 					parcelLayerPINFieldName = configXML.parcelLayerPINFieldName;
 					//userid =  ExternalInterface.call("getUserID");
-					userid = "101";
+					//userid = "101";
 										
 					portalIntegrationMethods = new mx.rpc.soap.mxml.WebService();
 					portalIntegrationMethods.wsdl = integrationWebService;
@@ -833,8 +833,8 @@
 							spatialsearchlayer: lyrSpatialSearchLyr,
 							graphicallabel: lyrGraphicalLabel,
 							expr: configLayerExprs,
-							fields: lyrFields,
 							links: lyrLinks,
+							fields: lyrFields,
 							multi: lyrMultiImgField,
 							zoomscale: zoomScale,
 							zoompercent: zoomPercent,

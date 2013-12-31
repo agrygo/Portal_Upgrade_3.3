@@ -28,15 +28,17 @@
 
     <fx:Script>
         <![CDATA[
-            import com.esri.ags.Map;
-            import com.esri.ags.events.ExtentEvent;
-            import com.esri.ags.events.PanEvent;
-            import com.esri.ags.geometry.MapPoint;
-
-            import mx.core.FlexGlobals;
-            import mx.events.FlexEvent;
-
-            import spark.components.Application;
+			import com.esri.ags.Map;
+			import com.esri.ags.events.ExtentEvent;
+			import com.esri.ags.events.PanEvent;
+			import com.esri.ags.geometry.MapPoint;
+			
+			import mx.core.FlexGlobals;
+			import mx.events.FlexEvent;
+			
+			import spark.components.Application;
+			
+			import widgets.eSearch.SearchResult;
 
             private function init():void
             {
@@ -211,6 +213,12 @@
                 }
                 return result;
             }
+			
+			/*public function navigateToResultsTab(event:MouseEvent):void
+			{
+				event.stopImmediatePropagation(); // don't dispatch SEARCH_RESULT_CLICK since we don't want to zoom to feature
+				ExternalInterface.call("showDetailsTab",PRCL_NBR);
+			}*/
         ]]>
     </fx:Script>
 
@@ -259,7 +267,7 @@
         </mx:HRule>
         <s:Group id="infoCanvas"
                  x="80" x.regRight="0" y="10" width="200"
-                 minHeight="60">
+                 minHeight="150">
             <mx:VBox width="100%" height="100%"
                      horizontalAlign="left"
                      paddingBottom="4"

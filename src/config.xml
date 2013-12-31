@@ -149,8 +149,8 @@
 				config="widgets/Route/RouteWidget.xml"
 				url="widgets/Route/RouteWidget.swf"/> -->
                 
-        <widget label="Print" left="390" top="400"
-                icon="assets/images/i_print.png"
+        <widget label="Create PDF" left="390" top="400"
+                icon="assets/images/pdf-40x40.png"
                 config="widgets/Print/PrintWidget.xml"
                 url="widgets/Print/PrintWidget.swf"/>
                 
