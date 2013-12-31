@@ -54,7 +54,7 @@
         		<layer label="Esri Streets" type="tiled" visible="false" url="http://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer" icon="assets/images/basemap_streets.jpg"/>
 	            <layer label="Esri Imagery"  type="tiled" visible="true" url="http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer" icon="assets/images/basemap_imagery.jpg"/>
   			
-	  			<layer label="2013 County Imagery" type="dynamic" visible="false" url="http://arcgiswaprod/ArcGIS/rest/services/County/Portal_Pictometry_2013/MapServer" icon="assets/images/bsmp_CountyImagery.png"/>
+	  			<layer label="2013 County Imagery" type="dynamic" visible="false" url="http://arcgiswaprod/ArcGIS/rest/services/County/Portal_Bsmp_Pictometry_2013/MapServer" icon="assets/images/bsmp_CountyImagery.png"/>
 	  			<layer label="Open Street Map" type="osm" visible="false"/> 
 	  			<layer label="National Geographic" type="tiled" visible="false" url="http://services.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer"/> 
 	  			<layer label="USGS Topo" type="tiled" visible="false" url="http://server.arcgisonline.com/ArcGIS/rest/services/USA_Topo_Maps/MapServer" icon="assets/images/basemap_topographic.jpg"/>
