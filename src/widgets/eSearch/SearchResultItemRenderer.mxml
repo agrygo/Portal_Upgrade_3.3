@@ -99,6 +99,7 @@
 			
 			//Created 7/14/2011 PWA function that handles the click event for the clear record button
 			//AMG - this is actually the View Details button
+			
 			private function navigateToResultsTab(event:MouseEvent):void
 			{
 				event.stopImmediatePropagation(); // don't dispatch SEARCH_RESULT_CLICK since we don't want to zoom to feature
@@ -123,6 +124,27 @@
 				
 				searchResult = data as SearchResult;
 				
+				if(searchResult.links[0] && searchResult.links[0].link){
+					linkGroup.includeInLayout = linkGroup.visible = true;
+				}
+				
+				for(var l:int = 0; l < searchResult.links.length; l++){
+					if(searchResult.links[l].link){
+						var lImg:Image = new Image();
+						lImg.height = lImg.width = 20;
+						lImg.buttonMode = true;
+						lImg.useHandCursor = true;
+						lImg.addEventListener(MouseEvent.CLICK, showLink);
+						lImg.source = (searchResult.links[l].icon && searchResult.links[l].icon != "")?searchResult.links[l].icon:"assets/images/w_link.png";	 
+						lImg.name = searchResult.links[l].link;
+						if(searchResult.links[l].alias)
+							lImg.toolTip = searchResult.links[l].alias;
+						lImg.includeInLayout = lImg.visible = true;
+						linkGroup.addElement(lImg);
+					}
+				}
+				
+				
 				if (searchResult){
 					if (lastResultSymbol !== searchResult.graphic.symbol){
 						if (resultIcon.numChildren > 0){
@@ -143,25 +165,8 @@
 					linkicon = "assets/images/Final-Flex-ViewDetails.png";
 					selectFillIcon = "assets/images/selectNoFill.png";
 
-					for(var l:int = 0; l < searchResult.links.length; l++){
-						if(searchResult.links[l].link){
-							var lImg:Image = new Image();
-							lImg.height = lImg.width = 20;
-							lImg.buttonMode = true;
-							lImg.useHandCursor = true;
-							lImg.addEventListener(MouseEvent.CLICK, showLink);
-							lImg.source = (searchResult.links[l].icon && searchResult.links[l].icon != "")?searchResult.links[l].icon:"assets/images/w_link.png";	 
-							lImg.name = searchResult.links[l].link;
-							if(searchResult.links[l].alias)
-								lImg.toolTip = searchResult.links[l].alias;
-							lImg.includeInLayout = lImg.visible = true;
-							linkGroup.addElement(lImg);
-						}
-					}
 					
-					if(searchResult.links[0] && searchResult.links[0].link){
-						linkGroup.includeInLayout = linkGroup.visible = true;
-					}
+					
 					if(searchResult.relates != null){
 						linkGroup.includeInLayout = linkGroup.visible = true;
 					}

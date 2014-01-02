@@ -8,7 +8,7 @@
 			<enableexport>true</enableexport>
 			<enableprintgrid title="Selected Parcels">true</enableprintgrid>
 			<name>Parcels</name>
-			<url>http://arcgiswaprod/arcgis/rest/services/County/Portal_Base/MapServer/0</url>
+			<url>http://arcgiswaprod/arcgis/rest/services/County/Portal_Base/MapServer/9</url>
 			<expressions>
 				<expression alias="Parcel Identification Number" textsearchlabel="Search by Parcel Identification Number" isvaluerequired="false">
 					<values>
@@ -19,6 +19,8 @@
 			<graphicalsearchlabel>Use one of the graphical search tools to select Parcels</graphicalsearchlabel>
 			<spatialsearchlayer>true</spatialsearchlayer>
 			<titlefield>PRCL_NBR</titlefield>
+			
+			
 			<fields all="false" >
 				<field name= "PRCL_NBR" alias = "PIN" gridfield= "true" />
 				<field name= "ParcelType" alias = "Parcel Type" gridfield= "true" />
@@ -31,16 +33,16 @@
                 <field name= "TXNAME" alias = "Taxpayer Name" gridfield ="true" />
                 <field name= "TXADR1" alias = "Taxpayer Address" gridfield ="true" />
                 <field name= "TXADR2" alias = "Taxpayer City State ZIP" gridfield= "true"/>
-                <field name= "TAX_DIST_NAME" alias = "Tax District" gridfield ="true" />
-                <field name= "PLDESC" alias = "Plat Description" gridfield ="true" />
-                <field name= "LOT_NBR" alias = "Lot" gridfield= "true"/>
-                <field name= "BLOCK_NBR" alias = "Block" gridfield ="true" />
-                <field name= "DEEDED_ACRES" alias = "Deeded acres" gridfield ="true" />
-                <field name= "SECTION" alias = "Section" gridfield ="true" />
-                <field name= "TOWNSHIP" alias = "Township" gridfield ="true" />
-                <field name= "RANGE" alias = "Range" gridfield= "true"/>
-                <field name= "SCH_DIST" alias = "School District" gridfield ="true" />
-                <field name= "LAKE_NAME" alias = "Lake Name" gridfield ="true" />
+                <field name= "TAX_DIST_NAME" alias = "Tax District" gridfield ="true"  gridfieldonly= "true"  />
+                <field name= "PLDESC" alias = "Plat Description" gridfield ="true"  gridfieldonly= "true" />
+                <field name= "LOT_NBR" alias = "Lot" gridfield= "true"  gridfieldonly= "true" />
+                <field name= "BLOCK_NBR" alias = "Block" gridfield ="true"  gridfieldonly= "true" />
+                <field name= "DEEDED_ACRES" alias = "Deeded acres" gridfield ="true"  gridfieldonly= "true" />
+                <field name= "SECTION" alias = "Section" gridfield ="true"  gridfieldonly= "true" />
+                <field name= "TOWNSHIP" alias = "Township" gridfield ="true"  gridfieldonly= "true" />
+                <field name= "RANGE" alias = "Range" gridfield= "true"  gridfieldonly= "true" />
+                <field name= "SCH_DIST" alias = "School District" gridfield ="true"  gridfieldonly= "true" />
+                <field name= "LAKE_NAME" alias = "Lake Name" gridfield ="true"  gridfieldonly= "true" />
                 <field name= "NET_TAX" alias = "2013 Tax" gridfield= "true" currencyformat ="$|2|,|." gridfieldonly= "true" />
                 <field name= "TOT_SPEC_ASMT" alias = "Special Assessments" gridfield= "true" currencyformat ="$|2|,|." gridfieldonly= "true" />
                 <field name= "BalDue" alias = "2013 Total Tax" gridfield= "true" currencyformat ="$|2|,|." gridfieldonly= "true" />
@@ -56,12 +58,20 @@
                 <field name= "TAXABLE_BUILDING" alias = "Taxable Bldg Mkt Value" gridfield= "true" currencyformat ="$|2|,|." gridfieldonly= "true" />
                 <field name= "TaxableMarketValue" alias = "Taxable Market Value" gridfield= "true" currencyformat ="$|2|,|." gridfieldonly= "true" />
                 <field name= "LEGAL" alias = "Legal Description" gridfield ="true" gridfieldonly = "true"/>
-                <field name= "OBJECTID" alias="ObjectID" gridfield="true" />
+                <field name= "OBJECTID" alias="OBJECTID" gridfield="true" />
 			</fields>
 			<links>
 				<link alias="View Oblique Imagery" disablelinksifnull="true">
 					<![CDATA[http://arcgiswaprod.co.st-louis.mn.us/PictometryIPA/VisualIpa.aspx?PRCL_NBR={PRCL_NBR}]]>
 					<icon><![CDATA[assets/images/i_lego.png]]></icon>
+				</link>
+				<link alias="Parcel Tax Lookup" disablelinksifnull="true">
+					<![CDATA[http://apps.stlouiscountymn.gov/auditor/parcelInfo2005Iframe/frmSearchNDetailREV1.aspx?ParcelID={PRCL_NBR}]]>
+					<icon><![CDATA[assets/images/Tax.png]]></icon>
+				</link>
+				<link alias="Property Details Report" disablelinksifnull="true">
+					<![CDATA[http://reports.stlouiscountymn.gov/ssrs_wrapper/ShowSSRSReport.aspx?reportPath=/Assessor/PropertyDetails/Main&param1=parcelnum={PRCL_NBR}&pdf=true"]]>
+					<icon><![CDATA[assets/images/edit_attributes.png]]></icon>
 				</link>
 			</links>
 			<zoomscale usegeometry="true" zoompercent="2"></zoomscale>
@@ -81,7 +91,7 @@
 		<definitionexpression></definitionexpression>
 			<enableexport>true</enableexport>
 			<name>Name</name>
-			<url>http://arcgiswaprod/arcgis/rest/services/County/Portal_Base/MapServer/0</url>
+			<url>http://arcgiswaprod/arcgis/rest/services/County/Portal_Base/MapServer/9</url>
 			<expressions>
 				<br></br>
 				<expression alias="Owner Name" textsearchlabel="Enter owner LAST name for the most results;  LAST name  FIRST name for fewer results"  isvaluerequired="false">
@@ -98,7 +108,8 @@
 			<graphicalsearchlabel>Use one of the graphical search tools to select a parcel or parcels</graphicalsearchlabel>
 			<spatialsearchlayer>false</spatialsearchlayer>
 			<titlefield>PRCL_NBR</titlefield>
-			<fields all="false">
+			
+			<fields all="false" >
 				<field name= "PRCL_NBR" alias = "PIN" gridfield= "true" />
 				<field name= "ParcelType" alias = "Parcel Type" gridfield= "true" />
 				<field name= "PHYSADDR" alias = "Address" gridfield= "true" />
@@ -110,16 +121,16 @@
                 <field name= "TXNAME" alias = "Taxpayer Name" gridfield ="true" />
                 <field name= "TXADR1" alias = "Taxpayer Address" gridfield ="true" />
                 <field name= "TXADR2" alias = "Taxpayer City State ZIP" gridfield= "true"/>
-                <field name= "TAX_DIST_NAME" alias = "Tax District" gridfield ="true" />
-                <field name= "PLDESC" alias = "Plat Description" gridfield ="true" />
-                <field name= "LOT_NBR" alias = "Lot" gridfield= "true"/>
-                <field name= "BLOCK_NBR" alias = "Block" gridfield ="true" />
-                <field name= "DEEDED_ACRES" alias = "Deeded acres" gridfield ="true" />
-                <field name= "SECTION" alias = "Section" gridfield ="true" />
-                <field name= "TOWNSHIP" alias = "Township" gridfield ="true" />
-                <field name= "RANGE" alias = "Range" gridfield= "true"/>
-                <field name= "SCH_DIST" alias = "School District" gridfield ="true" />
-                <field name= "LAKE_NAME" alias = "Lake Name" gridfield ="true" />
+                <field name= "TAX_DIST_NAME" alias = "Tax District" gridfield ="true"  gridfieldonly= "true"  />
+                <field name= "PLDESC" alias = "Plat Description" gridfield ="true"  gridfieldonly= "true" />
+                <field name= "LOT_NBR" alias = "Lot" gridfield= "true"  gridfieldonly= "true" />
+                <field name= "BLOCK_NBR" alias = "Block" gridfield ="true"  gridfieldonly= "true" />
+                <field name= "DEEDED_ACRES" alias = "Deeded acres" gridfield ="true"  gridfieldonly= "true" />
+                <field name= "SECTION" alias = "Section" gridfield ="true"  gridfieldonly= "true" />
+                <field name= "TOWNSHIP" alias = "Township" gridfield ="true"  gridfieldonly= "true" />
+                <field name= "RANGE" alias = "Range" gridfield= "true"  gridfieldonly= "true" />
+                <field name= "SCH_DIST" alias = "School District" gridfield ="true"  gridfieldonly= "true" />
+                <field name= "LAKE_NAME" alias = "Lake Name" gridfield ="true"  gridfieldonly= "true" />
                 <field name= "NET_TAX" alias = "2013 Tax" gridfield= "true" currencyformat ="$|2|,|." gridfieldonly= "true" />
                 <field name= "TOT_SPEC_ASMT" alias = "Special Assessments" gridfield= "true" currencyformat ="$|2|,|." gridfieldonly= "true" />
                 <field name= "BalDue" alias = "2013 Total Tax" gridfield= "true" currencyformat ="$|2|,|." gridfieldonly= "true" />
@@ -135,9 +146,22 @@
                 <field name= "TAXABLE_BUILDING" alias = "Taxable Bldg Mkt Value" gridfield= "true" currencyformat ="$|2|,|." gridfieldonly= "true" />
                 <field name= "TaxableMarketValue" alias = "Taxable Market Value" gridfield= "true" currencyformat ="$|2|,|." gridfieldonly= "true" />
                 <field name= "LEGAL" alias = "Legal Description" gridfield ="true" gridfieldonly = "true"/>
-               <field name= "OBJECTID" alias="ObjectID" gridfield="true" />
+                <field name= "OBJECTID" alias="OBJECTID" gridfield="true" />
 			</fields>
-			<links/>
+			<links>
+				<link alias="View Oblique Imagery" disablelinksifnull="true">
+					<![CDATA[http://arcgiswaprod.co.st-louis.mn.us/PictometryIPA/VisualIpa.aspx?PRCL_NBR={PRCL_NBR}]]>
+					<icon><![CDATA[assets/images/i_lego.png]]></icon>
+				</link>
+				<link alias="Parcel Tax Lookup" disablelinksifnull="true">
+					<![CDATA[http://apps.stlouiscountymn.gov/auditor/parcelInfo2005Iframe/frmSearchNDetailREV1.aspx?ParcelID={PRCL_NBR}]]>
+					<icon><![CDATA[assets/images/Tax.png]]></icon>
+				</link>
+				<link alias="Property Details Report" disablelinksifnull="true">
+					<![CDATA[http://reports.stlouiscountymn.gov/ssrs_wrapper/ShowSSRSReport.aspx?reportPath=/Assessor/PropertyDetails/Main&param1=parcelnum={PRCL_NBR}&pdf=true"]]>
+					<icon><![CDATA[assets/images/edit_attributes.png]]></icon>
+				</link>
+			</links>
 			<zoomscale usegeometry="true" zoompercent="2"></zoomscale>
 			<autoopendatagrid>true</autoopendatagrid>
 			<queryattachments>false</queryattachments>
@@ -154,7 +178,7 @@
 		<definitionexpression></definitionexpression>
 			<enableexport>true</enableexport>
 			<name>Address</name>
-			<url>http://arcgiswaprod/arcgis/rest/services/County/Portal_Base/MapServer/0</url>
+			<url>http://arcgiswaprod/arcgis/rest/services/County/Portal_Base/MapServer/9</url>
 			<expressions>
 				<expression alias="Physical Address" textsearchlabel="Enter street address using abbreviations (St, Rd, Ave)"  isvaluerequired="false">
 					<values>
@@ -175,7 +199,8 @@
 			<graphicalsearchlabel>Click on a graphic below to select a parcel or parcels</graphicalsearchlabel>
 			<spatialsearchlayer>false</spatialsearchlayer>
 			<titlefield>PRCL_NBR</titlefield>
-			<fields all="false">
+			
+			<fields all="false" >
 				<field name= "PRCL_NBR" alias = "PIN" gridfield= "true" />
 				<field name= "ParcelType" alias = "Parcel Type" gridfield= "true" />
 				<field name= "PHYSADDR" alias = "Address" gridfield= "true" />
@@ -187,39 +212,47 @@
                 <field name= "TXNAME" alias = "Taxpayer Name" gridfield ="true" />
                 <field name= "TXADR1" alias = "Taxpayer Address" gridfield ="true" />
                 <field name= "TXADR2" alias = "Taxpayer City State ZIP" gridfield= "true"/>
-                <field name= "TAX_DIST_NAME" alias = "Tax District" gridfield ="true" />
-                <field name= "PLDESC" alias = "Plat Description" gridfield ="true" />
-                <field name= "LOT_NBR" alias = "Lot" gridfield= "true"/>
-                <field name= "BLOCK_NBR" alias = "Block" gridfield ="true" />
-                <field name= "DEEDED_ACRES" alias = "Deeded acres" gridfield ="true" />
-                <field name= "SECTION" alias = "Section" gridfield ="true" />
-                <field name= "TOWNSHIP" alias = "Township" gridfield ="true" />
-                <field name= "RANGE" alias = "Range" gridfield= "true"/>
-                <field name= "SCH_DIST" alias = "School District" gridfield ="true" />
-                <field name= "LAKE_NAME" alias = "Lake Name" gridfield ="true" />
+                <field name= "TAX_DIST_NAME" alias = "Tax District" gridfield ="true"  gridfieldonly= "true"  />
+                <field name= "PLDESC" alias = "Plat Description" gridfield ="true"  gridfieldonly= "true" />
+                <field name= "LOT_NBR" alias = "Lot" gridfield= "true"  gridfieldonly= "true" />
+                <field name= "BLOCK_NBR" alias = "Block" gridfield ="true"  gridfieldonly= "true" />
+                <field name= "DEEDED_ACRES" alias = "Deeded acres" gridfield ="true"  gridfieldonly= "true" />
+                <field name= "SECTION" alias = "Section" gridfield ="true"  gridfieldonly= "true" />
+                <field name= "TOWNSHIP" alias = "Township" gridfield ="true"  gridfieldonly= "true" />
+                <field name= "RANGE" alias = "Range" gridfield= "true"  gridfieldonly= "true" />
+                <field name= "SCH_DIST" alias = "School District" gridfield ="true"  gridfieldonly= "true" />
+                <field name= "LAKE_NAME" alias = "Lake Name" gridfield ="true"  gridfieldonly= "true" />
                 <field name= "NET_TAX" alias = "2013 Tax" gridfield= "true" currencyformat ="$|2|,|." gridfieldonly= "true" />
                 <field name= "TOT_SPEC_ASMT" alias = "Special Assessments" gridfield= "true" currencyformat ="$|2|,|." gridfieldonly= "true" />
                 <field name= "BalDue" alias = "2013 Total Tax" gridfield= "true" currencyformat ="$|2|,|." gridfieldonly= "true" />
                 <field name= "DELINQUENT" alias = "Delinquent Balance" gridfield= "true" currencyformat ="$|2|,|." gridfieldonly= "true" />
                 <field name= "BAL_DUE" alias = "Balance Due" gridfield= "true" currencyformat ="$|2|,|." gridfieldonly= "true" />
                 <field name= "TPCLSCode1" alias = "Class Code" gridfield ="true" gridfieldonly= "true" />
-                <field name= "TPCLS1" alias = "Class Code Description" gridfield ="true" gridfieldonly= "true" />
+                <field name= "TPCLS1" alias = "Class Code Desc" gridfield ="true" gridfieldonly= "true" />
                 <field name= "HSTD_Desc1" alias = "Homestead Class Code" gridfield ="true" gridfieldonly= "true" />
-                <field name= "LAND_EST" alias = "Est Land Market Value" gridfield ="true" currencyformat= "$|2|,|." gridfieldonly = "true"/>
-                <field name= "BUILDING" alias = "Est Building Market Value" gridfield ="true" currencyformat= "$|2|,|." gridfieldonly = "true"/>
-                <field name= "EstTotalValue" alias = "Total Est Market Value" gridfield= "true" currencyformat ="$|2|,|." gridfieldonly= "true" />
-                <field name= "TAXABLE_LAND_VALUE" alias = "Taxable Land Market Value" gridfield= "true" currencyformat ="$|2|,|." gridfieldonly= "true" />
-                <field name= "TAXABLE_BUILDING" alias = "Taxable Building Market Value" gridfield= "true" currencyformat ="$|2|,|." gridfieldonly= "true" />
+                <field name= "LAND_EST" alias = "Est Land Mkt Value" gridfield ="true" currencyformat= "$|2|,|." gridfieldonly = "true"/>
+                <field name= "BUILDING" alias = "Est Building Mkt Value" gridfield ="true" currencyformat= "$|2|,|." gridfieldonly = "true"/>
+                <field name= "EstTotalValue" alias = "Total Est Mkt Value" gridfield= "true" currencyformat ="$|2|,|." gridfieldonly= "true" />
+                <field name= "TAXABLE_LAND_VALUE" alias = "Taxable Land Mkt Value" gridfield= "true" currencyformat ="$|2|,|." gridfieldonly= "true" />
+                <field name= "TAXABLE_BUILDING" alias = "Taxable Bldg Mkt Value" gridfield= "true" currencyformat ="$|2|,|." gridfieldonly= "true" />
                 <field name= "TaxableMarketValue" alias = "Taxable Market Value" gridfield= "true" currencyformat ="$|2|,|." gridfieldonly= "true" />
                 <field name= "LEGAL" alias = "Legal Description" gridfield ="true" gridfieldonly = "true"/>
-                <field name= "OBJECTID" alias="ObjectID" gridfield="true" />
+                <field name= "OBJECTID" alias="OBJECTID" gridfield="true" />
 			</fields>
 			<links>
-                <link alias="Parcel Tax Lookup"> 
-                  <![CDATA[http://apps.stlouiscountymn.gov/auditor/parcelInfo2005Iframe/frmSearchNDetailREV1.aspx?ParcelID={PRCL_NBR}]]>
-				  <icon><![CDATA[assets/images/Tax.png]]></icon>	                 
-                </link>
-            </links>
+				<link alias="View Oblique Imagery" disablelinksifnull="true">
+					<![CDATA[http://arcgiswaprod.co.st-louis.mn.us/PictometryIPA/VisualIpa.aspx?PRCL_NBR={PRCL_NBR}]]>
+					<icon><![CDATA[assets/images/i_lego.png]]></icon>
+				</link>
+				<link alias="Parcel Tax Lookup" disablelinksifnull="true">
+					<![CDATA[http://apps.stlouiscountymn.gov/auditor/parcelInfo2005Iframe/frmSearchNDetailREV1.aspx?ParcelID={PRCL_NBR}]]>
+					<icon><![CDATA[assets/images/Tax.png]]></icon>
+				</link>
+				<link alias="Property Details Report" disablelinksifnull="true">
+					<![CDATA[http://reports.stlouiscountymn.gov/ssrs_wrapper/ShowSSRSReport.aspx?reportPath=/Assessor/PropertyDetails/Main&param1=parcelnum={PRCL_NBR}&pdf=true"]]>
+					<icon><![CDATA[assets/images/edit_attributes.png]]></icon>
+				</link>
+			</links>
 			<zoomscale usegeometry="true" zoompercent="2"></zoomscale>
 			<autoopendatagrid>true</autoopendatagrid>
 			<queryattachments>false</queryattachments>
@@ -544,10 +577,10 @@
 		<!-- You can have one or the other, either simplemarkersymbol or picturemarkersymbol 
 			defined for your point results NOT BOTH. picturemarkersymbol will override 
 			simplemarkersymbol if you do not have it commented out. -->
-		<!-- <simplemarkersymbol style="square" size="12" color="0xff0000" alpha="0.5" 
+		<simplemarkersymbol style="square" size="12" color="0xff0000" alpha="0.5" 
 			xoffset="0" yoffset="0" angle="0"> <outline style="solid" color="0x000000" 
-			alpha="1" width="1"/> </simplemarkersymbol> -->
-		<picturemarkersymbol url="assets/images/i_search.png" height="30" width="30" xoffset="0" yoffset="0" />
+			alpha="1" width="1"/> </simplemarkersymbol>
+		<!-- <picturemarkersymbol url="assets/images/i_search.png" height="30" width="30" xoffset="0" yoffset="0" /> -->
 		<simplelinesymbol color="0xff0000" alpha="0.8" width="2" />
 	</symbols>
 </configuration>
