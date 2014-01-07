@@ -117,10 +117,7 @@
                 }
             }
 
-          
-	
-			
-			private function basewidget_widgetConfigLoaded():void
+            private function basewidget_widgetConfigLoaded():void
             {
                 // hide map infowindow if any               
                 map.infoWindow.hide();
@@ -1457,12 +1454,7 @@
             private function widgetMinimizedHandler(event:Event):void
             {
                 lastState = "minimized";
-				
             }
-			
-			
-			
-				
         ]]>
     </fx:Script>
 
@@ -1481,9 +1473,6 @@
                                     skinClass="widgets.Edit.EditWidgetRelationshipInspectorSkin"/>
     </fx:Declarations>
 
-	
-	
-	
     <viewer:WidgetTemplate id="wTemplate"
                            closed="widgetClosedHandler(event)"
                            minimized="widgetMinimizedHandler(event)"

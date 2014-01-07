@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<viewer:BaseWidget xmlns:fx="http://ns.adobe.com/mxml/2009"
+				   xmlns:s="library://ns.adobe.com/flex/spark"
+				   xmlns:mx="library://ns.adobe.com/flex/mx"
+				   xmlns:viewer="com.esri.viewer.*"
+				   x="150" y="150"  layout="absolute"
+				   widgetConfigLoaded="init()"
+				   >
+				 
+	<fx:Declarations>
+		
+		<mx:Glow id="glow" duration="1500" blurXTo="40" blurYTo="40" color="0xFF0000"/>
+		
+	</fx:Declarations>
+   
+    <fx:Script>
+        <![CDATA[
+			import com.esri.ags.Graphic;
+			import com.esri.ags.geometry.MapPoint;
+			import com.esri.ags.geometry.Polyline;
+			import com.esri.ags.layers.GraphicsLayer;
+			import com.esri.ags.symbols.MarkerSymbol;
+			import com.esri.ags.symbols.SimpleLineSymbol;
+			import com.esri.ags.symbols.SimpleMarkerSymbol;
+			
+			import widgets.CoordinateMenu.ExtentGrabber.ExtentGrabberDialog;
+			import widgets.CoordinateMenu.GoToCoordinate.GoToCoordinateDialog;
+			import widgets.CoordinateMenu.ProjectCoordinate.ProjectCoordinateDialog;
+          
+			[Bindable]
+			private var graphicsLayer:GraphicsLayer = new GraphicsLayer();
+			[Bindable]
+			private var mouseMoveMapPoint:MapPoint;
+			[Bindable]
+			private var mapPoint:MapPoint;
+			[Bindable]
+			private var helper:CoordinateMenuWidgetHelper;
+			
+			private var project:ProjectCoordinateDialog = new ProjectCoordinateDialog();
+			private var goToCoordinate:GoToCoordinateDialog = new GoToCoordinateDialog();
+			private var extentGrabber:ExtentGrabberDialog = new ExtentGrabberDialog();
+			
+			private function init():void
+			{
+				//Set Helper
+				this.helper = new CoordinateMenuWidgetHelper(configXML,map);
+				
+				//SET Mouse Event Handlers
+				this.map.addEventListener(MouseEvent.MOUSE_MOVE, onMapMouseMove);
+				this.map.addEventListener(MouseEvent.CLICK, onMapMouseClick);
+				
+				//Add GraphicsLayer to map
+				this.graphicsLayer.symbol =  new SimpleMarkerSymbol("circle",10,0xFF0000);;
+				this.map.addLayer(this.graphicsLayer);
+				
+				// add additional contex menu for projected coords.
+				if (this.helper.coordinateSystems.length == 0)
+				{
+					btnProject.visible = false;
+					btnProject.includeInLayout = false;
+				}
+				
+			}
+			
+			private function onMapMouseClick(e:MouseEvent):void
+			{	
+				btnCopy.enabled = true;
+				
+				this.mapPoint = this.map.toMapFromStage(e.stageX,e.stageY);
+				txtX.text = this.mapPoint.x.toFixed(helper.precision);
+				txtY.text = this.mapPoint.y.toFixed(helper.precision);
+				
+				this.graphicsLayer.clear()
+				var graphic:Graphic = new Graphic(this.mapPoint);
+				this.graphicsLayer.add(graphic);
+				glow.play([graphic]);
+			
+			}
+					
+			private function onMapMouseMove(e:MouseEvent):void
+			{
+				this.mouseMoveMapPoint = this.map.toMapFromStage(e.stageX,e.stageY);
+			}
+			
+			protected function btnProject_clickHandler(event:MouseEvent):void
+			{
+				
+				project.show(mapPoint, configXML,map);
+			}
+			
+			protected function btnGoToXY_clickHandler(event:MouseEvent):void
+			{
+				
+				goToCoordinate.show(configXML,map)
+			}
+			
+			protected function btnGetExtent_clickHandler(event:MouseEvent):void
+			{
+				extentGrabber.show(configXML,map);
+			}
+			
+			private function copy():void
+			{
+				glow.play([bdrCoordinates]);
+				var str:String = helper.format(this.mapPoint);
+				System.setClipboard(str); // Flash system clipboard function
+			}
+			
+		]]>
+    </fx:Script>
+
+    <viewer:WidgetTemplate open="{this.graphicsLayer.visible = true; }" closed="{this.graphicsLayer.visible = false; }" id="wTemplate" width="400" height="235">
+		
+		
+		
+		<viewer:layout>
+			<s:VerticalLayout paddingBottom="5" paddingLeft="5" paddingRight="5" paddingTop="5"/>
+		</viewer:layout>
+		<s:Label fontWeight="bold" text="Live Coordinates"/>
+		<s:HGroup width="100%" color="#C4C4C4" fontSize="10">
+			<mx:Label fontWeight="bold" text="X:"/><mx:Label width="100%"
+															 text="{this.mouseMoveMapPoint.x.toFixed(helper.precision)}"/>
+			<mx:Label fontWeight="bold" text="Y:"/>
+			<mx:Label width="100%" text="{this.mouseMoveMapPoint.y.toFixed(helper.precision)}"/>
+		</s:HGroup>
+		<s:Label fontWeight="bold" text="Selected Coordinates"/>
+		<s:BorderContainer id="bdrCoordinates" width="100%" minWidth="0" minHeight="0" backgroundAlpha="0.0"
+						   borderAlpha="0.5" borderColor="#B9B9B9" contentBackgroundAlpha="0.0"
+						   cornerRadius="3">
+			<s:layout>
+				<s:VerticalLayout gap="2" paddingBottom="5" paddingLeft="5" paddingRight="5"
+								  paddingTop="5"/>
+			</s:layout>
+			<s:HGroup width="100%">
+				<mx:Label fontWeight="bold" text="X:"/>
+				<mx:Label id="txtX" width="100%" selectable="true" text="( waiting...)"/>
+				<mx:Label fontWeight="bold" text="Y:"/>
+				<mx:Label id="txtY" width="100%" selectable="true" text="( waiting...)"/>
+			</s:HGroup>
+			<s:HGroup width="100%">
+			</s:HGroup>
+			<s:HGroup width="100%" horizontalAlign="right" verticalAlign="justify">
+				<mx:Button enabled="false" click="copy()" id="btnCopy" x="116" width="100%" label="Copy Coordinate"
+						   icon="@Embed('widgets/CoordinateMenu/images/copy.png')"/>
+			</s:HGroup>
+		</s:BorderContainer>
+		<s:Label fontWeight="bold" text="Other XY Tools"/>
+		<mx:HRule width="100%" height="1"/>
+		<s:HGroup width="100%">
+			<mx:Button enabled="{btnCopy.enabled}" id="btnProject" width="100%" label="Project"
+					   click="btnProject_clickHandler(event)"
+					   icon="@Embed('widgets/CoordinateMenu/images/map_go.png')"/>
+			<mx:Button id="btnGoToXY" width="100%" label="Go To XY"
+					   click="btnGoToXY_clickHandler(event)"
+					   icon="@Embed('widgets/CoordinateMenu/images/asterisk.png')"/>
+			<mx:Button id="btnGetExtent" width="100%" label="Get Extent"
+					   click="btnGetExtent_clickHandler(event)"
+					   icon="@Embed('widgets/CoordinateMenu/images/shape_square.png')"/>
+		</s:HGroup>
+		
+    </viewer:WidgetTemplate>
+
+</viewer:BaseWidget>

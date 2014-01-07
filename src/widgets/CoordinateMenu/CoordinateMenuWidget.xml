@@ -1,0 +1,67 @@
+<?xml version="1.0" ?>
+<configuration>
+    <!--
+     ############################################################################
+     ## Created By: Andrew Timmins
+     ## Date: Jan 30 , 2011
+     ## Location: Ontario Canada
+     ## For: Flex-A-Widget Challenge
+     ## ****************************************************************************
+     ## References:
+     ## ESRI: Flex API, Flex Viewer - Source
+     ## Images courtesy of FAMFAMFAM - Silk Icon Set - http://www.famfamfam.com/lab/icons/silk/
+     ############################################################################
+	-->
+	
+   <!-- 
+   ####################################################
+   # REQUIRED
+   #################################################### 
+   -->
+	
+   <!-- Geometry Service URL --> 
+   <geometryServiceURL>http://gis.stlouiscountymn.gov/arcgis/rest/services/Utilities/Geometry/GeometryServer</geometryServiceURL>
+   
+   
+   <!-- 
+   ####################################################
+   # OPTIONAL
+   #################################################### 
+   -->
+   
+   <!-- GLOBAL DECIMAL PRECISION -->
+   <precision>2</precision>
+   
+      <!--
+   	Custom coordinate systems used to display in the drop downs.- comment/delete XML to remove functionality
+   	Get the WKID (Well Known ID) needed from the below sites.	
+   
+    Projected Coordinate Systems 
+    http://help.arcgis.com/en/arcgisserver/10.0/apis/rest/index.html?pcs.html
+	
+	Geographic Coordinate Systems 
+	http://help.arcgis.com/en/arcgisserver/10.0/apis/rest/index.html?gcs.html
+    -->
+   <coordinateSystems>
+		<coordinateSystem name="St Louis County Coordinates" wkid="" wkt='PROJCS["St Louis County Transverse Mercator System 96",GEOGCS["St Louis County Transverse Mercator System 96",DATUM["",SPHEROID["",6378523.0,298.2752724012429]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],PROJECTION["Transverse_Mercator"],PARAMETER["False_Easting",4757208.33333333],PARAMETER["False_Northing",3280833.33333333],PARAMETER["Central_Meridian",-92.45],PARAMETER["Scale_Factor",0.99998529],PARAMETER["Latitude_Of_Origin",46.61666667],UNIT["Foot_US",0.3048006096012192]]' decimals="4"/>
+		<coordinateSystem name="NAD 1983 UTM Zone 15"  wkid="26915" wkt="" decimals="4"/>
+		<coordinateSystem name="GCS WGS 1984 (Decimal Degrees)" wkid="4326" wkt="" decimals=""/>
+	<!-- <coordinateSystem name="GCS WGS 1984 (Decimal Degrees)" wkid="4326" decimals="2"/> -->
+   </coordinateSystems>
+   
+	<!-- Zoom To Coordinate Scale -->
+	<zoomScale>5000</zoomScale>
+
+   <!-- 
+   The string format you would like to copy to the clipboard. 
+   Use the formmaters {X} {Y} to replace where X and Y values will be placed in the string: SAMPLE: X:{X} Y:{Y} 
+   -->
+   <copyFormat>X: {X} Y: {Y}</copyFormat>
+   
+   <!-- Hide the ESRI context menu items -->
+   <hideESRIAboutItems>true</hideESRIAboutItems>
+   
+   <!-- How long until the animated markers are removed from the stage - in milliseconds. 1000 ms = 1 sec. -->
+   <markerRemoveDelay>4000</markerRemoveDelay>
+   
+</configuration>

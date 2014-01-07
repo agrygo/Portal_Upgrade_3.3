@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx" 
+			   width="420" height="255"  styleName="modal"
+			   creationComplete="creationCompleteHandler(event)" 
+			   title="Go To Coordinates" xmlns:GoToCoordinate="widgets.CoordinateMenu.GoToCoordinate.*">
+	<s:layout>
+		<s:VerticalLayout paddingBottom="10" paddingTop="10" paddingLeft="10" paddingRight="10"/>
+	</s:layout>
+	
+	<fx:Declarations>
+		<mx:Glow id="glow" duration="1000" color="0xFF0000"/>
+	</fx:Declarations>
+	
+<fx:Style>
+	@namespace s "library://ns.adobe.com/flex/spark";
+	@namespace mx "library://ns.adobe.com/flex/mx";
+	
+	.modal
+	{
+		modal-transparency-duration: 0;
+	}
+	
+</fx:Style>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.esri.ags.Map;
+			import com.esri.ags.geometry.MapPoint;
+			
+			import mx.core.FlexGlobals;
+			import mx.events.CloseEvent;
+			import mx.events.FlexEvent;
+			import mx.managers.PopUpManager;
+			
+			import widgets.CoordinateMenu.CoordinateMenuWidgetHelper;
+			import widgets.CoordinateMenu.Projector;
+
+			[Bindable]
+			public var projectedPoint:MapPoint;
+			[Bindable]
+			private var projector:Projector;
+			[Bindable]
+			private var helper:CoordinateMenuWidgetHelper;
+			[Bindable]
+			private var map:Map;
+			
+			public function show(configXML:XML,_map:Map):void
+			{
+				this.map = _map;
+				this.helper = new CoordinateMenuWidgetHelper(configXML,_map);
+				
+				var appWidth:Number = FlexGlobals.topLevelApplication.width;
+				
+				this.y = 75;
+				this.x = ( appWidth /2 ) - (this.width /2);
+				PopUpManager.addPopUp(this,FlexGlobals.topLevelApplication as DisplayObject,false);
+				
+				//remove custom option if none exist in config.
+				if (this.helper.coordinateSystems.length  == 0)
+				{
+					accordion.removeElement(navCustom);
+				}
+			}
+			
+			public function close():void
+			{
+				PopUpManager.removePopUp(this);
+			}
+			
+			protected function creationCompleteHandler(event:FlexEvent):void
+			{
+				this.addEventListener(CloseEvent.CLOSE, onClose)
+			}
+			
+			private function onClose(event:CloseEvent):void
+			{
+				this.close();
+			}
+		]]>
+	</fx:Script>
+	<mx:Accordion id="accordion" width="100%" height="100%" openDuration="200" creationPolicy="all">
+		
+		<!-- Map Coordinates -->
+		<s:NavigatorContent creationPolicy="all"  label="Current Map Coordinates" width="100%" height="100%" icon="@Embed(source='../images/asterisk.png')">
+			<s:VGroup width="100%">
+				<GoToCoordinate:GoToCoordinate wkid="{this.map.spatialReference.wkid}" helper="{this.helper}" map="{this.map}"/>
+			</s:VGroup>
+		</s:NavigatorContent>
+		
+		<!-- WGS 84 Coordinates -->
+		<s:NavigatorContent creationPolicy="all"  label="Latitude and Longitude"   width="100%" height="100%" icon="@Embed(source='../images/asterisk.png')">
+			<s:VGroup width="100%">
+				<GoToCoordinate:GoToCoordinate xLabel="Long:" yLabel="Lat:" wkid="4326" helper="{this.helper}" map="{this.map}" />
+			</s:VGroup>
+		</s:NavigatorContent>
+	
+		<!-- Custom Coordinates -->
+		<s:NavigatorContent id="navCustom"  label="Custom" width="100%" height="100%" icon="@Embed(source='../images/asterisk.png')">
+			<s:VGroup width="100%">
+				<s:VGroup paddingLeft="5" paddingRight="5" paddingTop="5" paddingBottom="0" width="100%">
+					<s:Label text="Select Custom Coordinate System:"/>
+					<s:DropDownList contentBackgroundAlpha="1" id="cmbcoordinateSystem" width="100%" dataProvider="{this.helper.coordinateSystems}" labelField="name"  prompt="-- Select One --"/>
+				</s:VGroup>
+				<GoToCoordinate:GoToCoordinate wkid="{cmbcoordinateSystem.selectedItem.wkid}" helper="{this.helper}" map="{this.map}"/>
+			</s:VGroup>
+		</s:NavigatorContent>
+			
+	</mx:Accordion>
+	
+</s:TitleWindow>

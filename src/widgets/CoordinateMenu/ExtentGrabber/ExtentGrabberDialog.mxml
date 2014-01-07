@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   creationComplete="creationCompleteHandler(event)" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx" width="450" title="Extent Grabber">
+	<s:layout>
+		<s:VerticalLayout paddingTop="10" paddingLeft="10" paddingRight="10" paddingBottom="10"/>
+	</s:layout>
+	<fx:Declarations>
+		
+		<mx:Glow id="glow" duration="1000" blurXTo="30" blurYTo="30" color="0xFF0000"/>
+		
+	</fx:Declarations>
+	
+	
+	<fx:Style>
+		@namespace s "library://ns.adobe.com/flex/spark";
+		@namespace mx "library://ns.adobe.com/flex/mx";
+		
+		/*
+		Remove the ESRI scrollbar skin.
+		*/
+		.extentTextArea 
+		{
+			vertical-scroll-bar-style-name: "noScrollSkin";
+			horizontal-scroll-bar-style-name: "noScrollSkin";
+			color: #000000;
+			paddingLeft:6;
+		}
+		
+		.noScrollSkin
+		{
+			downArrowUpSkin: ClassReference(null);
+			downArrowOverSkin:  ClassReference(null);
+			downArrowDownSkin:  ClassReference(null);
+			upArrowUpSkin:  ClassReference(null);
+			upArrowOverSkin:  ClassReference(null);
+			upArrowDownSkin:  ClassReference(null);
+			thumbDownSkin:  ClassReference(null);
+			thumbUpSkin:  ClassReference(null);
+			thumbOverSkin:  ClassReference(null);		 
+		}
+		
+		
+	</fx:Style>
+	
+	
+	<fx:Script>
+		<![CDATA[
+			import com.esri.ags.Map;
+			
+			import mx.controls.Alert;
+			import mx.core.FlexGlobals;
+			import mx.events.CloseEvent;
+			import mx.events.FlexEvent;
+			import mx.events.IndexChangedEvent;
+			import mx.managers.PopUpManager;
+			
+			import widgets.CoordinateMenu.CoordinateMenuWidget;
+			import widgets.CoordinateMenu.CoordinateMenuWidgetHelper;
+
+			[Bindable]
+			public var widget:CoordinateMenuWidget;
+			[Bindable]
+			public var map:Map;
+			[Bindable]
+			private var xmlText:String = "";
+			[Bindable]
+			private var helper:CoordinateMenuWidgetHelper;
+			
+			public function show(confixXML:XML, _map:Map):void
+			{
+				
+				helper = new CoordinateMenuWidgetHelper(confixXML,_map);
+				
+				var appWidth:Number = FlexGlobals.topLevelApplication.width;
+				
+				this.y = 75;
+				this.x = ( appWidth /2 ) - (this.width /2);
+				PopUpManager.addPopUp(this,FlexGlobals.topLevelApplication as DisplayObject,false);
+				//this.widget = _coordinateMenuWidget;
+				this.map = _map;
+			}
+		
+			
+			public function close():void
+			{
+				PopUpManager.removePopUp(this);
+			}
+			
+			protected function creationCompleteHandler(event:FlexEvent):void
+			{
+				this.addEventListener(CloseEvent.CLOSE, onClose);
+			}
+			
+			private function onClose(event:CloseEvent):void
+			{
+				this.close();
+			}
+			
+			private function copyTextArea():void
+			{
+				var txt:TextArea = null;
+				
+				switch(tabs.selectedIndex)
+				{
+					case 0:
+					{
+						txt= (txtConfigXML);
+						break;
+					}
+					case 1:
+					{
+						txt=(txtBookmarkXML);
+						break;
+					}
+					case 2:
+					{
+						txt=(txtString);
+						break;
+					}
+					case 3:
+					{
+						txt=(txtProgramming);
+						break;
+					}
+						
+					default:
+					{
+						txt=(txtString);
+						break;
+					}
+				}
+				
+				glow.play([tabs, btnCopy]);
+				System.setClipboard(txt.text); // Flash system clipboard function
+				
+			}
+			private function copyLabel(lbl:mx.controls.Label):void
+			{
+				glow.play([lbl]);
+				System.setClipboard(lbl.text); // Flash system clipboard function
+			}
+			
+			
+			
+			
+			
+			
+			
+		]]>
+	</fx:Script>
+	<s:Label x="10" y="10" text="Current Map Extent" fontWeight="bold"/>
+	<mx:HRule width="100%" height="1"/>
+	<s:HGroup width="100%">
+		<s:HGroup width="100%">
+			<mx:Image toolTip="Copy Coordinates" buttonMode="true" useHandCursor="true" click="copyLabel(lblxMin)" scaleContent="false" width="16" height="16" source="@Embed(source='../images/copy.png')"/>
+			<mx:Label text="X MIN:" width="47"/>
+			<mx:Label id="lblxMin" text="{this.map.extent.xmin.toFixed(helper.precision)}"/>
+		</s:HGroup>
+		<s:HGroup width="100%">
+			<mx:Image toolTip="Copy Coordinates" buttonMode="true" useHandCursor="true" click="copyLabel(lblYMin)" scaleContent="false" width="16" height="16" source="@Embed(source='../images/copy.png')"/>
+			<mx:Label text="Y MIN:" width="47"/>
+			<mx:Label id="lblYMin" text="{this.map.extent.ymin.toFixed(helper.precision)}"/>
+		</s:HGroup>
+	</s:HGroup>
+	<s:HGroup width="100%">
+		<s:HGroup width="100%">
+			<mx:Image toolTip="Copy Coordinates" buttonMode="true" useHandCursor="true" click="copyLabel(lblXMax)" scaleContent="false" width="16" height="16" source="@Embed(source='../images/copy.png')"/>
+			<mx:Label text="X MAX:" width="47"/>
+			<mx:Label id="lblXMax" text="{this.map.extent.xmax.toFixed(helper.precision)}"/>
+		</s:HGroup>
+		<s:HGroup width="100%">
+			<mx:Image toolTip="Copy Coordinates" buttonMode="true" useHandCursor="true" click="copyLabel(lblYMax)" scaleContent="false" width="16" height="16" source="@Embed(source='../images/copy.png')"/>
+			<mx:Label text="Y MAX:" width="47"/>
+			<mx:Label id="lblYMax" text="{this.map.extent.ymax.toFixed(helper.precision)}"/>
+		</s:HGroup>
+		
+	</s:HGroup>
+	<mx:Spacer height="5" width="100%"/>
+	<s:HGroup width="100%" verticalAlign="middle">
+		<s:Label text="Other Formats" fontWeight="bold"/>
+	</s:HGroup>
+	
+	<mx:HRule width="100%" height="1"/>
+	<mx:TabNavigator id="tabs"   width="100%" height="130" backgroundAlpha="0.0" borderAlpha="0.3"
+					 contentBackgroundColor="#FFFFFF" paddingTop="0">
+
+<s:NavigatorContent label="Config XML" width="100%" height="100%">
+	
+<mx:TextArea id="txtConfigXML" left="0" right="0" top="0" bottom="0" width="100%" height="100%" condenseWhite="false" styleName="extentTextArea">
+<mx:text>
+&lt;map
+initialextent="{this.map.extent.xmin.toFixed(helper.precision) + " " + this.map.extent.ymin.toFixed(helper.precision) + " " + this.map.extent.xmax.toFixed(helper.precision) + " " + this.map.extent.ymax.toFixed(helper.precision)}"
+fullextent="{this.map.extent.xmin.toFixed(helper.precision) + " " + this.map.extent.ymin.toFixed(helper.precision) + " " + this.map.extent.xmax.toFixed(helper.precision) + " " + this.map.extent.ymax.toFixed(helper.precision)}"
+top="40"&gt;
+</mx:text>	
+</mx:TextArea>
+</s:NavigatorContent>
+		
+<s:NavigatorContent label="Bookmark XML" width="100%" height="100%">
+<mx:TextArea id="txtBookmarkXML" left="0" right="0" top="0" bottom="0" condenseWhite="false" styleName="extentTextArea">
+<mx:text>
+&lt;bookmark name="My Bookmark"&gt;
+{this.map.extent.xmin.toFixed(helper.precision) + " " + this.map.extent.ymin.toFixed(helper.precision) + " " + this.map.extent.xmax.toFixed(helper.precision) + " " + this.map.extent.ymax.toFixed(helper.precision)}
+&lt;/bookmark&gt;
+</mx:text>
+</mx:TextArea>
+</s:NavigatorContent>
+		
+<s:NavigatorContent label="String" width="100%" height="100%">
+<mx:TextArea id="txtString" left="0" right="0" top="0" bottom="0" condenseWhite="false" styleName="extentTextArea">
+<mx:text>{this.map.extent.xmin.toFixed(helper.precision) + " " + this.map.extent.ymin.toFixed(helper.precision) + " " + this.map.extent.xmax.toFixed(helper.precision) + " " + this.map.extent.ymax.toFixed(helper.precision)}</mx:text>
+</mx:TextArea>
+</s:NavigatorContent>
+
+<s:NavigatorContent label="Programming Properties" width="100%" height="100%">
+<mx:TextArea id="txtProgramming" left="0" right="0" top="0" bottom="0" condenseWhite="false" styleName="extentTextArea">
+<mx:text>var extent:Extent = new Extent();
+extent.xmin={ this.map.extent.xmin.toFixed(helper.precision)};
+extent.ymin={ this.map.extent.ymin.toFixed(helper.precision)};
+extent.xmax={ this.map.extent.xmax.toFixed(helper.precision)};
+extent.ymax={ this.map.extent.ymax.toFixed(helper.precision)};
+extent.spatialReference = new SpatialReference({ this.map.spatialReference.wkid });
+</mx:text>
+</mx:TextArea>
+</s:NavigatorContent>
+
+
+
+
+</mx:TabNavigator>
+	<s:HGroup width="100%" horizontalAlign="right">
+		<mx:Button id="btnCopy" click="copyTextArea()" label="Copy Extent Format" icon="@Embed('widgets/CoordinateMenu/images/copy.png')"/>
+		<mx:Button id="btnClose" label="Close Window" click="this.close();"/>
+	</s:HGroup>
+	
+</s:TitleWindow>

@@ -514,7 +514,8 @@
 					integrationWebService = configXML.integrationWebService;
 					parcelLayerName = configXML.parcelLayerName;
 					parcelLayerPINFieldName = configXML.parcelLayerPINFieldName;
-					//userid =  ExternalInterface.call("getUserID");
+					//This userid gets the user ID from the portal
+					userid =  ExternalInterface.call("getUserID");
 					//userid = "101";
 										
 					portalIntegrationMethods = new mx.rpc.soap.mxml.WebService();

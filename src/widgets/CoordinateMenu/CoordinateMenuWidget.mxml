@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<viewer:BaseWidget xmlns:fx="http://ns.adobe.com/mxml/2009"
+                   xmlns:s="library://ns.adobe.com/flex/spark"
+                   xmlns:mx="library://ns.adobe.com/flex/mx"
+                   xmlns:viewer="com.esri.viewer.*"
+                   width="0"
+				   height="0"
+				   creationComplete="creationCompleteHandler(event)"
+				   widgetConfigLoaded="widgetConfigLoadedHandler(event)">
+ 
+	<fx:Script>
+		<![CDATA[
+			import com.esri.ags.geometry.MapPoint;
+			
+			import mx.controls.Alert;
+			import mx.events.FlexEvent;
+			
+			import widgets.CoordinateMenu.ExtentGrabber.ExtentGrabberDialog;
+			import widgets.CoordinateMenu.GoToCoordinate.GoToCoordinateDialog;
+			import widgets.CoordinateMenu.ProjectCoordinate.ProjectCoordinateDialog;
+			
+			[Bindable]
+			public var X:Number;
+			[Bindable]
+			public var Y:Number;
+			[Bindable]
+			public var mapPoint:MapPoint;
+			
+			private var goToCoordinates:GoToCoordinateDialog;
+			private var extentNabber:ExtentGrabberDialog;
+			private var helper:CoordinateMenuWidgetHelper;
+			
+			protected function creationCompleteHandler(event:FlexEvent):void
+			{
+				this.goToCoordinates = new GoToCoordinateDialog();
+				this.extentNabber = new ExtentGrabberDialog();
+			}
+			
+			protected function widgetConfigLoadedHandler(event:Event):void
+			{
+				if (configXML)
+				{
+					//Set Helper 
+					this.helper = new CoordinateMenuWidgetHelper(configXML,map);
+
+					// Map mouse move event handler - captures XY
+					this.map.addEventListener(MouseEvent.MOUSE_MOVE, onMapMouseMove);	
+					
+					//Hide ESRI About Menu Items
+					hideESRIMenuItems();
+					
+					// Load context Menu items.
+					createContextMenu();	
+				}
+				else
+				{
+					//Show error if XML fails.
+					Alert.show("There was an error loading the widget configuration XML file ( CopyXY Widget )");
+					return;
+				}
+			}
+			
+			private function onMapClick(event:ContextMenuEvent):void
+			{
+				this.mapPoint = this.map.toMapFromStage(this.X,this.Y);
+			}
+			
+			private function createContextMenu():void
+			{
+				map.contextMenu.addEventListener(ContextMenuEvent.MENU_SELECT, onMapClick);
+			
+				//Copy XY
+				var cmCopyXY:ContextMenuItem = new ContextMenuItem("Copy Map XY Coordinates To Clipboard", true);
+				cmCopyXY.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, onCopyXYItemSelect)
+				addContextMenuItem(cmCopyXY);
+		
+				// add additional contex menu for projected coords.
+				if (this.helper.coordinateSystems.length > 0)
+				{
+					var cmProjected:ContextMenuItem = new ContextMenuItem("Copy Projected XY Coordinates To Clipboard", false);
+					
+					var widget:CoordinateMenuWidget = this; // reference widget with variable to pass to dialog.
+					cmProjected.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, function (event:ContextMenuEvent):void
+					{
+						// open Project Dialog
+						var projectedDialog:ProjectCoordinateDialog = new ProjectCoordinateDialog();
+						projectedDialog.show(mapPoint,configXML,map);
+					});
+					//add item to menu items array
+					addContextMenuItem(cmProjected);
+				}
+				
+				//Go To Coordinates
+				var cmGoToCoordinates:ContextMenuItem = new ContextMenuItem("Go To XY Coordinates", true);
+				cmGoToCoordinates.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, onGoToCoordinatesSelect)
+				addContextMenuItem(cmGoToCoordinates);
+				
+				//Extent Nabber Menu Item
+				var cmExtentNabber:ContextMenuItem = new ContextMenuItem("Get Map Extent", true);
+				cmExtentNabber.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, onExtentNabberSelect)
+				addContextMenuItem(cmExtentNabber);
+				
+			}
+			
+			private function addContextMenuItem(menuItem:ContextMenuItem):void
+			{
+				// Code COURTESY of ESRI Flex VIEWER = MapManager.mxml - Line 169
+				// call contextMenu dynamically so this will compile in AIR
+				if (map.contextMenu["customItems"] is Array)
+					(map.contextMenu["customItems"] as Array).push(menuItem);
+				else if (map.contextMenu["addItem"])
+					map.contextMenu["addItem"](menuItem);
+				else {}
+			}
+			
+			private function hideESRIMenuItems():void
+			{
+				if (map.contextMenu["customItems"] is Array)
+					(map.contextMenu["customItems"] as Array).splice(0, 2)
+			}
+			
+			private function onMapMouseMove(event:MouseEvent):void
+			{
+				this.X = event.stageX;
+				this.Y  = event.stageY;
+			}
+
+			private function onGoToCoordinatesSelect(event:ContextMenuEvent):void
+			{
+				this.goToCoordinates.show(configXML,this.map);
+			}
+			
+			private function onExtentNabberSelect(event:ContextMenuEvent):void
+			{
+				this.extentNabber.show(configXML,map)
+			}
+			
+			private function onCopyXYItemSelect(event:ContextMenuEvent):void
+			{
+				this.copy(this.mapPoint); //copy to clipboard
+			}
+
+			private function copy(mPoint:MapPoint):void
+			{
+				var copyString:String = helper.format(mPoint);
+				helper.showGraphicAsCopied(this.mapPoint);
+				System.setClipboard(copyString); // Flash system clipboard function
+			}
+
+		]]>
+	</fx:Script>
+	
+</viewer:BaseWidget>

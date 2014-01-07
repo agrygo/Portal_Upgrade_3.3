@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		  xmlns:s="library://ns.adobe.com/flex/spark" 
+		  xmlns:mx="library://ns.adobe.com/flex/mx" width="100%" height="100%">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.esri.ags.Map;
+			import com.esri.ags.SpatialReference;
+			import com.esri.ags.events.GeometryServiceEvent;
+			import com.esri.ags.geometry.MapPoint;
+			
+			import mx.controls.Alert;
+			
+			import widgets.CoordinateMenu.CoordinateMenuWidgetHelper;
+			import widgets.CoordinateMenu.Projector;
+			
+			[Bindable]
+			public var xLabel:String = "X:";
+			[Bindable]
+			public var yLabel:String = "Y:";
+			[Bindable]
+			public var wkid:Number;
+			[Bindable]
+			public var helper :CoordinateMenuWidgetHelper;
+			[Bindable]
+			public var map :Map;
+			
+			public var X:Number;
+			public var Y:Number;
+
+			private function zoomTo():void
+			{
+				goToCoordinate(this.helper.zoomScale);
+			}
+			
+			private function panTo():void
+			{
+				goToCoordinate(map.scale);
+			}
+			
+			private function goToCoordinate(scale:Number):void
+			{
+				
+				if (txtX.text == "" || txtY.text == "")
+				{
+					Alert.show("Invalid Coordinates");
+					return;
+				}
+				
+				this.X = Number (txtX.text);
+				this.Y = Number (txtY.text);
+				var mapPoint:MapPoint = new MapPoint(this.X, this.Y, new SpatialReference( this.wkid ));
+				
+				if (mapPoint != null)
+				{
+					if (this.wkid == map.spatialReference.wkid)
+					{
+						if (isValidateMapPoint(mapPoint))
+						{
+							map.scale = scale;
+							map.centerAt(mapPoint);
+							helper.showGraphic(mapPoint);
+						}
+						else
+						{
+							Alert.show("Invalid Coordinate(s)");
+						}
+					}
+					else
+					{
+						var projector:Projector = new Projector(helper.geometryServiceURL);
+						
+						projector.projectPoint(mapPoint,map.spatialReference.wkid,function(event:GeometryServiceEvent):void
+						{
+							var projectedMapPoint:MapPoint = event.result[0] as MapPoint;
+							if (projectedMapPoint != null)
+							{
+								if (isValidateMapPoint(mapPoint))
+								{
+									map.scale = scale;
+									map.centerAt(projectedMapPoint);
+									helper.showGraphic(projectedMapPoint);
+								}
+								else
+								{
+									Alert.show("Invalid Coordinate(s)");
+								}
+							}
+							else
+							{
+								Alert.show("There was an error projecting your coordinates.\nPlease check your values and try again.","Conversion Error");
+							}
+						});
+					}
+				}
+			}
+			
+			private function reset():void
+			{
+				txtX.text = "";
+				txtY.text = "";
+			}
+			
+			private function isValidateMapPoint(mPoint:MapPoint):Boolean
+			{
+				if (isNaN(mPoint.x) || isNaN(mPoint.y))
+				{
+					return false;
+				}
+				return true;
+			}
+			
+		]]>
+	</fx:Script>
+	
+	
+	<mx:Form width="100%" paddingLeft="5" paddingRight="5" paddingBottom="5" paddingTop="5">
+		<mx:FormItem label="{xLabel}" width="100%">
+			<s:TextInput id="txtX"  width="100%"/>
+		</mx:FormItem>
+		<mx:FormItem label="{yLabel}" width="100%">
+			<s:TextInput id="txtY"  width="100%"/>
+		</mx:FormItem>
+		<mx:FormItem width="100%">
+			<s:HGroup width="100%">
+				<mx:Button click="zoomTo();" label="Zoom To Coordinate" icon="@Embed(source='../images/magnifier.png')" width="100%"/>
+				<mx:Button click="panTo()" label="Pan To Coordinate" icon="@Embed(source='../images/arrow_right.png')" width="100%"/>
+				<mx:Button click="reset()" icon="@Embed(source='../images/reset.png')" width="20" toolTip="Reset Form"/>
+			</s:HGroup>
+		</mx:FormItem>
+	</mx:Form>
+	
+</s:VGroup>

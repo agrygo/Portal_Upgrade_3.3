@@ -25,7 +25,9 @@
     <widget right="20" top="55"    config="widgets/BaseMapSwitcher/BaseMapSwitcherWidget.xml" url="widgets/BaseMapSwitcher/BaseMapSwitcherWidget.swf"/>
     <widget left="0"   top="0"     config="widgets/HeaderController/HeaderControllerWidget.xml" url="widgets/HeaderController/HeaderControllerWidget.swf"/>
     <widget left="5" bottom="50"    config="widgets/Coordinate/CoordinateWidget.xml" url="widgets/Coordinate/CoordinateWidget.swf"/>
+    <!-- <widget left="0"  top="0"  config="widgets/CoordinateMenu/CoordinateMenuWidget.xml" url="widgets/CoordinateMenu/CoordinateMenuWidget.swf"/>-->
     <widget left="0" bottom="0"    config="widgets/eSearch/SearchWidgetFixedDG.xml" url="widgets/eSearch/SearchWidgetFixedDG.swf"/>
+    
 
     <map wraparound180="true" initialextent="-10679623.4209 5870891.7487 -9899354.2362 6213941.1316" fullextent="-10679623.4209 5870891.7487 -9899354.2362 6213941.1316" top="40" addarcgisbasemaps="false"
     attributionvisible="false" esrilogovisible="false" minscale="1:4514" >
@@ -119,7 +121,7 @@
     <!-- widgets organized into widget containers that manage close/open etc -->
     <!-- supported layout property options: horizontal(default)|float|vertical|fix-->
     <widgetcontainer layout="float">
-        <widget label="Search" left="80" top="280" preload="open"
+        <widget label="Search" left="100" top="60" preload="open"
                 icon="assets/images/Final-Flex-Search.png"
                 config="widgets/eSearch/eSearchWidget.xml"
                 url="widgets/eSearch/eSearchWidget.swf"/>
@@ -150,14 +152,21 @@
 				url="widgets/Route/RouteWidget.swf"/> -->
                 
         <widget label="Create PDF" left="390" top="400"
-                icon="assets/images/pdf-40x40.png"
+                icon="assets/images/i_print.png"
                 config="widgets/Print/PrintWidget.xml"
                 url="widgets/Print/PrintWidget.swf"/>
                 
        <widget label="Parcel Discrepancy Reporter" right="400" top="50"
-                icon="assets/images/Final-Flex-Parcel-Discrepancy.png" preload="minimized"
+                icon="assets/images/Final-Flex-Parcel-Discrepancy.png" 
                 config="widgets/Edit/EditWidget.xml"
                 url="widgets/Edit/EditWidget.swf"/>
+       <widgetgroup>
+       		<widget label="Map Coordinates" left="100" top="80" preload="open"
+	            icon="widgets/CoordinateMenu/images/coordinateIcon.png"
+	            config="widgets/CoordinateMenu/CoordinateMenuWidget.xml"
+	            url="widgets/CoordinateMenu/CoordinateMenuWidget_GUI.swf"/>
+       </widgetgroup>         
+ 
 
         <!--
         <widget label="My first widget"
