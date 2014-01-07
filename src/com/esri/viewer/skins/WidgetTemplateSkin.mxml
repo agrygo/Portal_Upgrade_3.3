@@ -120,8 +120,7 @@
                 <!-- Use mx:Resize instead of s:Resize for minimize to work with Flex 4.5 sdk -->
                 <mx:Resize heightTo="30"
                            target="{hostComponent}"
-						   
-                           widthTo="275"/>
+                           widthTo="150"/>
                 <s:Move duration="100" target="{header}"/>
                 <s:Move easer="{bounce}" target="{icon}"/>
             </s:Sequence>
