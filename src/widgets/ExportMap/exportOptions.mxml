@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:BorderContainer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+                   xmlns:s="library://ns.adobe.com/flex/spark" 
+                   xmlns:mx="library://ns.adobe.com/flex/mx"
+                   backgroundAlpha="0.95"
+                   backgroundColor="{getStyle('contentBackgroundColor')}"
+                   borderColor="{getStyle('accentColor')}"
+                   cornerRadius="15">
+    <s:layout>
+        <s:VerticalLayout paddingTop="12" paddingBottom="12" paddingLeft="12" paddingRight="12" verticalAlign="middle"/>
+    </s:layout>
+    
+    <fx:Script>
+        <![CDATA[
+            import com.esri.ags.Graphic;
+            import com.esri.ags.Map;
+            import com.esri.ags.components.ContentNavigator;
+            import com.esri.ags.portal.PopUpRenderer;
+            import com.esri.ags.portal.supportClasses.PopUpInfo;
+            import com.esri.ags.portal.supportClasses.PopUpMediaInfo;
+            import com.esri.viewer.ViewerContainer;
+            
+            import mx.graphics.ImageSnapshot;
+            import mx.graphics.codec.JPEGEncoder;
+            import mx.managers.PopUpManager;
+            
+            private var _hostBaseWidget:Object;
+            
+            [Bindable] private var incWidgets:Boolean;
+            
+            [Bindable] private var incInfoWin:Boolean;
+            
+            [Bindable] private var incWidgetsLabel:String;
+            
+            [Bindable] private var incMapInfoWinLabel:String;
+            
+            [Bindable] private var exportBtnLabel:String;
+            
+            [Bindable] private var cancelBtnLabel:String;
+            
+            public function get hostBaseWidget():Object
+            {
+                return _hostBaseWidget;
+            }
+            
+            public function set hostBaseWidget(value:Object):void
+            {
+                _hostBaseWidget = value;
+                if (_hostBaseWidget)
+                {
+                    incWidgets = _hostBaseWidget.exportWidgetsToo;
+                    incInfoWin = _hostBaseWidget.exportMapInfoWindow;
+                    incWidgetsLabel = _hostBaseWidget.incWidgetsLabel;
+                    exportBtnLabel = _hostBaseWidget.exportBtnLabel;
+                    incMapInfoWinLabel = _hostBaseWidget.incMapInfoWinLabel;
+                    cancelBtnLabel = _hostBaseWidget.cancelBtnLabel;
+                }
+            }
+            
+            protected function ExportBtn_clickHandler(event:MouseEvent):void
+            {
+                PopUpManager.removePopUp(this);
+                var map:Map = ViewerContainer.getInstance().mapManager.map;
+                //Check if popup has image
+                var puHasImages:Boolean;
+                var classFactory:ClassFactory;
+                var popUpInfo:PopUpInfo;
+                var contentNavigator:ContentNavigator = map.infoWindow.content as ContentNavigator;
+                var popupRenderer:PopUpRenderer = map.infoWindow.content as PopUpRenderer;
+                if (contentNavigator
+                    && contentNavigator.dataProvider
+                    && contentNavigator.dataProvider.length > 0){
+                    var contentGraphic:Graphic = contentNavigator.dataProvider.getItemAt(0) as Graphic;
+                    if(contentGraphic && contentGraphic.infoWindowRenderer && contentGraphic.graphicsLayer){
+                        classFactory = contentGraphic.infoWindowRenderer as ClassFactory;
+                        popUpInfo = classFactory.properties.popUpInfo as PopUpInfo;
+                    }else if(contentGraphic && contentGraphic.graphicsLayer){
+                        classFactory = contentGraphic.graphicsLayer.infoWindowRenderer as ClassFactory;
+                        popUpInfo = classFactory.properties.popUpInfo as PopUpInfo;
+                    }else{
+                        //Default to true in case the infowindow possibly does have an image.
+                        puHasImages = true;
+                    }
+                }
+                if(popupRenderer){
+                    popUpInfo = popupRenderer.popUpInfo;
+                }
+                //Check if it does have an actual image or is it just a chart
+                if(popUpInfo && popUpInfo.popUpMediaInfos && popUpInfo.popUpMediaInfos.length > 0){
+                    for(var mi:int=0; mi<popUpInfo.popUpMediaInfos.length; mi++){
+                        var pMediaInfo:PopUpMediaInfo = popUpInfo.popUpMediaInfos[mi] as PopUpMediaInfo;
+                        if(pMediaInfo.type == PopUpMediaInfo.IMAGE){
+                            puHasImages = true;
+                            break;
+                        }
+                    }
+                }
+                //If there is an image or the user has chosen not toinclude the map info window
+                //then close the info window and clear it as well
+                if(puHasImages || incInfoWinChk.selected == false){
+                    map.infoWindow.hide();
+                    map.infoWindowContent = null;
+                }
+                
+                const encoder: JPEGEncoder = new JPEGEncoder(_hostBaseWidget.quality);
+                map.logoVisible = _hostBaseWidget.logovis;
+                map.scaleBarVisible = _hostBaseWidget.sbvis;
+                map.zoomSliderVisible = _hostBaseWidget.zoomslidevis;
+                map.opaqueBackground = _hostBaseWidget.mapbg;
+                /* var mText:Label = new Label();
+                mText.text = "Hello World!";
+                mText.right = 5;
+                mText.bottom = 5;
+                mText.setStyle("color", "0x000000");
+                map.staticLayer.addElement(mText); */
+                map.validateNow();
+                
+                // set up a bitmap image of the stage to capture all widgets and items opened by the PopUpManager
+                var bitmapData:BitmapData = new BitmapData(systemManager.stage.stageWidth, systemManager.stage.stageHeight);
+                bitmapData.draw(systemManager.stage);
+                
+                const imageSnapshot:ImageSnapshot = ImageSnapshot.captureImage((incWidgetsChk.selected)?bitmapData:map,0,encoder);
+                map.scaleBarVisible=true;
+                map.opaqueBackground = null;
+                /* map.staticLayer.removeElement(mText); */
+                map.validateNow();
+                const fileReference:FileReference = new FileReference();
+                fileReference.save(imageSnapshot.data, _hostBaseWidget.fName);
+                fileReference.addEventListener(Event.COMPLETE, _hostBaseWidget.resetIcon);
+                fileReference.addEventListener(Event.CANCEL, _hostBaseWidget.resetIcon);
+            }
+            
+            protected function CancelBtn_clickHandler(event:MouseEvent):void
+            {
+                PopUpManager.removePopUp(this);
+                _hostBaseWidget.resetIcon(null);
+            }
+            
+        ]]>
+    </fx:Script>
+    <s:HGroup gap="12" width="100%" verticalAlign="middle">
+        <s:Image source="assets/images/Final-Flex-Save_30x30.png" />
+        <s:Label text="Export Options" fontWeight="bold" />
+    </s:HGroup>
+    <s:CheckBox id="incWidgetsChk" label="{incWidgetsLabel}" selected="{incWidgets}" />
+    <s:CheckBox id="incInfoWinChk" label="{incMapInfoWinLabel}" selected="{incInfoWin}"/>
+    <s:HGroup horizontalAlign="right" gap="12" width="100%">
+        <s:Button id="ExportBtn" label="{exportBtnLabel}" click="ExportBtn_clickHandler(event)"/>
+        <s:Button id="CancelBtn" label="{cancelBtnLabel}" click="CancelBtn_clickHandler(event)"/>
+    </s:HGroup>
+</s:BorderContainer>

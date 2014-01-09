@@ -54,6 +54,7 @@
     <module application="src/index.mxml" destPath="widgets/Edit/EditWidget.swf" optimize="true" sourcePath="src/widgets/Edit/EditWidget.mxml"/>
     <module application="src/index.mxml" destPath="widgets/CoordinateMenu/CoordinateMenuWidget.swf" optimize="true" sourcePath="src/widgets/CoordinateMenu/CoordinateMenuWidget.mxml"/>
     <module application="src/index.mxml" destPath="widgets/CoordinateMenu/CoordinateMenuWidget_GUI.swf" optimize="true" sourcePath="src/widgets/CoordinateMenu/CoordinateMenuWidget_GUI.mxml"/>
+    <module application="src/index.mxml" destPath="widgets/ExportMap/exportMap.swf" optimize="true" sourcePath="src/widgets/ExportMap/exportMap.mxml"/>
   </modules>
   <workers/>
   <buildCSSFiles/>

@@ -26,6 +26,7 @@
     <widget left="0"   top="0"     config="widgets/HeaderController/HeaderControllerWidget.xml" url="widgets/HeaderController/HeaderControllerWidget.swf"/>
     <widget left="5" bottom="50"    config="widgets/Coordinate/CoordinateWidget.xml" url="widgets/Coordinate/CoordinateWidget.swf"/>
     <!-- <widget left="0"  top="0"  config="widgets/CoordinateMenu/CoordinateMenuWidget.xml" url="widgets/CoordinateMenu/CoordinateMenuWidget.swf"/>-->
+    <widget top="3" right="825"    config="widgets/ExportMap/exportMap.xml"    	url="widgets/ExportMap/exportMap.swf" />  
     <widget left="0" bottom="0"    config="widgets/eSearch/SearchWidgetFixedDG.xml" url="widgets/eSearch/SearchWidgetFixedDG.swf"/>
     
 
@@ -50,9 +51,10 @@
 			<lod resolution="1222.99245256249" scale="4622324.434309"/>
     </lods>
         <basemaps>
-        		<layer label="Bing Hybrid" type="bing" visible="false" style="aerialWithLabels" culture="en-US" icon="assets/images/bing_aerialWithLabels.png"/>
+        	<!--Bing removed 1-8-2014, AMG-->
+        		<!-- <layer label="Bing Hybrid" type="bing" visible="false" style="aerialWithLabels" culture="en-US" icon="assets/images/bing_aerialWithLabels.png"/>
         		<layer label="Bing Aerial" type="bing" visible="false" style="aerial" culture="en-US" icon="assets/images/bing_aerial.png" />
-        		<layer label="Bing Roads" type="bing" visible="false" style="road" culture="en-US" icon="assets/images/bing_road.png"/>
+        		<layer label="Bing Roads" type="bing" visible="false" style="road" culture="en-US" icon="assets/images/bing_road.png"/>-->
         		<layer label="Esri Streets" type="tiled" visible="false" url="http://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer" icon="assets/images/basemap_streets.jpg"/>
 	            <layer label="Esri Imagery"  type="tiled" visible="true" url="http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer" icon="assets/images/basemap_imagery.jpg"/>
   			
@@ -161,10 +163,13 @@
                 config="widgets/Edit/EditWidget.xml"
                 url="widgets/Edit/EditWidget.swf"/>
        <widgetgroup>
-       		<widget label="Map Coordinates" left="100" top="80" preload="open"
+       		<widget label="Map Coordinates" left="100" top="80" 
 	            icon="widgets/CoordinateMenu/images/coordinateIcon.png"
 	            config="widgets/CoordinateMenu/CoordinateMenuWidget.xml"
 	            url="widgets/CoordinateMenu/CoordinateMenuWidget_GUI.swf"/>
+	         
+	            
+	      
        </widgetgroup>         
  
 

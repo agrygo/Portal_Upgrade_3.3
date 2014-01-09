@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+
+<configuration>
+    <exportwidgetstoo>true</exportwidgetstoo>
+    <exportinfowindow>true</exportinfowindow>
+	<jpegquality>100</jpegquality>
+	<maplogovisible>false</maplogovisible>
+	<mapscalebarvisible>false</mapscalebarvisible>
+	<zoomslidervisible>false</zoomslidervisible>
+	<mapbackgroundcolor>0xffffff</mapbackgroundcolor>
+	<imageurl>assets/images/Final-Flex-Save_30x30.png</imageurl>
+	<tooltip>Export Map</tooltip>
+    <exportbtnlabel>Export map</exportbtnlabel>
+    <cancelbtnlabel>Cancel</cancelbtnlabel>
+    <incmapinfowinlabel>Include info windows</incmapinfowinlabel>
+    <incwidgetslabel>Include map header</incwidgetslabel>
+	<!--!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	!!!!!!!!!!!! USING FLASH PLAYER YOU CAN NOT SPECIFY THE OUTPUT LOCATION!!!!!!!!!!!!!!
+	!!!!!!!!!!!! JUST THE FILE NAME!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!--> 
+	<defaultexportfilename>myMap.jpg</defaultexportfilename>
+</configuration>

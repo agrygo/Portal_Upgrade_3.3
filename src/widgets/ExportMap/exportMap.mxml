@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+////////////////////////////////////////////////////////////////////////////////
+//
+// Version 3.3 - May 6, 2013
+//
+// This is a Map export widget for FlexViewer 3.2 version
+//
+// Delevoped by Robert Scheitlin
+//
+////////////////////////////////////////////////////////////////////////////////
+-->
+<viewer:BaseWidget xmlns:fx="http://ns.adobe.com/mxml/2009"
+                   xmlns:s="library://ns.adobe.com/flex/spark"
+                   xmlns:viewer="com.esri.viewer.*"
+                   widgetConfigLoaded="init()">
+    <fx:Declarations>
+        <s:ColorMatrixFilter id="cOver" matrix="[0.5,0.5,0.5,0,0,0.5,0.5,0.5,0,0,0.5,0.5,0.5,0,0,0,0,0,0.6,0]"/>
+    </fx:Declarations>
+    <fx:Script>
+        <![CDATA[
+            import mx.managers.PopUpManager;
+            import mx.managers.PopUpManagerChildList;
+            
+            public var quality:Number;
+            public var logovis:Boolean;	
+            public var sbvis:Boolean;
+            public var zoomslidevis:Boolean;
+            public var exportWidgetsToo:Boolean;
+            public var exportMapInfoWindow:Boolean;
+            public var mapbg:uint;
+            public var exportBtnLabel:String;
+            [Bindable] public var etooltip:String;
+            public var fName:String;
+            private var imgsource:String;
+            public var cancelBtnLabel:String;
+            public var incMapInfoWinLabel:String;
+            public var incWidgetsLabel:String;
+            
+            // Initialize
+            private function init():void
+            {
+                if (this.configXML)
+                {
+                    incWidgetsLabel =  configXML.incwidgetslabel || "Include Widgets";
+                    incMapInfoWinLabel = configXML.incmapinfowinlabel || "Include Map Info Window (if it does not contain image medias).";
+                    exportBtnLabel = configXML.exportbtnlabel || "Export...";
+                    cancelBtnLabel = configXML.cancelbtnlabel || "Cancel";
+                    exportMapInfoWindow = configXML.exportinfowindow && configXML.exportinfowindow == "true";
+                    exportWidgetsToo = configXML.exportwidgetstoo && configXML.exportwidgetstoo == "true";
+                    quality = (!configXML.jpegquality=="")?Number(configXML.jpegquality):100;
+                    logovis = configXML.maplogovisible && configXML.maplogovisible == "true";
+                    sbvis = configXML.mapscalebarvisible && configXML.mapscalebarvisible == "true";
+                    zoomslidevis = configXML.zoomslidervisible && configXML.zoomslidervisible == "true";
+                    mapbg = configXML.mapbackgroundcolor || 0xffffff;
+                    etooltip = configXML.tooltip || "Export Map";
+                    fName = configXML.defaultexportfilename || "map.jpg";
+                    imgsource = configXML.imageurl || "widgets/ExportMap/assets/images/i_exportmap.png";
+                    img.source = imgsource;
+                }
+            }
+            
+            public function resetIcon(evt:Event):void
+            {
+                img.filters =[];
+                loader.visible = false;
+            }
+            
+            protected function preExport():void
+            {
+                loader.visible = true;
+                img.filters =[cOver];
+                var exportOps:exportOptions = new exportOptions();
+                exportOps.hostBaseWidget = this;
+                PopUpManager.addPopUp(exportOps,map,false,PopUpManagerChildList.POPUP);
+                PopUpManager.centerPopUp(exportOps);
+                PopUpManager.bringToFront(exportOps);
+            }
+            
+        ]]>
+    </fx:Script>
+    <s:Group width="100%" height="100%">
+        <s:layout>
+            <s:BasicLayout />
+        </s:layout>
+        <s:Image id="img" click="preExport()" buttonMode="true" useHandCursor="true" toolTip="{etooltip}" horizontalCenter="0" verticalCenter="0"/>
+        <s:SWFLoader id="loader" source="assets/images/loader.swf" visible="false" horizontalCenter="0" verticalCenter="0"/>
+    </s:Group>
+</viewer:BaseWidget>
