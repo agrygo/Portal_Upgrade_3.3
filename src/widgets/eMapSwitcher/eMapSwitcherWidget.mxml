@@ -1,0 +1,708 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+///////////////////////////////////////////////////////////////////////////
+// Copyright (c) 2010-2011 Esri. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//    http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+///////////////////////////////////////////////////////////////////////////
+-->
+<viewer:BaseWidget xmlns:fx="http://ns.adobe.com/mxml/2009"
+                   xmlns:s="library://ns.adobe.com/flex/spark"
+                   xmlns:mx="library://ns.adobe.com/flex/mx"
+                   xmlns:viewer="com.esri.viewer.*"
+                   xmlns:toc="com.esri.viewer.components.toc.*"
+                   widgetConfigLoaded="widgetConfigLoadedHandler()"
+				   xmlns:eMapSwitcher="widgets.eMapSwitcher.*">
+    <fx:Script>
+        <![CDATA[
+            import com.esri.ags.events.ZoomEvent;
+            import com.esri.ags.layers.Layer;
+            import com.esri.viewer.AppEvent;
+            
+            import mx.collections.ArrayCollection;
+            import mx.collections.ArrayList;
+            import mx.core.FlexGlobals;
+            import mx.core.LayoutDirection;
+            import mx.core.UIComponent;
+            import mx.events.CollectionEvent;
+            import mx.events.CollectionEventKind;
+            import mx.events.DragEvent;
+            
+            import spark.components.supportClasses.ListBase;
+            import spark.events.IndexChangeEvent;
+
+            private var hideOpLayersTimer:Timer = new Timer(250);
+            private var hideBasemapsTimer:Timer = new Timer(250);
+            private var hideSuspended:Boolean = false;
+
+            private var expandLayerItems:Boolean;
+            private var includeLegendItems:Boolean = true; // include legend items in the TOC
+            private var basemapSelectionComponent:ListBase;
+
+            [Bindable]
+            private var shouldShowOpLayers:Boolean;
+            [Bindable]
+            private var shouldShowBasemaps:Boolean;
+
+            [Bindable]
+            private var basemapList:ArrayList;
+
+            [Bindable]
+            private var opLayerListButtonLabel:String;
+            [Bindable]
+            private var basemapsLabel:String;
+			
+			private var lastFaderValue:Number;
+			private var _showThumbnails:Boolean;
+
+            private function widgetConfigLoadedHandler():void
+            {
+                var showThumbnails:Boolean;
+
+                if (configXML){
+                    opLayerListButtonLabel = configXML.labels.layerlistlabel || getDefaultString("layerListLabel");
+                    basemapsLabel = configXML.labels.basemapslabel || getDefaultString("basemap");
+                    expandLayerItems = (configXML.expandlayeritems == "true");
+                    if (configXML.includelegenditems.length())
+                    {
+                        includeLegendItems = (configXML.includelegenditems == "true");
+                    }
+
+					var needToInitTOC:Boolean = (!configXML.layerlist.@visible[0] || configXML.layerlist.@visible[0] == "true");
+					if (needToInitTOC){
+						initTOC(expandLayerItems);
+						hideOpLayersTimer.addEventListener(TimerEvent.TIMER, hideOpLayersTimer_timerHandler, false, 0, true);
+						AppEvent.addListener(AppEvent.SUSPEND_TOC_HIDE_TIMER, suspendHideListener);
+					}
+                    showThumbnails = _showThumbnails = (configXML.showthumbnails[0] != "false");
+                }
+				reprocessConfigDataBasemaps(showThumbnails);
+				AppEvent.addListener(AppEvent.BASEMAP_SWITCH, checkSelectedBasemap);
+            }
+			
+			private function checkSelectedBasemap(AppEvt:AppEvent):void
+			{
+				for each (var basemap0:Basemap in basemapList.toArray()){
+					if (basemap0.id == AppEvt.data){
+						basemapSelectionComponent.selectedItem = basemap0;
+						break;
+					}
+				}
+				basemapSelectionComponent.validateNow();
+				for (var x:int = 0; x < basemapList.length; x++){
+					(basemapList.getItemAt(x) as Basemap).lalpha = 1;
+					basemapList.itemUpdated((basemapList.getItemAt(x) as Basemap),"lalpha",0,1);
+				}
+				if(_showThumbnails){
+					fader.value = basemapSelectionComponent.selectedIndex + 1;
+				}else{
+					basemapsButtonBar.fader.value = basemapSelectionComponent.selectedIndex + 1;
+				}
+				var layers:ArrayCollection = map.layers as ArrayCollection;
+				for each (var basemap:Object in configData.basemaps){
+					var label:String = basemap.label;
+					for each (var layer:Layer in layers){
+						if(layer.id == label){
+							const lAlpha:Number = layer.alpha;
+							layer.alpha = 1;
+						}
+					}
+				}
+				if(basemapList.getItemAt(basemapSelectionComponent.selectedIndex).forcescaleonswitch && map.scale < basemapList.getItemAt(basemapSelectionComponent.selectedIndex).forcescaleonswitch){
+					map.scale = basemapList.getItemAt(basemapSelectionComponent.selectedIndex).forcescaleonswitch;
+				}
+			}
+			
+			private function reprocessConfigDataBasemaps(showThumbnails:Boolean):void
+			{
+				var configBasemaps:Array = [];
+				var maplayerList:XMLList = configData.configXML.map.basemaps.layer;
+				
+				for (var i:int = 0; i < maplayerList.length(); i++){
+					if(maplayerList[i].@forcescaleonswitch[0]){
+						addForceScaleOnSwitch(maplayerList[i]);
+					}
+					if(maplayerList[i].@autoswitchtoscale[0]){
+						addAutoSwitchToScale(maplayerList[i]);
+					}
+				}
+				initBasemaps(showThumbnails);
+			}
+			
+			private function addForceScaleOnSwitch(obj:XML):void
+			{
+				for each (var bmap:Object in configData.basemaps){
+					if(bmap.label == obj.@label){
+						bmap.forcescaleonswitch = obj.@forcescaleonswitch;
+					}
+				}
+			}
+			
+			private function addAutoSwitchToScale(obj:XML):void
+			{
+				//Add the zoom end event listener to the map now that we know we have
+				//a basemap with a autoswitchtoscale
+				map.addEventListener(ZoomEvent.ZOOM_END, checkScale); 
+				
+				for each (var bmap:Object in configData.basemaps){
+					if(bmap.label == obj.@label){
+						bmap.autoswitchtoscale = obj.@autoswitchtoscale;
+					}
+				}
+			}
+			
+			private function checkScale(evt:Event):void
+			{
+				for each (var bmap:Object in configData.basemaps){
+					if(map.scale == bmap.autoswitchtoscale){
+						for (var b:int = 0; b < basemapList.length; b++){
+							if(basemapList.getItemAt(b).label == bmap.label){
+								var layers:ArrayCollection = map.layers as ArrayCollection;
+								if(currentState == "buttonOptions" && basemapsButtonBar){
+									basemapsButtonBar.fader.value = b + 1;
+								}
+								basemapSelectionComponent.selectedItem = b;
+								for (var x:int = 0; x < basemapList.length; x++){
+									var basemapLabel:String = basemapList.getItemAt(x).label;
+									for each (var layer:Layer in layers){
+										if(basemapList.getItemAt(b).label != basemapLabel){
+											if(layer.id == basemapLabel){
+												layer.visible = false;
+											}
+										}
+										if(layer.id == basemapLabel){
+											layer.alpha = 1;
+										}
+									}
+								}
+								if(basemapList.getItemAt(b).forcescaleonswitch && map.scale < basemapList.getItemAt(b).forcescaleonswitch){
+									map.scale = basemapList.getItemAt(b).forcescaleonswitch;
+								}
+								if(currentState == "buttonOptions" && basemapsButtonBar){
+									basemapsButtonBar.selectedItem = basemapList.getItemAt(b);
+								}
+								AppEvent.dispatch(AppEvent.BASEMAP_SWITCH, basemapList.getItemAt(b).id);
+							}
+						}
+					}	
+				}
+			}
+
+            private function initBasemaps(showThumbnails:Boolean):void
+            {
+                initBasemapList();
+                if (basemapList.length <= 1){
+                    currentState = "noBasemaps";
+                }else{
+                    currentState = showThumbnails ? "thumbnailOptions" : "buttonOptions";
+                    initBasemapSelectionComponent(showThumbnails);
+                }
+            }
+
+            private function initBasemapSelectionComponent(showThumbnails:Boolean):void
+            {
+                basemapSelectionComponent = showThumbnails ? basemapGallery : basemapsButtonBar;
+                preselectTopmostVisibleBasemap(showThumbnails);
+                hideBasemapsTimer.addEventListener(TimerEvent.TIMER, hideBasemapsTimer_timerHandler, false, 0, true);
+            }
+
+            private function initTOCIfHasOpLayers(event:AppEvent):void
+            {
+                var opLayersList:Array = event.data as Array;
+                if (opLayersList.length > 0){
+                    initTOC(expandLayerItems);
+                    opLayersButton.visible = true;
+                    hideOpLayersTimer.addEventListener(TimerEvent.TIMER, hideOpLayersTimer_timerHandler, false, 0, true);
+                    AppEvent.addListener(AppEvent.SUSPEND_TOC_HIDE_TIMER, suspendHideListener);
+                }
+            }
+
+            private function initBasemapList():void
+            {
+                basemapList = new ArrayList();
+                var labels:Array = [];
+                for each (var bmap:Object in configData.basemaps){
+                    var label:String = bmap.label;
+                    if (labels.indexOf(label) == -1){ // avoid duplicates using the labels
+                        labels.push(label);
+                        var basemapItem:Basemap = new Basemap(bmap.id, label, bmap.icon, bmap.visible, 1,
+							(bmap.forcescaleonswitch)?bmap.forcescaleonswitch:Number.NaN,
+							(bmap.autoswitchtoscale)?bmap.autoswitchtoscale:Number.NaN);
+                        basemapList.addItem(basemapItem);
+                    }
+                }
+            }
+
+            private function setWidgetState(showThumbnails:Boolean):void
+            {
+                if (basemapList.length <= 1){
+                    currentState = "noBasemaps";
+                }else{
+                    currentState = showThumbnails ? "thumbnailOptions" : "buttonOptions";
+                }
+            }
+
+            private function preselectTopmostVisibleBasemap(showThumbnails:Boolean):void
+            {
+                var totalBasemaps:Array = basemapList.toArray().reverse();
+                for each (var basemap:Basemap in totalBasemaps){
+                    if (basemap.visible){
+                        basemapSelectionComponent.selectedItem = basemap;
+						callLater(function():void{
+							if(showThumbnails){
+								fader.value = basemapSelectionComponent.selectedIndex + 1;
+							}else{
+								basemapsButtonBar.fader.value = basemapSelectionComponent.selectedIndex + 1;
+							}
+						},null);
+                        break;
+                    }
+                }
+            }
+
+            private function hideOpLayersTimer_timerHandler(event:TimerEvent):void
+            {
+                if (!hideSuspended){
+                    AppEvent.dispatch(AppEvent.TOC_HIDDEN);
+                    shouldShowOpLayers = false;
+                }
+            }
+
+            private function hideBasemapsTimer_timerHandler(event:TimerEvent):void
+            {
+                if(dragOnGoing){
+                    return;
+                }
+                shouldShowBasemaps = false;
+            }
+
+            private function suspendHideListener(event:AppEvent):void
+            {
+                hideSuspended = (event.data != null);
+            }
+
+            private function initTOC(expandLayerItems:Boolean = false):void
+            {
+                toc.map = map;
+                toc.isMapServiceOnly = false; //gotta get this from the config file
+                toc.excludeLayers = getExcludeLayers();
+                toc.excludeGraphicsLayers = true;
+                toc.includeLegendItems = includeLegendItems;
+				var tocLayers:ArrayCollection = toc.dataProvider as ArrayCollection;
+				opLayersButton.visible = tocLayers.length ? true : false;
+				tocLayers.addEventListener(CollectionEvent.COLLECTION_CHANGE, toc_collectionChangeHandler);
+                toc.expandLayerItems = expandLayerItems; 
+            }
+			
+			private function toc_collectionChangeHandler(event:CollectionEvent):void
+			{
+				if (event.kind == CollectionEventKind.ADD)
+				{
+					if (ArrayCollection(event.target).length)
+					{
+						opLayersButton.visible = true;
+					}
+				}
+				else if (event.kind == CollectionEventKind.REMOVE)
+				{
+					if (!ArrayCollection(event.target).length)
+					{
+						opLayersButton.visible = false;
+					}
+				}
+			}
+
+            private function getExcludeLayers():ArrayCollection
+            {
+                var excludeLayers:ArrayCollection = new ArrayCollection();
+
+                if (configData && configData.basemaps){
+                    // exclude basemaps
+                    for (var i:int = 0; i < configData.basemaps.length; i++){
+                        excludeLayers.addItem(configData.basemaps[i].label);
+                    }
+                }
+
+                if (configXML){
+                    // exclude these layers
+                    var layers:XMLList = configXML.layerlist.excludelayer as XMLList;
+                    for (var j:int = 0; j < layers.length(); j++){
+                        excludeLayers.addItem(layers[j].toString());
+                    }
+                }
+
+                return excludeLayers;
+            }
+
+            private function startHideTimer():void
+            {
+                hideOpLayersTimer.reset();
+                hideOpLayersTimer.start();
+            }
+
+            private function opLayerListButton_rollOverHandler(event:MouseEvent):void
+            {
+                shouldShowBasemaps = false;
+                shouldShowOpLayers = true;
+                hideOpLayersTimer.reset();
+                updateContainerPosition(opLayersButton, opLayersContainer);
+            }
+            
+            private function opLayersButton_clickHandler(event:MouseEvent):void
+            {
+                // a way to check if the click event has been done by keyboard action
+                if (isNaN(event.localX))
+                {
+                    shouldShowOpLayers = !shouldShowOpLayers;
+                    shouldShowBasemaps = false;
+                    if (shouldShowOpLayers)
+                    {
+                        updateContainerPosition(opLayersButton, opLayersContainer);
+                        toc.setFocus();
+                    }
+                }
+            }
+            
+            private function opLayersButton_keyUpHandler(event:KeyboardEvent):void
+            {
+                if (event.keyCode == Keyboard.RIGHT)
+                {
+                    // by pressing right set the focus on basemapsButtonBar or basemapsButton
+                    focusManager.getNextFocusManagerComponent().setFocus();
+                }
+            }
+
+            private function updateContainerPosition(anchorComponent:UIComponent, container:UIComponent):void
+            {
+                var app:UIComponent = FlexGlobals.topLevelApplication as UIComponent;
+                
+                var appRect:Rectangle = app.screen;
+                var anchorRect:Rectangle = anchorComponent.getBounds(app as DisplayObject);
+                var containerRect:Rectangle = new Rectangle(0, 0, container.width, container.height);
+                
+                var isLTR:Boolean = (layoutDirection == LayoutDirection.LTR);
+                var leftOffset:Number = isLTR ? anchorComponent.width - container.width : 0;
+                var rightOffset:Number = isLTR ? 0 : anchorComponent.width - container.width;
+                
+                var leftContainerRect:Rectangle = containerRect.clone();
+                var rightContainerRect:Rectangle = containerRect.clone();
+                var bottomContainerRect:Rectangle = containerRect.clone();
+                var topContainerRect:Rectangle = containerRect.clone();
+                
+                leftContainerRect.x = anchorRect.x + leftOffset;
+                rightContainerRect.x = anchorRect.x + rightOffset;
+                bottomContainerRect.y = anchorRect.y + anchorRect.height;
+                topContainerRect.y = anchorRect.y + 1 - container.height;
+                
+                var leftIntersectionRect:Rectangle = appRect.intersection(leftContainerRect);
+                var rightIntersectionRect:Rectangle = appRect.intersection(rightContainerRect);
+                var bottomIntersectionRect:Rectangle = appRect.intersection(bottomContainerRect);
+                var topIntersectionRect:Rectangle = appRect.intersection(topContainerRect);
+                
+                if (leftIntersectionRect.width > rightIntersectionRect.width)
+                {
+                    container.x = anchorComponent.x + leftOffset;
+                }
+                else
+                {
+                    container.x = anchorComponent.x + rightOffset;
+                }
+                
+                if (topIntersectionRect.height > bottomIntersectionRect.height)
+                {
+                    container.y = anchorComponent.y + 1 - container.height;
+                }
+                else
+                {
+                    container.y = anchorComponent.height - 1;
+                }
+            }
+
+            private function positionContainerHorizontally(x:Number, anchorComponent:DisplayObject, container:UIComponent):void
+            {
+                var appWidth:Number = FlexGlobals.topLevelApplication.width;
+                if (x > appWidth){
+                    container.x = anchorComponent.x - container.width + anchorComponent.width;
+				}else{
+                    container.x = anchorComponent.x;
+				}
+            }
+
+            private function positionContainerVertically(y:Number, anchorComponent:DisplayObject, container:UIComponent):void
+            {
+                var appHeight:Number = FlexGlobals.topLevelApplication.height;
+                if (y > appHeight){
+                    container.y = anchorComponent.y + 1 - container.height;
+				}else{
+                    container.y = anchorComponent.height - 1;
+				}
+            }
+
+            private function dispatchChangeBasemapEvent():void
+            {
+                if(dragOnGoing){
+                    return;
+                }
+				for (var x:int = 0; x < basemapList.length; x++){
+					(basemapList.getItemAt(x) as Basemap).lalpha = 1;
+					basemapList.itemUpdated((basemapList.getItemAt(x) as Basemap),"lalpha",0,1);
+				}
+				fader.value = basemapSelectionComponent.selectedIndex + 1;
+				lastFaderValue = fader.value;
+				var layers:ArrayCollection = map.layers as ArrayCollection;
+				for each (var basemap:Object in configData.basemaps){
+					var label:String = basemap.label;
+					for each (var layer:Layer in layers){
+						if(layer.id == label){
+							const lAlpha:Number = layer.alpha;
+							layer.alpha = 1;
+						}
+					}
+				}
+				if(basemapList.getItemAt(basemapSelectionComponent.selectedIndex).forcescaleonswitch && map.scale < basemapList.getItemAt(basemapSelectionComponent.selectedIndex).forcescaleonswitch){
+					map.scale = basemapList.getItemAt(basemapSelectionComponent.selectedIndex).forcescaleonswitch;
+				}
+                AppEvent.dispatch(AppEvent.BASEMAP_SWITCH, (basemapSelectionComponent.selectedItem as Basemap).id);
+            }
+			
+			private function basemapButtonBar_changeHandler(event:IndexChangeEvent):void
+			{
+				var layers:ArrayCollection = map.layers as ArrayCollection;
+				basemapsButtonBar.fader.value = event.newIndex + 1;
+				for (var x:int = 0; x < basemapList.length; x++){
+					var basemapLabel:String = basemapList.getItemAt(x).label;
+					for each (var layer:Layer in layers){
+						if(basemapList.getItemAt(event.newIndex).label != basemapLabel){
+							if(layer.id == basemapLabel){
+								layer.visible = false;
+							}
+						}
+						if(layer.id == basemapLabel){
+							layer.alpha = 1;
+						}
+					}
+				}
+				if(basemapList.getItemAt(event.newIndex).forcescaleonswitch && map.scale < basemapList.getItemAt(event.newIndex).forcescaleonswitch){
+					map.scale = basemapList.getItemAt(event.newIndex).forcescaleonswitch;
+				}
+				AppEvent.dispatch(AppEvent.BASEMAP_SWITCH, basemapList.getItemAt(event.newIndex).id);
+			}
+
+            protected function opLayersContainer_clickHandler(event:MouseEvent):void
+            {
+                AppEvent.dispatch(AppEvent.TOC_HIDDEN); // always hide the toc layer menu
+            }
+
+            private function startBasemapsHideTimer(event:MouseEvent):void
+            {
+				hideBasemapsTimer.reset();
+                hideBasemapsTimer.start();
+            }
+
+			private var widthAdjusted:Boolean;
+            private function basemapsButton_rollOverHandler(event:MouseEvent):void
+            {
+                shouldShowOpLayers = false;
+                shouldShowBasemaps = true;
+				if(!isNaN(lastFaderValue) && lastFaderValue != fader.value){
+					fader.value = lastFaderValue;
+				}
+                hideBasemapsTimer.reset();
+				if(basemapGallery.scroller.verticalScrollBar.visible && !widthAdjusted){
+					basemapsContainer.width += basemapGallery.scroller.verticalScrollBar.width;
+					widthAdjusted = true;
+				}
+                updateContainerPosition(basemapsButton, basemapsContainer);
+            }
+
+            private function basemapGallery_clickHandler(event:MouseEvent):void
+            {
+                var basemapItemRenderer:BasemapItemRenderer = event.target as BasemapItemRenderer;
+                if (basemapItemRenderer){
+					dispatchChangeBasemapEvent();
+                }
+            }
+			
+			public function faderFade(event:Event):void
+			{
+				//If the user is sliding the slider and leaves the basemapsContainer then the fading should stop
+				if(!basemapsContainer.hitTestPoint(stage.mouseX, stage.mouseY)){
+					event.preventDefault();
+					event.stopImmediatePropagation();
+					return;
+				}
+				lastFaderValue = fader.value;
+				var layers:ArrayCollection = map.layers as ArrayCollection;
+				var layer:Layer;
+				
+				//As there is normally just one Base Map visible in Flex Viewer at a time
+				//turn on all the basemap layers so they can be faded
+				for (var x:int = 0; x < basemapList.length; x++){
+					var basemapLbl:String = (basemapList.getItemAt(x) as Basemap).label;
+					for each (layer in layers){
+						if (layer.id == basemapLbl){
+							layer.visible = true;
+							break;
+						}
+					}
+				}
+				
+				var currentValue:Number = event.currentTarget.value;
+				var floorValue:Number = Math.floor(event.currentTarget.value);
+				
+				basemapSelectionComponent.selectedIndex = Math.round(currentValue) - 1;
+				
+				//set the alpha if it is less than the the max value 
+				if (currentValue < event.currentTarget.maximum){
+					var basemapLabel:String = (basemapList.getItemAt(floorValue) as Basemap).label;
+					for each (layer in layers){
+						if (layer.id == basemapLabel){
+							const lAplha0:Number = layer.alpha;
+							layer.alpha = (basemapList.getItemAt(floorValue) as Basemap).lalpha = currentValue - floorValue;
+							basemapList.itemUpdated((basemapList.getItemAt(floorValue) as Basemap),"lalpha",lAplha0,layer.alpha);
+						}
+					}
+				}
+				
+				//set the alpha for the previous layer one OR the last layer
+				var basemapLabel2:String = (basemapList.getItemAt(floorValue-1) as Basemap).label;
+				for each (layer in layers){
+					if (layer.id == basemapLabel2){
+						const lAplha:Number = layer.alpha;
+						layer.alpha = (basemapList.getItemAt(floorValue-1) as Basemap).lalpha = 1 - (currentValue - floorValue);
+						basemapList.itemUpdated((basemapList.getItemAt(floorValue-1) as Basemap),"lalpha",lAplha,layer.alpha);
+					}
+				}
+				
+				//reset the alpha to zero for the layers that are not being merged.
+				//This is needed to cater for a track click
+				for (var i:int = 0; i < basemapList.length; i++){
+					if (i > floorValue || i < floorValue - 1){
+						var basemapLabel3:String = (basemapList.getItemAt(i) as Basemap).label;
+						for each (layer in layers){
+							if (layer.id == basemapLabel3){
+								const lAplha2:Number = layer.alpha;
+								layer.alpha = (basemapList.getItemAt(i) as Basemap).lalpha = 0;
+								layer.visible = false;
+								basemapList.itemUpdated((basemapList.getItemAt(i) as Basemap),"lalpha",lAplha2,layer.alpha);
+							}
+						}
+					}
+				}
+			}
+            
+            private var dragOnGoing:Boolean;
+			
+            protected function basemapGallery_dragStartHandler(event:DragEvent):void
+            {
+                dragOnGoing = true;
+                hideBasemapsTimer.stop();
+            }
+            
+            protected function basemapGallery_dragCompleteHandler(event:DragEvent):void
+            {
+                dragOnGoing = false;
+                hideBasemapsTimer.reset();
+                dispatchChangeBasemapEvent();
+            }
+            
+        ]]>
+    </fx:Script>
+
+    <viewer:states>
+        <s:State name="noBasemaps"/>
+        <s:State name="thumbnailOptions" stateGroups="normal"/>
+        <s:State name="buttonOptions" stateGroups="normal"/>
+    </viewer:states>
+
+    <s:HGroup id="mapLayersContainer" gap="9">
+        <s:Button id="opLayersButton"
+                  height="100%"
+                  click="opLayersButton_clickHandler(event)"
+                  keyUp="opLayersButton_keyUpHandler(event)"
+                  label="{opLayerListButtonLabel}"
+                  rollOut="startHideTimer()"
+                  rollOver="opLayerListButton_rollOverHandler(event)"
+                  tabIndex="1"
+                  visible="false"/>
+		<eMapSwitcher:BasemapButtonBar id="basemapsButtonBar"
+									   change="basemapButtonBar_changeHandler(event)"
+									   dataProvider="{basemapList}"
+									   labelField="label" 
+									   includeIn="buttonOptions"
+									   requireSelection="true"
+									   map="{map}"
+									   focusEnabled="false"
+                                       tabIndex="3"
+									   skinClass="widgets.eMapSwitcher.BasemapButtonBarSkin"/>
+        <s:Button id="basemapsButton"
+                  includeIn="thumbnailOptions"
+                  label="{basemapsLabel}"
+                  rollOut="startBasemapsHideTimer(event)"
+                  rollOver="basemapsButton_rollOverHandler(event)"
+                  tabIndex="4"
+                  skinClass="com.esri.viewer.skins.BasemapsButtonSkin"/>
+    </s:HGroup>
+    <s:BorderContainer id="opLayersContainer"
+                       width="265" height="180"
+                       backgroundColor="{getStyle('contentBackgroundColor')}"
+                       click="opLayersContainer_clickHandler(event)"
+                       includeInLayout="false"
+                       rollOut="startHideTimer()"
+                       rollOver="hideOpLayersTimer.reset()"
+                       visible="{shouldShowOpLayers}">
+        <toc:TOC id="toc" tabIndex="2"
+                 left="2" right="2" top="3" bottom="3"/>
+    </s:BorderContainer>
+    <s:BorderContainer id="basemapsContainer"
+                       backgroundColor="{getStyle('contentBackgroundColor')}"
+                       includeIn="thumbnailOptions"
+                       includeInLayout="false"
+                       rollOut="startBasemapsHideTimer(event)"
+                       rollOver="hideBasemapsTimer.reset()"
+                       visible="{shouldShowBasemaps}">
+			<s:VGroup id="bgVgroup" width="100%" height="100%" paddingBottom="8">
+				<s:List id="basemapGallery"
+						borderVisible="false"
+						change="dispatchChangeBasemapEvent()"
+						click="basemapGallery_clickHandler(event)"
+						dataProvider="{basemapList}"
+						itemRenderer="widgets.eMapSwitcher.BasemapItemRenderer"
+					    maxHeight="355" width="100%"
+						requireSelection="true"
+                        dragMoveEnabled="true"
+                        dragEnabled="true"
+                        dropEnabled="true"
+                        dragStart="basemapGallery_dragStartHandler(event)"
+                        dragComplete="basemapGallery_dragCompleteHandler(event)">
+					<s:layout>
+						<s:TileLayout paddingBottom="10"
+									  paddingLeft="10"
+									  paddingRight="10"
+									  paddingTop="10"
+									  requestedColumnCount="{(basemapList.length > 2) ? 3 : 2}"/>
+					</s:layout>
+				</s:List>
+				<s:HGroup gap="0" width="100%">
+					<s:Spacer width="10"/>
+					<s:HSlider id="fader" mouseFocusEnabled="false" width="100%"
+							   minimum="1" maximum="{basemapList.length}"
+							   snapInterval="0.01" liveDragging="true" enabled="true"
+							   showDataTip="false" value="0" change="faderFade(event)"
+							   skinClass="widgets.eMapSwitcher.BasemapFaderSkin"/>
+					<s:Spacer width="10"/>
+				</s:HGroup>
+				
+			</s:VGroup>
+    </s:BorderContainer>
+</viewer:BaseWidget>

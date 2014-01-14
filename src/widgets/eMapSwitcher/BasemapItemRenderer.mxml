@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:ItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009"
+                xmlns:s="library://ns.adobe.com/flex/spark"
+                xmlns:mx="library://ns.adobe.com/flex/mx"
+                width="110" height="110"
+                autoDrawBackground="false">
+    <fx:Script>
+        <![CDATA[
+			[Bindable] private var poverlay_left:int = 5;
+			[Bindable] private var poverlay_right:int = 5;
+			[Bindable] private var poverlay_alpha:Number = 0;
+			
+            override public function set data(value:Object):void
+            {
+                super.data = value;
+				percentAlpha.text = "";
+                const basemap:Basemap = value as Basemap;
+                if (basemap){
+                    displayImage.source = basemap.thumbnail;
+                    displayLabel.text = basemap.label;
+					poverlay_alpha = (basemap.lalpha == 1 || basemap.lalpha == 0)? 0 : 0.85;
+					if(basemap.lalpha > 0 && basemap.lalpha != 1){
+						poverlay_left = 5;
+						poverlay_right = (basemap.lalpha * 100) + 5;
+						percentAlpha.text = Number(basemap.lalpha * 100).toFixed(0) + " %";
+					}
+                }
+            }
+        ]]>
+    </fx:Script>
+
+    <s:states>
+        <s:State name="normal"/>
+        <s:State name="hovered"/>
+        <s:State name="selected"/>
+    </s:states>
+
+    <s:Rect left="0" right="0" top="0" bottom="0"
+            includeIn="hovered,selected">
+        <s:stroke>
+            <s:SolidColorStroke color.hovered="{getStyle('borderColor')}"
+                                color.selected="{getStyle('focusColor')}"
+                                weight="2"/>
+        </s:stroke>
+    </s:Rect>
+
+    <s:BitmapImage id="displayImage"
+                   width="100" height="67"
+                   top="5"
+                   horizontalCenter="0">
+        <s:filters>
+            <s:GlowFilter alpha="0.5"
+                          blurX="12"
+                          blurY="12"
+                          color="0x000000"/>
+        </s:filters>
+    </s:BitmapImage>
+	
+	<s:Rect id="poverlay"
+			top="5" height="67"
+			left="{poverlay_left}" right="{poverlay_right}">
+		<s:fill>
+			<s:SolidColor color="0xffffff" alpha="{poverlay_alpha}" />
+		</s:fill>
+	</s:Rect>
+
+    <s:Label id="displayLabel"
+             width="100"
+             top="75" bottom="0"
+             horizontalCenter="0"
+             maxDisplayedLines="2"
+             showTruncationTip="true"
+             textAlign="center"
+             verticalAlign="middle"/>
+	<s:Label id="percentAlpha"
+			 horizontalCenter="0"
+			 height="67"
+			 top="5" color="{(getStyle('focusColor')==0xFFD700)?getStyle('focusColor'):0xffffff}"
+			 textAlign="center"
+			 verticalAlign="middle">
+		<s:filters>
+			<s:GlowFilter alpha="0.8"
+						  blurX="12"
+						  blurY="12"
+						  strength="3"
+						  color="0x000000"/>
+		</s:filters>
+	</s:Label>
+</s:ItemRenderer>

@@ -4,18 +4,18 @@
         <excludelayer>Europe</excludelayer>
         <excludelayer>Pirates</excludelayer>
     </layerlist>
-    <!-- Bing Hybrid -->
+    <!-- Bing Hybrid 
     <basemap>
     	<source>assets/images/bing_aerialWithLabels.png</source>
     </basemap>
-    <!-- Bing Aerial -->
+	 Bing Aerial 
     <basemap>
     	<source>assets/images/bing_aerial.png</source>
     </basemap>
-    <!-- Bing Roads -->
+     Bing Roads 
     <basemap>
     	<source>assets/images/bing_road.png</source>
-    </basemap>
+    </basemap>-->
    
     
     <!-- esri Streets -->
@@ -41,7 +41,7 @@
     <basemap>
     	<source>assets/images/bsmp_NationalGeo.png</source>
     </basemap>
-    <!-- esri Topo -->
+    <!-- USGS Topo -->
     <basemap>
     	<source>assets/images/basemap_topographic.png</source>
     </basemap>

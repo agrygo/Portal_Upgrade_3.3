@@ -449,7 +449,8 @@
 
     <s:BorderContainer id="opLayersContainer"
                        width="265" height="180"
-                       backgroundColor="{getStyle('contentBackgroundColor')}"
+                       backgroundImage="assets/images/basemap.png"
+					   backgroundColor="{getStyle('contentBackgroundColor')}"
                        click="opLayersContainer_clickHandler(event)"
                        includeInLayout="false"
                        keyFocusChange="keyFocusChangeHandler(event)"
@@ -464,6 +465,8 @@
 
     <s:BorderContainer id="basemapsContainer"
                        backgroundColor="{getStyle('contentBackgroundColor')}"
+					   borderWeight="1"
+					   cornerRadius="10"
                        includeIn="thumbnailOptions"
                        includeInLayout="false"
                        keyFocusChange="keyFocusChangeHandler(event)"
@@ -479,7 +482,7 @@
                 focusAlpha="0"
                 itemRenderer="widgets.MapSwitcher.BasemapItemRenderer"
                 maxHeight="362"
-                requireSelection="true"
+                requireSelection="false"
                 tabIndex="5">
             <s:layout>
                 <s:TileLayout paddingBottom="10"

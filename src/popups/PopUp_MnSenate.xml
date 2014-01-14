@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+<configuration>
+    <title>Minnesota Senate District {DISTRICT}</title>
+    <description>
+    	<![CDATA[
+    	  	
+    	<a target="_blank" href="http://www.senate.mn/members/index.php?ls=#header">Contact your Senator</a>
+    	]]>
+    </description>
+</configuration>
+
+<!--
+    Pop-up configuration file for:
+    http://sampleserver3.arcgisonline.com/ArcGIS/rest/services/SanFrancisco/311Incidents/FeatureServer/0
+
+    See pop-up documentation at
+    http://links.esri.com/flexviewer/popups
+-->

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:ButtonBar xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			 xmlns:s="library://ns.adobe.com/flex/spark" 
+			 xmlns:mx="library://ns.adobe.com/flex/mx">
+	<fx:Script>
+		<![CDATA[
+			import com.esri.ags.Map;
+			import com.esri.ags.layers.Layer;
+			
+			import mx.collections.ArrayCollection;
+			
+			import spark.components.HSlider;
+			
+			[SkinPart(required="false")]
+			public var fader:HSlider;
+			
+			private var _map:Map;
+			
+			private var range:String;
+			
+			public function set map(value:Map):void
+			{
+				_map = value;
+			}
+			
+			public function get map():Map
+			{
+				return _map;
+			}
+			
+			public function faderFade(event:Event):void
+			{
+				//Special thanks to Mark Hoyland for portions of this code.
+				
+				var layers:ArrayCollection = map.layers as ArrayCollection;
+				var layer:Layer;
+				
+				//As there is normally just one Base Map visible in Flex Viewer at a time
+				//turn on all the basemap layers so they can be faded
+				for (var x:int = 0; x < dataProvider.length; x++){
+					var basemapLbl:String = dataProvider.getItemAt(x).label;
+					for each (layer in layers)
+					{
+						if (layer.id == basemapLbl)
+							layer.visible = true;
+					}
+				}
+				
+				var currentValue:Number = event.currentTarget.value;
+				var floorValue:Number = Math.floor(event.currentTarget.value);
+				
+				//Special thanks to Mattias Ekström for these 2 lines
+				selectedIndex = Math.round(currentValue) - 1;
+				stage.focus = null;
+				
+				//AppEvent.dispatch(AppEvent.BASEMAP_SWITCH, dataProvider.getItemAt(selectedIndex).id);
+				
+				//set the alpha if it is less than the the max value 
+				if (currentValue < event.currentTarget.maximum){
+					var basemapLabel:String = dataProvider.getItemAt(floorValue).label;
+					for each (layer in layers){
+						if (layer.id == basemapLabel)
+							layer.alpha = currentValue - floorValue;
+					}
+				}
+				
+				//set the alpha for the previous layer one OR the last layer
+				var basemapLabel2:String = dataProvider.getItemAt(floorValue-1).label;
+				for each (layer in layers){
+					if (layer.id == basemapLabel2)
+						layer.alpha = 1 - (currentValue - floorValue);
+				}
+				
+				//reset the alpha to zero for the layers that are not being merged.
+				//This is needed to cater for a track click
+				for (var i:int = 0; i < dataProvider.length; i++){
+					if (i > floorValue || i < floorValue - 1){
+						var basemapLabel3:String = dataProvider.getItemAt(i).label;
+						for each (layer in layers){
+							if (layer.id == basemapLabel3)
+								layer.alpha = 0;
+						}
+					}
+				}
+			}			
+		]]>
+	</fx:Script>
+</s:ButtonBar>

@@ -21,8 +21,9 @@
     <!-- UI elements -->
     <widget left="10"  top="50"    config="widgets/Navigation/NavigationWidget.xml" url="widgets/Navigation/NavigationWidget.swf"/>
     <widget right="0" bottom="0"   config="widgets/OverviewMap/OverviewMapWidget.xml" url="widgets/OverviewMap/OverviewMapWidget.swf"/>
-    <!-- <widget right="20" top="55"    config="widgets/MapSwitcher/MapSwitcherWidget.xml" url="widgets/MapSwitcher/MapSwitcherWidget.swf"/>-->
-    <widget right="20" top="55"    config="widgets/BaseMapSwitcher/BaseMapSwitcherWidget.xml" url="widgets/BaseMapSwitcher/BaseMapSwitcherWidget.swf"/>
+    <!--  <widget right="20" top="55"    config="widgets/MapSwitcher/MapSwitcherWidget.xml" url="widgets/MapSwitcher/MapSwitcherWidget.swf"/> -->
+    <!--  <widget right="20" top="55"    config="widgets/BaseMapSwitcher/BaseMapSwitcherWidget.xml" url="widgets/BaseMapSwitcher/BaseMapSwitcherWidget.swf"/>-->
+    <widget right="15" top="55"    config="widgets/eMapSwitcher/eMapSwitcherWidget.xml" url="widgets/eMapSwitcher/eMapSwitcherWidget.swf"/>
     <widget left="0"   top="0"     config="widgets/HeaderController/HeaderControllerWidget.xml" url="widgets/HeaderController/HeaderControllerWidget.swf"/>
     <widget left="5" bottom="50"    config="widgets/Coordinate/CoordinateWidget.xml" url="widgets/Coordinate/CoordinateWidget.swf"/>
     <!-- <widget left="0"  top="0"  config="widgets/CoordinateMenu/CoordinateMenuWidget.xml" url="widgets/CoordinateMenu/CoordinateMenuWidget.swf"/>-->
@@ -58,49 +59,65 @@
         		<layer label="Esri Streets" type="tiled" visible="false" url="http://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer" icon="assets/images/basemap_streets.jpg"/>
 	            <layer label="Esri Imagery"  type="tiled" visible="true" url="http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer" icon="assets/images/basemap_imagery.jpg"/>
   			
-	  			<layer label="2013 County Imagery" type="dynamic" visible="false" url="http://arcgiswaprod/ArcGIS/rest/services/County/Portal_Pictometry_2013/MapServer" icon="assets/images/bsmp_CountyImagery.png"/>
-	  			<layer label="Open Street Map" type="osm" visible="false"/> 
-	  			<layer label="National Geographic" type="tiled" visible="false" url="http://services.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer"/> 
-	  			<layer label="USGS Topo" type="tiled" visible="false" url="http://server.arcgisonline.com/ArcGIS/rest/services/USA_Topo_Maps/MapServer" icon="assets/images/basemap_topographic.jpg"/>
+	  			<layer label="2013 County Imagery" type="dynamic" visible="false" url="http://arcgiswaprod/ArcGIS/rest/services/County/Portal_Bsmp_Pictometry_2013/MapServer" icon="assets/images/bsmp_CountyImagery2.png"/>
+	  			<layer label="Open Street Map" type="osm" visible="false" icon="assets/images/bsmp_OSM2.png"/> 
+	  			<layer label="National Geographic" type="tiled" visible="false" url="http://services.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer" icon="assets/images/basemap_NationalGeo.png"/> 
+	  			<layer label="USGS Topo" type="tiled" visible="false" url="http://server.arcgisonline.com/ArcGIS/rest/services/USA_Topo_Maps/MapServer" icon="assets/images/World_Topo_Map.jpg"/>
 				
           </basemaps>
         <operationallayers>
+        	<!-- NOTE layers display in reverse order from listed, imagery is on bottom of list, labels are on top -->
           	<layer label="2013 Imagery" type="dynamic" visible="true" url="http://arcgiswaprod/ArcGIS/rest/services/County/Portal_Pictometry_2013/MapServer"/>
 			<layer label="General Structures"  type="dynamic" visible="false" url="http://arcgiswaprod/ArcGIS/rest/services/Planning/Portal_Structures/MapServer"/>
 			<layer label="QA-QC"  type="dynamic" visible="false" url="http://arcgiswaprod/ArcGIS/rest/services/Planning/Portal_QA_QC/MapServer"/>
 			<layer label="Mining and Minerals" type="dynamic" imageformat="png32" visible="false"  url="http://arcgiswaprod/ArcGIS/rest/services/Planning/Portal_MiningMinerals/MapServer"/>
-			<layer label="Environmental" type="dynamic" visible="false" imageformat="png32"  url="http://arcgiswaprod/ArcGIS/rest/services/Planning/Portal_Environmental/MapServer"/>
+			<layer label="Environmental" type="dynamic" visible="false" imageformat="png32"  url="http://arcgiswaprod/ArcGIS/rest/services/County/Portal_Environmental/MapServer">
+					<sublayer id="5" popupconfig="popups/PopUp_ImpairedStreams.xml"/>
+					<sublayer id="6" popupconfig="popups/PopUp_ImpairedLakes.xml"/>
+			</layer>		
 			<!--<layer label="Zoning" type="dynamic" visible="false" imageformat="png32"  url="http://arcgiswaprod/ArcGIS/rest/services/Planning/Portal_Zoning/MapServer"/>-->
 			
 			<layer label="Property Health Indicators" type="dynamic"  imageformat="png32" visible="false" url="http://arcgiswaprod/ArcGIS/rest/services/Planning/Portal_PropertyHealthIndicators/MapServer"/>
 			<!--<layer label="Tax Forfeit Land Sales" type="dynamic" visible="false" imageformat="png32" 
 			url="http://arcgiswaprod/ArcGIS/rest/services/Land/LandSales/MapServer"/>-->
-			<layer label="Market Activity" type="dynamic" visible="false" imageformat="png32" url="http://arcgiswaprod/ArcGIS/rest/services/Planning/Portal_Market_Activity/MapServer"/>
-			<layer label="2012 June Flood"  type="dynamic"  visible="false"  url="http://arcgiswaprod/ArcGIS/rest/services/Planning/Portal_FloodDamage/MapServer">
+			<layer label="Market Activity" type="dynamic" visible="false" imageformat="png32" url="http://arcgiswaprod/ArcGIS/rest/services/County/Portal_Market_Activity/MapServer"/>
+			
+			<!-- <layer label="2012 June Flood"  type="dynamic"  visible="false"  url="http://arcgiswaprod/ArcGIS/rest/services/Planning/Portal_FloodDamage/MapServer">
 					<sublayer id="0" popupconfig="popups/PopUp_Land.xml"/>
 	                <sublayer id="1" popupconfig="popups/PopUp_Land.xml"/>
 					<sublayer id="2" popupconfig="popups/PopUp_PW.xml"/>
 					<sublayer id="3" popupconfig="popups/PopUp_PW.xml"/>
 	                <sublayer id="4" popupconfig="popups/PopUp_Private.xml"/>
 					<sublayer id="5" popupconfig="popups/PopUp_Private.xml"/>
-			</layer>
+			</layer>-->
 					
 			
-			
+			<layer label="Parcel Discrepancies" type="dynamic" visible="false" url="http://arcgiswaprod/arcgis/rest/services/County/Portal_Parcel_Discrepancies/FeatureServer"/>
 			<layer label="Cadastral" type="dynamic" visible="false" imageformat="png32"	url="http://arcgiswaprod/ArcGIS/rest/services/County/Portal_PLSS_Cadastral/MapServer">
 				<sublayer id="1" popupconfig="popups/PopUp_ControlPoints.xml"/>
 			</layer>	
-			<layer label="Ownership" type="dynamic" imageformat="png32"  visible="false" url="http://arcgiswaprod/ArcGIS/rest/services/Planning/Portal_Ownership/MapServer"/>
+			<layer label="Public Lands" type="dynamic" imageformat="png32"  visible="false" url="http://arcgiswaprod/ArcGIS/rest/services/County/Portal_Public_Lands/MapServer"/>
+			<layer label="Ownership" type="dynamic" imageformat="png32"  visible="false" url="http://arcgiswaprod/ArcGIS/rest/services/County/Portal_Ownership/MapServer"/>
+			
 			<layer label="Baselayers" type="dynamic" imageformat="png32" visible="true" url="http://arcgiswaprod/arcgis/rest/services/County/Portal_Base/MapServer">
 				<sublayer id="0" popupconfig="popups/PopUp_Parcels.xml"/>
 			</layer>
-			<layer label="Administrative Boundaries"  type="dynamic" imageformat="png32" visible="false"  url="http://arcgiswaprod/arcgis/rest/services/Planning/Portal_Admin/MapServer"/>	
+			
+			
+			<layer label="Administrative Boundaries"  type="dynamic" imageformat="png32" visible="false"  url="http://arcgiswaprod/arcgis/rest/services/County/Portal_AdminBdy/MapServer">	
+				   <sublayer id="17" popupconfig="popups/PopUp_CommDist.xml"/>
+                   <sublayer id="18" popupconfig="popups/PopUp_MnHouse.xml"/>
+                   <sublayer id="19" popupconfig="popups/PopUp_MnSenate.xml"/>
+                   <sublayer id="6" popupconfig="popups/PopUp_SchoolDistricts.xml"/>
+            </layer>       
+			
 			<layer label="Addresing & Places Area 5" type="dynamic" visible="false" url="http://arcgiswaprod/ArcGIS/rest/services/Planning/Portal_Addressing_and_PlacesArea5/MapServer">
 				<sublayer id="1" popupconfig="popups/PopUp_MAR_Area5_DDP.xml"/>
 				<sublayer id="3" popupconfig="popups/PopUp_MAR.xml"/>
 				<sublayer id="4" popupconfig="popups/PopUp_MAR.xml"/>
 				<sublayer id="5" popupconfig="popups/PopUp_MAR.xml"/>
 			</layer>	
+			
 			<layer label="Addressing & Places Area 3/4"  type="dynamic"  visible="false" url="http://arcgiswaprod/ArcGIS/rest/services/Planning/Portal_Addressing_and_Places/MapServer">
 				<sublayer id="1" popupconfig="popups/PopUp_MAR_Area34_DDP.xml"/>
 				<sublayer id="3" popupconfig="popups/PopUp_MAR.xml"/>
@@ -111,12 +128,8 @@
 			</layer>	
 	
 			<layer label="Addressing EDITS" type="dynamic" visible="false" imageformat="png32" url="http://arcgiswaprod/arcgis/rest/services/Planning/Portal_Addressing_and_Places_EDITS/MapServer"/>
-			
-			<layer label="Parcel Discrepancies" type="dynamic" visible="false" url="http://arcgiswaprod/arcgis/rest/services/County/Portal_Parcel_Discrepancies/FeatureServer"/>
-			
-			
-			<!--<layer label="Addressing & Places"  type="dynamic" imageformat="png32" visible="false" url="http://nt-arcgis-prod/ArcGIS/rest/services/Planning/Portal_AddressingPlaces/MapServer"/>-->	
-			<layer label="Labels" type="dynamic" visible="false" url="http://arcgiswaprod/ArcGIS/rest/services/Planning/Portal_Labels/MapServer"/>
+								
+			<layer label="Labels" type="dynamic" visible="true" url="http://arcgiswaprod/ArcGIS/rest/services/County/Portal_Labels/MapServer"/>
         </operationallayers>
     </map>
 
@@ -158,16 +171,17 @@
                 config="widgets/Print/PrintWidget.xml"
                 url="widgets/Print/PrintWidget.swf"/>
                 
-       <widget label="Parcel Discrepancy Reporter" right="400" top="50"
-                icon="assets/images/Final-Flex-Parcel-Discrepancy.png" 
-                config="widgets/Edit/EditWidget.xml"
-                url="widgets/Edit/EditWidget.swf"/>
+       
        <widgetgroup>
        		<widget label="Map Coordinates" left="100" top="80" 
 	            icon="widgets/CoordinateMenu/images/coordinateIcon.png"
 	            config="widgets/CoordinateMenu/CoordinateMenuWidget.xml"
 	            url="widgets/CoordinateMenu/CoordinateMenuWidget_GUI.swf"/>
-	         
+	            
+	        <!-- <widget label="Parcel Discrepancy Reporter" right="400" top="50"
+                icon="assets/images/Final-Flex-Parcel-Discrepancy.png" 
+                config="widgets/Edit/EditWidget.xml"
+                url="widgets/Edit/EditWidget.swf"/>--> 
 	            
 	      
        </widgetgroup>         

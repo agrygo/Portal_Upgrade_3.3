@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+
+    ADOBE SYSTEMS INCORPORATED
+    Copyright 2008 Adobe Systems Incorporated
+    All Rights Reserved.
+
+    NOTICE: Adobe permits you to use, modify, and distribute this file
+    in accordance with the terms of the license agreement accompanying it.
+
+-->
+
+<!--- The default skin class for the Spark ButtonBar component. The buttons on the ButtonBar component
+    use the ButtonBarLastButtonSkin, ButtonBarFirstButtonSkin and ButtonBarMiddleButtonSkin classes.  
+    
+      @see spark.components.ButtonBar
+      @see spark.components.ButtonBarButton    
+        
+      @langversion 3.0
+      @playerversion Flash 10
+      @playerversion AIR 1.5
+      @productversion Flex 4
+-->
+<s:Skin xmlns:fx="http://ns.adobe.com/mxml/2009"
+		xmlns:s="library://ns.adobe.com/flex/spark" 
+        xmlns:widget="widgets.eMapSwitcher.*"
+        alpha.disabled="0.5">
+
+    <fx:Metadata>
+    <![CDATA[ 
+       /** 
+         * @copy spark.skins.spark.ApplicationSkin#hostComponent
+         */
+        [HostComponent("widgets.eMapSwitcher.BasemapButtonBar")]
+    ]]>
+    </fx:Metadata>	
+	
+    <s:states>
+        <s:State name="normal" />
+        <s:State name="disabled" />
+    </s:states>
+    
+    <fx:Declarations>
+        <!--- 
+            @copy spark.components.ButtonBar#firstButton
+            @default spark.skins.spark.ButtonBarFirstButtonSkin
+            @see spark.skins.spark.ButtonBarFirstButtonSkin
+        -->
+        <fx:Component id="firstButton">
+            <s:ButtonBarButton skinClass="spark.skins.spark.ButtonBarFirstButtonSkin" />
+        </fx:Component>
+
+        <!--- 
+            @copy spark.components.ButtonBar#middleButton
+            @default spark.skins.spark.ButtonBarMiddleButtonSkin
+            @see spark.skins.spark.ButtonBarMiddleButtonSkin
+        -->
+        <fx:Component id="middleButton" >
+            <s:ButtonBarButton skinClass="spark.skins.spark.ButtonBarMiddleButtonSkin" />
+        </fx:Component>
+
+        <!--- 
+            @copy spark.components.ButtonBar#lastButton
+            @default spark.skins.spark.ButtonBarLastButtonSkin
+            @see spark.skins.spark.ButtonBarLastButtonSkin
+        -->
+        <fx:Component id="lastButton" >
+            <s:ButtonBarButton skinClass="spark.skins.spark.ButtonBarLastButtonSkin" />
+        </fx:Component>
+
+    </fx:Declarations>
+	<s:Rect top="0" left="0" right="0" bottom="-14" radiusX="3" radiusY="3">
+		<s:fill>
+			<s:SolidColor id="fBackground"
+						  alpha="{getStyle('contentBackgroundAlpha')}"
+						  color="{getStyle('contentBackgroundColor')}"/>
+		</s:fill>
+		<s:stroke>
+			<s:SolidColorStroke id="border"
+								color="{getStyle('spark.skins.spark.ButtonBarMiddleButtonSkin.border.color')}"/>
+		</s:stroke>
+	</s:Rect>
+    <!--- @copy spark.components.SkinnableDataContainer#dataGroup -->
+    <s:DataGroup id="dataGroup" width="100%" height="100%">
+        <s:layout>
+            <s:ButtonBarHorizontalLayout gap="-1"/>
+        </s:layout>
+    </s:DataGroup>
+	
+	<s:HSlider id="fader" left="3" right="3" mouseFocusEnabled="false"
+			   bottom="-12" minimum="1" maximum="{hostComponent.dataProvider.length}" 
+			   snapInterval="0.01" liveDragging="true" enabled="true"
+			   showDataTip="false" value="0" change="{hostComponent.faderFade(event)}"
+			   skinClass="widgets.eMapSwitcher.BasemapFaderSkin"/>
+</s:Skin>

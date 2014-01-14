@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+<configuration>
+ <title>Lake Name: {WATER_NAME}</title>
+ <description>
+  <![CDATA[
+<a target="_blank" href="http://cf.pca.state.mn.us/water/watershedweb/wdip/waterunit.cfm?wid={AUID}">MPCA impaired waters data for {WATER_NAME} Lake</a>    
+
+ <b>Location</b>   {LOCATION}
+ <b>Lake ID #</b>   {AUID}
+ <b>Basin</b>       {BASIN}
+ 
+	    ]]>
+	   
+    </description>
+</configuration>
+
+
+<!--
+    Pop-up configuration file for:
+ http://nt-arcgis-proda:6080/arcgis/rest/services/County/Portal_Environmental/MapServer/6
+-->
+

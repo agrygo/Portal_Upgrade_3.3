@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<configuration>
+    <title>County Commissioner District {DIST_NAME}</title>
+    <description>
+    	<![CDATA[
+    	  	
+    	<a target="_blank" href="http://www.stlouiscountymn.gov/HOME/ERequest/ContactYourCommissioners.aspx">Contact your Commissioner</a>
+    	]]>
+    </description>
+</configuration>
+
+<!--
+   
+
+    See pop-up documentation at
+    http://links.esri.com/flexviewer/popups
+-->

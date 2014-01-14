@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+<configuration>
+    <title>Minnesota House District {DISTRICT}</title>
+    <description>
+    	<![CDATA[
+    	  	
+    	<a target="_blank" href="http://www.house.leg.state.mn.us/members/hmem.asp">Contact your Representative</a>
+    	]]>
+    </description>
+</configuration>
+
+<!--
+    Pop-up configuration file for:
+    http://sampleserver3.arcgisonline.com/ArcGIS/rest/services/SanFrancisco/311Incidents/FeatureServer/0
+
+    See pop-up documentation at
+    http://links.esri.com/flexviewer/popups
+-->

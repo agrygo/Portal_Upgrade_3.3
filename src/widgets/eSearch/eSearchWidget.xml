@@ -439,6 +439,73 @@
 				</simplefillsymbol>
 			</symbology>
 		</layer>
+		
+		<!-- SALES SEARCH -->
+		<layer>
+			<token/>
+			<definitionexpression></definitionexpression>
+			<enableexport>true</enableexport>
+			<enableprintgrid title="Selected Parcels">true</enableprintgrid>
+			<name>Sales</name>
+			<url>http://arcgiswaprod/arcgis/rest/services/County/Portal_Market_Activity/MapServer/1</url>
+			<expressions>
+				<expression alias="Parcel Identification Number" textsearchlabel="Search by Parcel Identification Number" isvaluerequired="false">
+					<values>
+						<value prompt="Example: 010-0010-00010" isvaluerequired="false">upper(PRCL_NBR) LIKE upper('%[value]%')</value>					
+					</values>
+				</expression>
+				<expression alias="CRV Number" textsearchlabel="Enter CRV number"  isvaluerequired="false">
+					<values>
+					<value prompt="Example: 204123" isvaluerequired="false">upper (CRV_NBR) LIKE upper('%[value]%')</value>
+					</values>
+				</expression>
+				<expression alias="Sale Date" textsearchlabel="Enter year and month to search by"  isvaluerequired="false">
+					<values>
+					<value prompt="Example: 201203 for March of 2012 " isvaluerequired="false">upper (SALE_DATE) LIKE upper('%[value]%')</value>
+					</values>
+				</expression>
+			</expressions>
+			<graphicalsearchlabel>Use one of the graphical search tools to select a parcel</graphicalsearchlabel>
+			<spatialsearchlayer>true</spatialsearchlayer>
+			<titlefield>PRCL_NBR</titlefield>
+			
+			<fields all="false" >
+				<field name= "PRCL_NBR" alias = "PIN" gridfield= "true" />
+				<field name= "CRV_NBR" alias = "CRV" gridfield= "true" />
+				<field name= "MULTI_PARCEL" alias = "Multiple Parcels (+ for yes)" gridfield ="true" />
+				<field name= "SALE_DATE" alias = "Sale Date (YearMonth)" gridfield= "true" />
+				<field name= "BUYER_NAME" alias = "Buyer" gridfield= "true" />
+				<field name= "SELLER_NAME" alias = "Seller" gridfield= "true" />
+				<field name= "PUR_PRICE" alias = "Purchase Price" gridfield= "true" currencyformat= "$|2|,|."/>
+                <field name= "SCH_DIST" alias = "School District" gridfield ="true" />
+                <field name= "MKT_AREA_CODE" alias = "Market Area" gridfield ="true" />
+                <field name= "NBHD_CODE" alias = "Neighborhood Code" gridfield ="true" />
+                <field name= "OBJECTID" alias="OBJECTID" gridfield="true" />
+			</fields>
+			<links>
+				<link alias="View Oblique Imagery" disablelinksifnull="true">
+					<![CDATA[http://arcgiswaprod.co.st-louis.mn.us/PictometryIPA/VisualIpa.aspx?PRCL_NBR={PRCL_NBR}]]>
+					<icon><![CDATA[assets/images/i_lego.png]]></icon>
+				</link>
+				<link alias="Parcel Tax Lookup" disablelinksifnull="true">
+					<![CDATA[http://apps.stlouiscountymn.gov/auditor/parcelInfo2005Iframe/frmSearchNDetailREV1.aspx?ParcelID={PRCL_NBR}]]>
+					<icon><![CDATA[assets/images/Tax.png]]></icon>
+				</link>
+				<link alias="Property Details Report" disablelinksifnull="true">
+					<![CDATA[http://reports.stlouiscountymn.gov/ssrs_wrapper/ShowSSRSReport.aspx?reportPath=/Assessor/PropertyDetails/Main&param1=parcelnum={PRCL_NBR}&pdf=true"]]>
+					<icon><![CDATA[assets/images/edit_attributes.png]]></icon>
+				</link>
+			</links>
+			<zoomscale usegeometry="true" zoompercent="2"></zoomscale>
+			<autoopendatagrid>true</autoopendatagrid>
+			<queryattachments>false</queryattachments>
+			<relates/>
+			<symbology>
+				<simplefillsymbol color="0xff0000" alpha="0.3">
+					<outline color="0xff0000" alpha="0.8" width="2" />
+				</simplefillsymbol>
+			</symbology>
+		</layer>
 	</layers>
 	<tables><!-- This section is ONLY for tables (i.e. data that has no geometry)! -->
 	</tables>
