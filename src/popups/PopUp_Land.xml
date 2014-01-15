@@ -3,7 +3,7 @@
     <title>Location: {ROAD_NAME}</title>
     <description><![CDATA[Damage: {DAMAGETYPE}
 Description: {NOTES}
-Image: <a target='_blank' href='file:{URL_LINK}'>{URL_LINK}</a>
+<a target='_blank' href='file:{URL_LINK}'>Image</a>
 Work Order Number: {WORKORDER}
 <b>Location</b>
 Latitude: {LAT}

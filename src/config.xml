@@ -67,42 +67,52 @@
           </basemaps>
         <operationallayers>
         	<!-- NOTE layers display in reverse order from listed, imagery is on bottom of list, labels are on top -->
-          	<layer label="2013 Imagery" type="dynamic" visible="true" url="http://arcgiswaprod/ArcGIS/rest/services/County/Portal_Pictometry_2013/MapServer"/>
-			<layer label="General Structures"  type="dynamic" visible="false" url="http://arcgiswaprod/ArcGIS/rest/services/Planning/Portal_Structures/MapServer"/>
-			<layer label="QA-QC"  type="dynamic" visible="false" url="http://arcgiswaprod/ArcGIS/rest/services/Planning/Portal_QA_QC/MapServer"/>
-			<layer label="Mining and Minerals" type="dynamic" imageformat="png32" visible="false"  url="http://arcgiswaprod/ArcGIS/rest/services/Planning/Portal_MiningMinerals/MapServer"/>
+          	
+			<layer label="Elevation" type="dynamic" visible="false" url="http://arcgiswaprod/ArcGIS/rest/services/County/Portal_Elevation/MapServer"/>
+			
+			<layer label="2013 Imagery" type="dynamic" visible="true" url="http://arcgiswaprod/ArcGIS/rest/services/County/Portal_Pictometry_2013/MapServer"/>
+			
+			<layer label="General Structures"  type="dynamic" visible="false" url="http://arcgiswaprod/ArcGIS/rest/services/County/Portal_Structures/MapServer"/>
+			
+			<layer label="QA-QC"  type="dynamic" visible="false" url="http://arcgiswaprod/ArcGIS/rest/services/County/Portal_QA_QC/MapServer"/>
+			
+			<layer label="Mining and Minerals" type="dynamic" imageformat="png32" visible="false"  url="http://arcgiswaprod/ArcGIS/rest/services/County/Portal_Mining_and_Minerals/MapServer"/>
+			
 			<layer label="Environmental" type="dynamic" visible="false" imageformat="png32"  url="http://arcgiswaprod/ArcGIS/rest/services/County/Portal_Environmental/MapServer">
 					<sublayer id="5" popupconfig="popups/PopUp_ImpairedStreams.xml"/>
 					<sublayer id="6" popupconfig="popups/PopUp_ImpairedLakes.xml"/>
 			</layer>		
 			<!--<layer label="Zoning" type="dynamic" visible="false" imageformat="png32"  url="http://arcgiswaprod/ArcGIS/rest/services/Planning/Portal_Zoning/MapServer"/>-->
 			
-			<layer label="Property Health Indicators" type="dynamic"  imageformat="png32" visible="false" url="http://arcgiswaprod/ArcGIS/rest/services/Planning/Portal_PropertyHealthIndicators/MapServer"/>
+			<layer label="Property Health Indicators" type="dynamic"  imageformat="png32" visible="false" url="http://arcgiswaprod/ArcGIS/rest/services/County/Portal_Property_Health_Indicators/MapServer"/>
+			
 			<!--<layer label="Tax Forfeit Land Sales" type="dynamic" visible="false" imageformat="png32" 
 			url="http://arcgiswaprod/ArcGIS/rest/services/Land/LandSales/MapServer"/>-->
+			
 			<layer label="Market Activity" type="dynamic" visible="false" imageformat="png32" url="http://arcgiswaprod/ArcGIS/rest/services/County/Portal_Market_Activity/MapServer"/>
 			
-			<!-- <layer label="2012 June Flood"  type="dynamic"  visible="false"  url="http://arcgiswaprod/ArcGIS/rest/services/Planning/Portal_FloodDamage/MapServer">
-					<sublayer id="0" popupconfig="popups/PopUp_Land.xml"/>
-	                <sublayer id="1" popupconfig="popups/PopUp_Land.xml"/>
-					<sublayer id="2" popupconfig="popups/PopUp_PW.xml"/>
+			<layer label="Emergency Operations" type="dynamic" visible="false" url="http://arcgiswaprod/arcgis/rest/services/County/Portal_Emergency_Operations/MapServer">
+					<sublayer id="1" popupconfig="popups/PopUp_Land.xml"/>
+	                <sublayer id="2" popupconfig="popups/PopUp_Land.xml"/>
 					<sublayer id="3" popupconfig="popups/PopUp_PW.xml"/>
-	                <sublayer id="4" popupconfig="popups/PopUp_Private.xml"/>
-					<sublayer id="5" popupconfig="popups/PopUp_Private.xml"/>
-			</layer>-->
-					
-			
+					<sublayer id="4" popupconfig="popups/PopUp_PW.xml"/>
+	                <sublayer id="5" popupconfig="popups/PopUp_Private.xml"/>
+					<sublayer id="7" popupconfig="popups/PopUp_Private.xml"/>
+			</layer>		
+
 			<layer label="Parcel Discrepancies" type="dynamic" visible="false" url="http://arcgiswaprod/arcgis/rest/services/County/Portal_Parcel_Discrepancies/FeatureServer"/>
-			<layer label="Cadastral" type="dynamic" visible="false" imageformat="png32"	url="http://arcgiswaprod/ArcGIS/rest/services/County/Portal_PLSS_Cadastral/MapServer">
+			
+			<layer label="Cadastral" type="dynamic" visible="true" imageformat="png32"	url="http://arcgiswaprod/ArcGIS/rest/services/County/Portal_PLSS_Cadastral/MapServer">
 				<sublayer id="1" popupconfig="popups/PopUp_ControlPoints.xml"/>
 			</layer>	
+			
 			<layer label="Public Lands" type="dynamic" imageformat="png32"  visible="false" url="http://arcgiswaprod/ArcGIS/rest/services/County/Portal_Public_Lands/MapServer"/>
+			
 			<layer label="Ownership" type="dynamic" imageformat="png32"  visible="false" url="http://arcgiswaprod/ArcGIS/rest/services/County/Portal_Ownership/MapServer"/>
 			
 			<layer label="Baselayers" type="dynamic" imageformat="png32" visible="true" url="http://arcgiswaprod/arcgis/rest/services/County/Portal_Base/MapServer">
 				<sublayer id="0" popupconfig="popups/PopUp_Parcels.xml"/>
 			</layer>
-			
 			
 			<layer label="Administrative Boundaries"  type="dynamic" imageformat="png32" visible="false"  url="http://arcgiswaprod/arcgis/rest/services/County/Portal_AdminBdy/MapServer">	
 				   <sublayer id="17" popupconfig="popups/PopUp_CommDist.xml"/>

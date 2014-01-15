@@ -1,17 +1,26 @@
 <?xml version="1.0" ?>
 <configuration>
-    <title>{Point_ID2}</title>
-    <fields>
-        <field name="Point_ID2"/>         
-        <field name="Northing_Feet" alias="Northing (feet): " visible="true"/>
-        <field name="Easting_Feet" alias="Easting (feet): " visible="true"/>
-		<field name="CornerCertificate" alias="Corner Certificate" hyperlinkgridfield="true" hyperlinkaliastext="Open Corner Certificate" visible="true"/>
-        <field name="CornerReport" alias="Corner Report" hyperlinkgridfield="true" hyperlinkaliastext="Open Corner Report" visible="true"/>
-	</fields>
+ <title>Survey Control Point ID # {Point_ID2}</title>
+ <description>
+  <![CDATA[
+ <b>Northing (feet)</b>   {Northing_Feet}
+ <b>Easting (feet)</b>  {Easting_Feet}
+ <b>Coordinate System:</b>
+  St.Louis County Transverse Mercator System 96
+ 
+ <b><a target="_blank"  href="{CornerReport}">Corner Report</a></b>
+ 
+ <b><a target="_blank"  href="{CornerCertificate}">Corner Certificate</a></b>
+  *link only works with using Internet Explorer 
+  	    
+<a target="_blank" href="http://www.stlouiscountymn.gov/GOVERNMENT/OnlineServices/SearchControlPoints.aspx">About St. Louis County Survey Control Points</a>    
+	    ]]>
+	   
+</description>
 </configuration>
 
 <!--
     Pop-up configuration file for:
- http://nt-arcgis-pilot/ArcGIS/rest/services/Planning/Portal_ControlPoints/MapServer/0
+ http://nt-arcgis-pilot/ArcGIS/rest/services/County/Portal_PLSS_Cadastral/MapServer/0
 -->
 
