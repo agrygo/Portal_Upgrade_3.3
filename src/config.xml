@@ -31,7 +31,7 @@
     <widget left="0" bottom="0"    config="widgets/eSearch/SearchWidgetFixedDG.xml" url="widgets/eSearch/SearchWidgetFixedDG.swf"/>
     
 
-    <map wraparound180="true" initialextent="-10679623.4209 5870891.7487 -9899354.2362 6213941.1316" fullextent="-10679623.4209 5870891.7487 -9899354.2362 6213941.1316" top="40" addarcgisbasemaps="false"
+    <map wkid="102100" wraparound180="true" initialextent="-10679623.4209 5870891.7487 -9899354.2362 6213941.1316" fullextent="-10679623.4209 5870891.7487 -9899354.2362 6213941.1316" top="40" addarcgisbasemaps="false"
     attributionvisible="false" esrilogovisible="false" minscale="1:4514" >
     
     <lods>
@@ -59,7 +59,7 @@
         		
         		<layer label="Esri Streets" type="tiled" visible="false" url="http://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer" icon="assets/images/basemap_streets.jpg"/>
 	            <layer label="Esri Imagery"  type="tiled" visible="true" url="http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer" icon="assets/images/basemap_imagery.jpg"/>
-  				<layer label="2013 County Imagery" type="dynamic" visible="false" url="http://arcgiswaprod/ArcGIS/rest/services/County/Portal_Bsmp_Pictometry_2013/MapServer" icon="assets/images/bsmp_CountyImagery2.png"/>
+  				<!-- <layer label="2013 County Imagery" type="dynamic" visible="false" url="http://arcgiswaprod/ArcGIS/rest/services/County/Portal_Bsmp_Pictometry_2013/MapServer" icon="assets/images/bsmp_CountyImagery2.png"/>-->
 	  			
 	  			<layer label="Open Street Map" type="osm" visible="false" icon="assets/images/bsmp_OSM2.png"/> 
 	  			<layer label="National Geographic" type="tiled" visible="false" url="http://services.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer" icon="assets/images/basemap_NationalGeo.png"/> 
@@ -174,12 +174,13 @@
                 config="widgets/eDraw/eDrawWidget.xml"
                 url="widgets/eDraw/eDrawWidget.swf"/>
                 
-       <!--  <widget label="Google Street View" width="380"
+        <widget label="Google Street View" width="380"
+        		left="575" top="60"
                 icon="widgets/StreetView/assets/images/i_gsv.png"
                 config="widgets/StreetView/StreetViewWidget.xml"
                 url="widgets/StreetView/StreetViewWidget.swf"/>
                 
-        <widget label="Drive Directions" 
+        <!-- <widget label="Drive Directions" 
     			icon="widgets/Route/assets/images/i_route.png" 
 				config="widgets/Route/RouteWidget.xml"
 				url="widgets/Route/RouteWidget.swf"/> -->

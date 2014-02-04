@@ -6646,7 +6646,7 @@
 										   backgroundAlpha="{getStyle('backgroundAlpha')}"
 										   backgroundColor="{getStyle('chromeColor')}"
 										   borderColor="{getStyle('accentColor')}"
-										   cornerRadius="8">
+										   cornerRadius="15">
 							<s:VGroup width="100%" height="100%" horizontalAlign="center" verticalAlign="middle"
 									  paddingBottom="2" paddingLeft="5" paddingRight="5" paddingTop="2">
 								<s:Label text="{buffergrapicpropsLbl}" />

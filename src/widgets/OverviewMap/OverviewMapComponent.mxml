@@ -615,7 +615,7 @@
 					   backgroundAlpha="1.0">
 					   
         <esri:Map id="overviewMap"
-                  width="250" height="250"
+                  width="200" height="200"
                   attributionVisible="false"
                   clickRecenterEnabled="false"
                   doubleClickZoomEnabled="false"

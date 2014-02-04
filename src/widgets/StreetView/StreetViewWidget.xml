@@ -6,9 +6,9 @@
     <!--  Google API key, user: agrygo.slc@gmail.com -->
     <apikey>AIzaSyDxY6i38KqAzaz3uO3ATeATpx3iv6izM8A</apikey> 
     <streetviewpanoramaoptions>
-        <addresscontrol controlposition="TOP_RIGHT">true</addresscontrol>
+        <addresscontrol controlposition="RIGHT_CENTER">true</addresscontrol>
         <clicktogo>true</clicktogo>
-        <disabledoubleclickzoom>true</disabledoubleclickzoom>
+        <disabledoubleclickzoom>false</disabledoubleclickzoom>
         <imagedatecontrol>true</imagedatecontrol>
         <linkscontrol>true</linkscontrol>
         <pancontrol controlposition="TOP_LEFT">true</pancontrol>

@@ -291,7 +291,7 @@
     </s:Group>
 
     <mx:Image id="resizeButton"
-              right="0" bottom="0"
+              right="5" bottom="5"
               preinitialize="resizeButton_preinitializeHandler(event)"
               source="assets/images/w_resize.png"
               visible.closed="false"

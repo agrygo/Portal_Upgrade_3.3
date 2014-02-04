@@ -230,14 +230,17 @@
 			</mx:filters>
 		</mx:UIComponent>
 		<s:VGroup width="100%" height="100%"
-				  verticalAlign="middle">
+				  verticalAlign="middle"
+				  fontFamily="Verdana">
 			<s:Label width="100%"
 					 fontWeight="bold"
 					 maxDisplayedLines="1"
 					 text="{searchResult.title}"/>
 			<s:RichText id="lContent"
 						fontWeight="normal"
-						width="100%"/>
+						width="100%"
+						fontFamily="Verdana"
+						fontStyle="normal"/>
 			<s:HGroup gap="8" id="linkGroup" height="18" horizontalAlign="center"
 					  verticalAlign="middle" paddingRight="25"
 					  width="100%" includeInLayout="false" visible="false"/>
