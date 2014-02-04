@@ -3,16 +3,35 @@
     <geocoder/>
 
     <links>
-        <link>
+        <link label="Help">
             <content>
-                <![CDATA[
-                     <p align='center'>
-                         <img src='assets/images/globe.png'/>
-                         <br/>
-                         <br/>
-                         <font size="+2"><b><a href="http://links.esri.com/flexviewer" target='_blank'>ArcGIS Viewer for Flex</a></b></font>
-                     </p>
-                ]]>
+               <![CDATA[<p align='center'>
+	            
+	            <img src='assets/images/st-louis-seal-final-Small2.png' width='100' height='100' />
+	        <br>
+	        	<p align='center'>
+	            <font size="18" color="#FFFFFF" font-family="Myriad Web Pro"><b>Land Information Portal</b></font>
+	            <font size-"16" color="#FFFFFF">St. Louis County Minnesota</font>
+	        </p>
+	        <p align='center'>
+	            This application was developed 
+	            <br>
+	            by St. Louis County, Minnesota 
+	            <br>
+	            staff for internal county use only.  
+				<br>
+		    </p>
+	    
+	        <p align='center'>
+			Future link to help documentation here
+	        <br>
+	        </p>
+	        
+			<p align='center'>
+			<font>(c) Copyright St. Louis County, Minnesota</font>
+			</p>
+	        
+	       ]]>
             </content>
         </link>
     </links>

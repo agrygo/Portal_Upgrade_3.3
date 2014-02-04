@@ -43,7 +43,7 @@
 	http://help.arcgis.com/en/arcgisserver/10.0/apis/rest/index.html?gcs.html
     -->
    <coordinateSystems>
-		<coordinateSystem name="St Louis County Coordinates" wkid="" wkt='PROJCS["St Louis County Transverse Mercator System 96",GEOGCS["St Louis County Transverse Mercator System 96",DATUM["",SPHEROID["",6378523.0,298.2752724012429]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],PROJECTION["Transverse_Mercator"],PARAMETER["False_Easting",4757208.33333333],PARAMETER["False_Northing",3280833.33333333],PARAMETER["Central_Meridian",-92.45],PARAMETER["Scale_Factor",0.99998529],PARAMETER["Latitude_Of_Origin",46.61666667],UNIT["Foot_US",0.3048006096012192]]' decimals="4"/>
+		<coordinateSystem name="St Louis County Coordinates" wkid="103694" wkt='PROJCS["St Louis County Transverse Mercator System 96",GEOGCS["St Louis County Transverse Mercator System 96",DATUM["",SPHEROID["",6378523.0,298.2752724012429]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],PROJECTION["Transverse_Mercator"],PARAMETER["False_Easting",4757208.33333333],PARAMETER["False_Northing",3280833.33333333],PARAMETER["Central_Meridian",-92.45],PARAMETER["Scale_Factor",0.99998529],PARAMETER["Latitude_Of_Origin",46.61666667],UNIT["Foot_US",0.3048006096012192]]' decimals="4"/>
 		<coordinateSystem name="NAD 1983 UTM Zone 15"  wkid="26915" wkt="" decimals="4"/>
 		<coordinateSystem name="GCS WGS 1984 (Decimal Degrees)" wkid="4326" wkt="" decimals=""/>
 	<!-- <coordinateSystem name="GCS WGS 1984 (Decimal Degrees)" wkid="4326" decimals="2"/> -->

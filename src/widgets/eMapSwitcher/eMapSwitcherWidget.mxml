@@ -670,7 +670,8 @@
                        includeInLayout="false"
                        rollOut="startBasemapsHideTimer(event)"
                        rollOver="hideBasemapsTimer.reset()"
-                       visible="{shouldShowBasemaps}">
+                       visible="{shouldShowBasemaps}"
+					   cornerRadius="15" >
 			<s:VGroup id="bgVgroup" width="100%" height="100%" paddingBottom="8">
 				<s:List id="basemapGallery"
 						borderVisible="false"

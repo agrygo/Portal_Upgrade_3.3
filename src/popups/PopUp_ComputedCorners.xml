@@ -2,13 +2,11 @@
 <configuration>
  <title>BLM Designation: {BLM_Designation}</title>
  <description>
-  <![CDATA[ <b>Northing (feet)</b>   {Northing_Feet}
- <b>Easting (feet)</b>  {Easting_Feet}
+  <![CDATA[ <b>Accuracy Comments</b>  {AccuracyComments}
  <b>Coordinate System:</b> SLCTM96
  <b>Geocode</b> {Geocode}
- <b>Point ID</b> {Point_ID2}
- <b><a target="_blank"  href="{CornerReport}">Corner Report</a></b>
- 
+ <b>Point Designation</b> {Point_Designation}
+  
  <b><a target="_blank"  href="{CornerCertificate}">Corner Certificate</a></b>
   *link only works with using Internet Explorer 
   	    

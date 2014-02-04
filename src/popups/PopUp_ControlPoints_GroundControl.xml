@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <configuration>
- <title>BLM Designation: {BLM_Designation}</title>
+ <title>BLM Designation: {BLM_DESIGNATION}</title>
  <description>
   <![CDATA[ <b>Northing (feet)</b>   {Northing_Feet}
  <b>Easting (feet)</b>  {Easting_Feet}

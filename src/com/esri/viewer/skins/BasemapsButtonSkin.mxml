@@ -126,7 +126,7 @@
     <!--- @private -->
     <s:Rect id="fill"
             left="1" right="1" top="1" bottom="1"
-            radiusX="2">
+            radiusX="15">
         <s:fill>
             <s:LinearGradient rotation="90">
                 <s:GradientEntry alpha="0.85"
@@ -145,7 +145,7 @@
     <!--- @private -->
     <s:Rect id="lowlight"
             left="1" right="1" top="1" bottom="1"
-            radiusX="2">
+            radiusX="15">
         <s:fill>
             <s:LinearGradient rotation="270">
                 <s:GradientEntry alpha="0.0627"
@@ -204,7 +204,7 @@
     <s:Rect id="hldownstroke1"
             left="1" right="1" top="1" bottom="1"
             includeIn="down"
-            radiusX="2">
+            radiusX="15">
         <s:stroke>
             <s:LinearGradientStroke rotation="90" weight="1">
                 <s:GradientEntry alpha="0.25"

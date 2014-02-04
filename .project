@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>Portal_Upgrade_3.3</name>
+	<name>Portal_Upgrade_3.3new</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -19,12 +19,22 @@
 		<link>
 			<name>bin-debug</name>
 			<type>2</type>
-			<locationURI>DOCUMENTS/FlexViewer</locationURI>
+			<location>C:/Users/grygoa/Adobe Flash Builder 4.7/Portal_Upgrade_3.3</location>
 		</link>
 		<link>
 			<name>bin-release</name>
 			<type>2</type>
-			<location>J:/LandPortal_Inside/stlouisportal/FlexWebAppUpgrade</location>
+			<location>J:/LandPortal_Inside/stlouisportal</location>
+		</link>
+		<link>
+			<name>bin-release1</name>
+			<type>2</type>
+			<location>J:/LandPortal_Inside/stlouisportal/FlexWebApp_Upgrade</location>
+		</link>
+		<link>
+			<name>bin-release2</name>
+			<type>2</type>
+			<location>J:/LandPortal_Inside/stlouisportal/FlexWebApp_Update</location>
 		</link>
 	</linkedResources>
 </projectDescription>

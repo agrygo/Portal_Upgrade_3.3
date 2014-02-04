@@ -27,7 +27,7 @@
     <widget left="0"   top="0"     config="widgets/HeaderController/HeaderControllerWidget.xml" url="widgets/HeaderController/HeaderControllerWidget.swf"/>
     <widget left="5" bottom="50"    config="widgets/Coordinate/CoordinateWidget.xml" url="widgets/Coordinate/CoordinateWidget.swf"/>
     <!-- <widget left="0"  top="0"  config="widgets/CoordinateMenu/CoordinateMenuWidget.xml" url="widgets/CoordinateMenu/CoordinateMenuWidget.swf"/>-->
-    <widget top="3" right="825"    config="widgets/ExportMap/exportMap.xml"    	url="widgets/ExportMap/exportMap.swf" />  
+    <widget top="3" right="525"    config="widgets/ExportMap/exportMap.xml"    	url="widgets/ExportMap/exportMap.swf" />  
     <widget left="0" bottom="0"    config="widgets/eSearch/SearchWidgetFixedDG.xml" url="widgets/eSearch/SearchWidgetFixedDG.swf"/>
     
 
@@ -56,13 +56,14 @@
         		<!-- <layer label="Bing Hybrid" type="bing" visible="false" style="aerialWithLabels" culture="en-US" icon="assets/images/bing_aerialWithLabels.png"/>
         		<layer label="Bing Aerial" type="bing" visible="false" style="aerial" culture="en-US" icon="assets/images/bing_aerial.png" />
         		<layer label="Bing Roads" type="bing" visible="false" style="road" culture="en-US" icon="assets/images/bing_road.png"/>-->
+        		
         		<layer label="Esri Streets" type="tiled" visible="false" url="http://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer" icon="assets/images/basemap_streets.jpg"/>
 	            <layer label="Esri Imagery"  type="tiled" visible="true" url="http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer" icon="assets/images/basemap_imagery.jpg"/>
-  			
-	  			<layer label="2013 County Imagery" type="dynamic" visible="false" url="http://arcgiswaprod/ArcGIS/rest/services/County/Portal_Bsmp_Pictometry_2013/MapServer" icon="assets/images/bsmp_CountyImagery2.png"/>
+  				<layer label="2013 County Imagery" type="dynamic" visible="false" url="http://arcgiswaprod/ArcGIS/rest/services/County/Portal_Bsmp_Pictometry_2013/MapServer" icon="assets/images/bsmp_CountyImagery2.png"/>
+	  			
 	  			<layer label="Open Street Map" type="osm" visible="false" icon="assets/images/bsmp_OSM2.png"/> 
 	  			<layer label="National Geographic" type="tiled" visible="false" url="http://services.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer" icon="assets/images/basemap_NationalGeo.png"/> 
-	  			<layer label="USGS Topo" type="tiled" visible="false" url="http://server.arcgisonline.com/ArcGIS/rest/services/USA_Topo_Maps/MapServer" icon="assets/images/World_Topo_Map.jpg"/>
+	  			<layer label="USGS Topo" type="tiled" visible="false" url="http://server.arcgisonline.com/ArcGIS/rest/services/USA_Topo_Maps/MapServer" icon="assets/images/basemap_topographic.jpg"/>
 				
           </basemaps>
         <operationallayers>
@@ -103,7 +104,9 @@
 			<layer label="Parcel Discrepancies" type="dynamic" visible="false" url="http://arcgiswaprod/arcgis/rest/services/County/Portal_Parcel_Discrepancies/FeatureServer"/>
 			
 			<layer label="Cadastral" type="dynamic" visible="true" imageformat="png32"	url="http://arcgiswaprod/ArcGIS/rest/services/County/Portal_PLSS_Cadastral/MapServer">
-				<sublayer id="1" popupconfig="popups/PopUp_ControlPoints.xml"/>
+				<sublayer id="2" popupconfig="popups/PopUp_ControlPoints.xml"/>
+				<sublayer id="3" popupconfig="popups/PopUp_ControlPoints_GroundControl.xml"/>
+				<sublayer id="4" popupconfig="popups/PopUp_ComputedCorners.xml"/>
 			</layer>	
 			
 			<layer label="Public Lands" type="dynamic" imageformat="png32"  visible="false" url="http://arcgiswaprod/ArcGIS/rest/services/County/Portal_Public_Lands/MapServer"/>
@@ -156,10 +159,15 @@
                 config="widgets/Bookmark/BookmarkWidget.xml"
                 url="widgets/Bookmark/BookmarkWidget.swf"/>
         
-        <widget label="Layers" left="100" top="400" 
+        <!-- <widget label="Layers" left="100" top="400" 
         		icon="assets/images/Final-Flex-Map-Layers.png"
         		 config="widgets/TOC/TOCWidget.xml"
-                url="widgets/TOC/TOCWidget.swf"/>  
+                url="widgets/TOC/TOCWidget.swf"/>-->
+                
+        <widget label="Layers" left="100" top="400" 
+        		icon="assets/images/Final-Flex-Map-Layers.png"
+        		 config="widgets/LayerList/LayerListWidget.xml"
+                url="widgets/LayerList/LayerListWidget.swf"/>            
 
         <widget label="Draw & Measure" left="60" top="400"
                 icon="assets/images/Final-Flex-Draw.png"

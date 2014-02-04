@@ -189,8 +189,8 @@
         </s:Rect>
         <s:Rect width="100%" height="{header.height}"
                 left="1" right="1" top="1"
-                topLeftRadiusX="5"
-                topRightRadiusX="5">
+                topLeftRadiusX="15"
+                topRightRadiusX="15">
             <s:fill>
                 <s:SolidColor id="headerBackground"
                               alpha="{getStyle('contentBackgroundAlpha')}"

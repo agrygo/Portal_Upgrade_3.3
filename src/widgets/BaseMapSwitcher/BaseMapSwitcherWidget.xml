@@ -17,22 +17,21 @@
     	<source>assets/images/bing_road.png</source>
     </basemap>-->
    
-    
-    <!-- esri Streets -->
-    <basemap>
-    	<source>assets/images/basemap_streets.png</source>
-    </basemap>    
-    <!-- esri Imagery -->
-    <basemap>
-    	<source>assets/images/basemap_imagery.png</source>
-    </basemap>
-    
-   
-    
     <!-- SLC imagery -->
   	<basemap>
   		<source>assets/images/bsmp_CountyImagery.png</source>
     </basemap>
+     <!-- esri Streets -->
+    <basemap>
+    	<source>assets/images/basemap_streets.png</source>
+    </basemap> 
+    <!-- esri Imagery -->
+    <basemap>
+    	<source>assets/images/basemap_imagery.png</source>
+    </basemap>
+      
+       
+    
      <!-- Open Street Map -->
     <basemap>
     	<source>assets/images/bsmp_OSM.png</source>
@@ -43,7 +42,7 @@
     </basemap>
     <!-- USGS Topo -->
     <basemap>
-    	<source>assets/images/basemap_topographic.png</source>
+    	<source>assets/images/basemap_topographic.jpg</source>
     </basemap>
   
     
