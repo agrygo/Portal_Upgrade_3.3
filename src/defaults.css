@@ -53,3 +53,8 @@ mx|HScrollBar
     thumbOverSkin: Embed(source="assets/images/thumb.png");
     trackSkin: Embed(source="assets/images/track.png");
 }
+
+esri|PopUpRenderer
+{
+	skin-class: ClassReference("com.esri.viewer.skins.supportClasses.PopUpRendererSkin" );
+}
