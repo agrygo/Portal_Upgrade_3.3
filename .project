@@ -36,5 +36,10 @@
 			<type>2</type>
 			<location>J:/LandPortal_Inside/stlouisportal/FlexWebApp_Update</location>
 		</link>
+		<link>
+			<name>bin-release3</name>
+			<type>2</type>
+			<location>T:/LandPortal_Inside/stlouisportal/FlexWebApp_Update</location>
+		</link>
 	</linkedResources>
 </projectDescription>

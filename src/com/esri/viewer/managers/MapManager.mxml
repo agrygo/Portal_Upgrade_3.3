@@ -160,6 +160,55 @@ Class used to configure the viewer map component (including layers) and handle m
             private var m_operationalLayers:Array = [];
 
             private var m_sortingCollator:SortingCollator;
+			
+			//Get URL parameters Source: Ian Grasshoff  ian.grasshoff@co.waupaca.wi.us   715 258 6496
+			import com.esri.ags.FeatureSet;
+			import com.esri.ags.tasks.QueryTask;
+			import com.esri.ags.tasks.supportClasses.Query;
+			import com.esri.ags.layers.GraphicsLayer;
+			import com.esri.ags.geometry.Polygon;
+			import com.esri.ags.utils.GraphicUtil;
+			import com.esri.ags.utils.GeometryUtil;
+			
+			import mx.controls.Image;
+			import mx.utils.ObjectUtil;
+			import mx.utils.ArrayUtil;
+			import spark.components.VGroup;
+			
+			private var params:Object;
+			private var popUpRenderer:PopUpRenderer = new PopUpRenderer();
+			private var graphicsLayer:GraphicsLayer = new GraphicsLayer();
+			private var data:Object;
+			private var parcelData:Object;
+			private var mapPoint:MapPoint = new MapPoint();
+			private var useURLparam:Boolean = false;
+			private var parcelsURL:String = "http://http://arcgiswaprod/arcgis/rest/services/County/Portal_Base/MapServer/0";
+			private var geomURL:String = "http://gis.stlouiscountymn.gov/arcgis/rest/services/Utilities/Geometry/GeometryServer";
+			private function getURLParameters():Object
+			
+			{
+				var result:URLVariables = new URLVariables();
+				
+				try	
+				{
+					if (ExternalInterface.available)
+					{
+						var search:String = ExternalInterface.call("location.search.substring",1);
+						if (search && search.length >0)
+						{
+							result.decode(search);
+							useURLparam = true;
+						}
+					}
+				}
+				catch (error:Error)
+				{
+					Alert.show(error.toString());
+				}
+				return result;
+			}
+			// Get URL Parameters End - IG
+			
 
             private function this_creationCompleteHandler():void
             {

@@ -1,0 +1,4 @@
+<configuration>
+	<helplabel>2. Click the dot below, then click on the map to create a hyperlink to that location</helplabel>
+    <linkbase>http://arcgiswaprod/stlouisportal/FlexWebApp/index.html?center=</linkbase>
+</configuration>

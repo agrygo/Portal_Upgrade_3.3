@@ -25,7 +25,7 @@
                    width="100%"
                    borderSkin="{null}"
                    creationComplete="creationCompleteHandler(event)"
-                   widgetConfigLoaded="widgetConfigLoadedHandler()">
+                   widgetConfigLoaded="widgetConfigLoadedHandler()" >
 
     <fx:Script>
         <![CDATA[
@@ -464,7 +464,7 @@
                     <HeaderController:WidgetItemDataGroup id="widgetItemDG"
                                                           width="100%"
                                                           dataProvider="{widgetItemArrCol}"
-                                                          horizontalCenter="0"
+                                                          horizontalCenter="150"
                                                           widgetItemClick="widgetItemDG_widgetItemClickHandler(event)"
                                                           widgetItemMouseOut="widgetItemDG_widgetItemMouseOutHandler(event)"
                                                           widgetItemMouseOver="widgetItemDG_widgetItemMouseOverHandler(event)">

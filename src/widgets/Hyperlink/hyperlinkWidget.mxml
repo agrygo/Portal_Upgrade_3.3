@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+///////////////////////////////////////////////////////////////////////////
+// Copyright (c) 2010-2011 Esri. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//    http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+///////////////////////////////////////////////////////////////////////////
+-->
+<viewer:BaseWidget xmlns:esri="http://www.esri.com/2008/ags"
+				   xmlns:fx="http://ns.adobe.com/mxml/2009"
+                   xmlns:s="library://ns.adobe.com/flex/spark"
+                   xmlns:mx="library://ns.adobe.com/flex/mx"
+                   xmlns:viewer="com.esri.viewer.*"
+                   widgetConfigLoaded="init()">
+    <fx:Script>
+        <![CDATA[
+			import com.esri.ags.Graphic;
+			import com.esri.ags.events.DrawEvent;
+			import com.esri.ags.events.MapMouseEvent;
+			import com.esri.ags.geometry.Geometry;
+			import com.esri.ags.geometry.MapPoint;
+			import com.esri.ags.layers.GraphicsLayer;
+			import com.esri.ags.tools.DrawTool;
+			import com.esri.viewer.components.InfoPopup;
+			
+			import org.osmf.utils.URL;
+			
+			[Bindable]
+			private var mapLink:String;
+			
+			private var baseURL:String;			
+			private var graphicsLayer:GraphicsLayer;
+			private var finishDrawing:Boolean;
+			private var drawType:String;			
+			private var selectedDrawingIcon:Image;
+			private var timer:Timer;
+			private var mapPoint:MapPoint;
+			
+            //this function called when the widget's configuration is loaded
+            private function init():void
+            {
+                if (configXML) // checking for valid content in the configuration file
+                {
+                    baseURL = configXML.linkbase || getDefaultString("linkBase");
+					helpLbl.text = configXML.helplabel || getDefaultString("helpLbl");
+                }
+				
+				// create the graphics layer.
+				graphicsLayer = new GraphicsLayer();
+            }
+			
+			private function activateDrawTool(event:MouseEvent):void
+			{
+				finishDrawing = false;
+				
+				// apply glow
+				selectedDrawingIcon = Image(event.currentTarget);
+				clearSelectionFilter();
+				selectedDrawingIcon.filters = [ glowFilter ];
+				
+				drawType = selectedDrawingIcon.name;
+				switch (drawType)
+				{
+					case DrawTool.MAPPOINT:
+					{
+						//setMapAction(drawType, drawStatus, null, drawEnd);
+						setMapAction(drawType, "Create hyperlink", null, drawEnd);
+						break;
+					}
+				}
+			}
+			
+			private function drawEnd(event:DrawEvent):void
+			{
+				// deactivate the draw tool
+				finishDrawing = true;
+				
+				selectedDrawingIcon = null;
+				clearSelectionFilter();
+				event.target.deactivate();
+				
+				var geom:Geometry = event.graphic.geometry;
+				var pt:MapPoint = geom as MapPoint;
+				
+				createMapGraphic(pt);
+			}
+			
+			// Create the graphic where user clicked
+			private function createMapGraphic(pt:MapPoint):void
+			{
+				
+				var coordGraphic:Graphic = new Graphic(pt,smsPoint);
+				
+				graphicsLayer.clear();
+				graphicsLayer.add(coordGraphic);
+				//myGraphicsLayer.refresh();
+				map.addLayer(graphicsLayer);
+				
+				createLink(pt);
+			}
+			
+			//Process the user map click location and generate hyperlink
+//			private function createLink(pt:MapPoint):void
+//			{
+//				mapPoint = pt;
+//				
+//				mapLink = baseURL + myCoordFormatter.format(mapPoint.x) + "," + 
+//					myCoordFormatter.format(mapPoint.y) + "&scale=" +
+//					Math.round(map.scale)+ "&name=" + linkName.text;		
+//			}
+			private function createLink(pt:MapPoint):void
+			{
+				mapPoint = pt;
+				
+				mapLink = baseURL + myCoordFormatter.format(mapPoint.x) + "," + 
+					myCoordFormatter.format(mapPoint.y) + "&level=" +
+					(map.level)+ "&name=" + linkName.text;		
+			}
+			
+			
+			
+			private function clearSelectionFilter():void
+			{
+				for (var i:int = 0; i < drawImageGroup.numChildren; i++)
+				{
+					if (drawImageGroup.getChildAt(i).filters && drawImageGroup.getChildAt(i).filters.length > 0)
+					{
+						if (!(selectedDrawingIcon && drawImageGroup.getChildAt(i) === selectedDrawingIcon))
+						{
+							drawImageGroup.getChildAt(i).filters = [];
+						}
+					}
+				}
+			}
+			
+			private function widgetClosedHandler(event:Event):void
+			{
+				graphicsLayer.visible = false;
+				
+				setMapAction(null, null, null, null); // deactivate drawTool
+				
+				finishDrawing = true;
+				if (selectedDrawingIcon)
+				{
+					selectedDrawingIcon = null;
+				}
+			}
+			
+			private function widgetOpenedHandler(event:Event):void
+			{
+				if (graphicsLayer)
+				{
+					graphicsLayer.visible = true;
+				}
+			}
+			
+			private function copyLink():void
+			{
+				// Copy text
+				System.setClipboard(linkTA.text);
+				// Show label
+				msgLbl.visible = true;
+				
+				// Setup a timer
+				timer = new Timer(1000,2);
+				timer.addEventListener(TimerEvent.TIMER_COMPLETE, timer_Complete);
+				timer.start();
+			}
+			
+			private function emailLink():void
+			{
+				// Create the in
+				var url:URLRequest = new URLRequest("mailto:");
+				url.method = "GET";
+				// Create URL Variables
+				var uv:URLVariables = new URLVariables();
+				uv.subject = "Map Link";
+				uv.body = mapLink.replace(" ","%20"); // Replace any spaces in the link with %20
+				url.data = uv;
+				
+				navigateToURL(url,'_blank');
+			}
+			
+			private function timer_Complete(evt:TimerEvent):void
+			{
+				msgLbl.visible = false;
+			}
+			
+			private function reset():void
+			{
+				graphicsLayer.clear();
+				linkTA.text = "";
+				linkName.text = "My Location";
+			}
+			
+        ]]>
+    </fx:Script>
+	
+	<fx:Declarations>
+		<s:GlowFilter id="glowFilter"
+					  alpha="1"
+					  color="{getStyle('focusColor')}"
+					  inner="true"
+					  strength="2"/>
+		
+		<mx:NumberFormatter id="myCoordFormatter" useThousandsSeparator="false" precision="3"/>
+		
+		<esri:SimpleMarkerSymbol id="smsPoint" color="0xFFFF00" alpha="0.8" size="15" style="diamond">
+			<esri:SimpleLineSymbol color="0xFF0000" width="2"/>
+		</esri:SimpleMarkerSymbol>
+	</fx:Declarations>
+	
+    <viewer:WidgetTemplate id="hyperlink"
+						   closed="widgetClosedHandler(event)"
+						   height="265" minHeight="265" minWidth="430" width="430"
+						   open="widgetOpenedHandler(event)">
+		
+		<s:Group width="100%" height="100%" id="layoutGroup">
+			<s:layout>
+				<s:VerticalLayout horizontalAlign="center" verticalAlign="middle"/>
+			</s:layout>
+			<s:HGroup horizontalAlign="center" verticalAlign="middle" width="100%">
+				<s:Label text="1 .Give your location a name:  " fontSize="12"/>
+				<s:TextInput id="linkName" width="150" text="My Location"/>
+			</s:HGroup>
+			<s:Line xFrom="0" xTo="350" width="95%">
+				<s:stroke>
+					<s:SolidColorStroke color="0x000000" weight="2" caps="round"/>
+				</s:stroke>
+			</s:Line>
+			<s:Label id="helpLbl" fontSize="12" paddingBottom="5"/>
+			<s:HGroup id="drawImageGroup">
+				<mx:Image name="{DrawTool.MAPPOINT}" click="activateDrawTool(event)" source="assets/images/i_draw_point.png" 
+				  useHandCursor="true" buttonMode="true" toolTip="Activate Hyperlink Tool"  width="40" height="40" mouseChildren="false"/>
+			</s:HGroup>
+			<s:Line xFrom="0" xTo="350" width="95%">
+				<s:stroke>
+					<s:SolidColorStroke color="0x000000" weight="2" caps="round"/>
+				</s:stroke>
+			</s:Line>
+			<s:TextArea id="linkTA" text="{mapLink}" width="95%" height="50" editable="false"/>
+			<s:HGroup horizontalAlign="center" verticalAlign="middle" width="100%">
+				<s:Button id="copyBtn" label="Copy Link" click="copyLink()"/>
+				<s:Button id="emailBtn" label="Email Link" click="emailLink()"/>
+				<s:Button id="clearBtn" label="Clear" click="reset()"/>
+			</s:HGroup>
+			<s:Label id="msgLbl" visible="false" text="Link Copied..." fontWeight="bold"/>
+		</s:Group>
+    </viewer:WidgetTemplate>
+</viewer:BaseWidget>

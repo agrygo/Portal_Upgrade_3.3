@@ -1,5 +1,6 @@
 <?xml version="1.0" ?>
 <configuration>
+ <id>{PRCL_NBR}</id>	
  <title>Parcel ID Number: {PRCL_NBR}</title>
  <description>
   <![CDATA[
@@ -31,6 +32,7 @@
 	   
 	   
     </description>
+    
 </configuration>
 
 <!-- ##################ORIGINAL CONFIG FILE, REVISED 8-14-2013, AMG

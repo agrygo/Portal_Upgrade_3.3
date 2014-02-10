@@ -197,6 +197,12 @@
 	            config="widgets/CoordinateMenu/CoordinateMenuWidget.xml"
 	            url="widgets/CoordinateMenu/CoordinateMenuWidget_GUI.swf"/>
 	            
+	        <!--<widget label="Map link" left="450" top="300"
+                icon="assets/images/arrow_down.png"
+                config="widgets/Hyperlink/hyperlinkWidget_parcel.xml"
+                url="widgets/Hyperlink/hyperlinkWidget.swf"/>-->
+	        
+	        
 	        <!-- <widget label="Parcel Discrepancy Reporter" right="400" top="50"
                 icon="assets/images/Final-Flex-Parcel-Discrepancy.png" 
                 config="widgets/Edit/EditWidget.xml"
